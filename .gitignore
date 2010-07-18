@@ -1,0 +1,21 @@
+# files/directories to be ignored in this project
+# ignore these directories
+.svn/
+DS1307RTC/
+EEPROM/
+Ethernet/
+Firmata/
+LiquidCrystal/
+Matrix/
+OneWire/
+Phillips6610LCDInv/
+Phillips6610LCDInv2/
+Servo/
+SoftwareSerial/
+Sprite/
+Stepper/
+Time/
+TimeAlarms/
+Wire/
+# ignore this zip script, may get deleted in the future
+ziplib.bat
