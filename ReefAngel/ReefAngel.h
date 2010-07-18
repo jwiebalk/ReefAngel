@@ -17,7 +17,7 @@
 #ifndef	ReefAngel_h
 #define ReefAngel_h
 
-#define ReefAngel_Version "0.8.5 beta 1"
+#define ReefAngel_Version "0.8.5 beta 2"
 
 //#define wifi
 #include <WProgram.h>
