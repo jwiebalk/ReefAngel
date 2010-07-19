@@ -50,6 +50,16 @@ class ReefAngel_EEPROMClass : public EEPROMClass {
         void LEDPWMActinic_write(uint8_t value);
         uint8_t ATOTimeout_read();
         void ATOTimeout_write(uint8_t value);
+        uint8_t MHDelay_read();
+        void MHDelay_write(uint8_t value);
+        uint8_t DP1OnHour_read();
+        void DP1OnHour_write(uint8_t value);
+        uint8_t DP1OnMinute_read();
+        void DP1OnMinute_write(uint8_t value);
+        uint8_t DP2OnHour_read();
+        void DP2OnHour_write(uint8_t value);
+        uint8_t DP2OnMinute_read();
+        void DP2OnMinute_write(uint8_t value);
 
         // Functions that read/write an int
         int WM1Timer_read();

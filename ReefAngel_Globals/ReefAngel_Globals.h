@@ -89,7 +89,12 @@
 #define Mem_B_ATOTimeout          VarsStart+30
 #define Mem_I_PHMax               VarsStart+31
 #define Mem_I_PHMin               VarsStart+33
-// Next value starts VarsStart+35
+#define Mem_B_MHDelay             VarsStart+35
+#define Mem_B_DP1OnHour           VarsStart+36
+#define Mem_B_DP1OnMinute         VarsStart+37
+#define Mem_B_DP2OnHour           VarsStart+38
+#define Mem_B_DP2OnMinute         VarsStart+39
+// Next value starts VarsStart+40
 
 // EEProm Pointers
 #define PH_Min		        949

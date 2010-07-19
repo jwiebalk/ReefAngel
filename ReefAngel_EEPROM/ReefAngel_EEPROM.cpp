@@ -133,6 +133,56 @@ void ReefAngel_EEPROMClass::ATOTimeout_write(uint8_t value)
     write(Mem_B_ATOTimeout, value);
 }
 
+uint8_t ReefAngel_EEPROMClass::MHDelay_read()
+{
+    return read(Mem_B_MHDelay);
+}
+
+void ReefAngel_EEPROMClass::MHDelay_write(uint8_t value)
+{
+    write(Mem_B_MHDelay, value);
+}
+
+uint8_t ReefAngel_EEPROMClass::DP1OnHour_read()
+{
+    return read(Mem_B_DP1OnHour);
+}
+
+void ReefAngel_EEPROMClass::DP1OnHour_write(uint8_t value)
+{
+    write(Mem_B_DP1OnHour, value);
+}
+
+uint8_t ReefAngel_EEPROMClass::DP1OnMinute_read()
+{
+    return read(Mem_B_DP1OnMinute);
+}
+
+void ReefAngel_EEPROMClass::DP1OnMinute_write(uint8_t value)
+{
+    write(Mem_B_DP1OnMinute, value);
+}
+
+uint8_t ReefAngel_EEPROMClass::DP2OnHour_read()
+{
+    return read(Mem_B_DP2OnHour);
+}
+
+void ReefAngel_EEPROMClass::DP2OnHour_write(uint8_t value)
+{
+    write(Mem_B_DP2OnHour, value);
+}
+
+uint8_t ReefAngel_EEPROMClass::DP2OnMinute_read()
+{
+    return read(Mem_B_DP2OnMinute);
+}
+
+void ReefAngel_EEPROMClass::DP2OnMinute_write(uint8_t value)
+{
+    write(Mem_B_DP2OnMinute, value);
+}
+
 // Int Functions
 int ReefAngel_EEPROMClass::WM1Timer_read()
 {
