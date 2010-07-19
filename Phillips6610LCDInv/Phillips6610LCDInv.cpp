@@ -594,57 +594,6 @@ void Phillips6610LCDInv::DrawOption(int Option, byte Selected, byte x, byte y, c
     {
         lcd_clear(COLOR_WHITE, x1-2, y-5, x2+6, y-3);
     }
-    /*
-    if (Option>=100)
-    {
-        x1=x;
-    }
-    else if (Option<100 && Option>9)
-    {
-        x1=x+6;
-    }
-    else if (Option<10)
-    {
-        x1=x+12;
-        if (unit=="" && subunit=="")
-        {
-            text[0]=0x30;
-            itoa(Option,temp,10);
-            strcat(text,temp);
-            x1=x+6;
-            //      Option=10; //Just to offset the prefix "0" when # is < 10
-        }
-    }
-    x2=x1+6-(x1-x)+6;
-    if (unit!="")
-    {
-        x2+=8;
-    }
-    if (subunit!="")
-    {
-        x3=x2;
-        x2=x2+5;
-    }
-    bcolor=COLOR_WHITE;
-    fcolor=COLOR_BLACK;
-    lcd_clear(COLOR_WHITE, x-2, y-8, x2+4, y+15);
-    if (Selected!=0)
-    {
-        bcolor = COLOR_BLUE;
-        fcolor = COLOR_WHITE;
-        lcd_draw_text(COLOR_BLACK,COLOR_WHITE, x1+((x2-x1-12)/2), y-8, " ^ ");
-        lcd_draw_text(COLOR_BLACK,COLOR_WHITE, x1+((x2-x1-12)/2), y+8, " ` ");
-    }
-
-    lcd_clear(bcolor,x1-2,y-2,x2+5,y+8);
-    lcd_draw_text(fcolor,bcolor,x1,y,text);
-    lcd_draw_text(fcolor,bcolor,x3,y-5,subunit);
-    lcd_draw_text(fcolor,bcolor,x2,y,unit);
-    if (subunit!="")
-    {
-        lcd_clear(COLOR_WHITE, x1-2, y-5, x2+6, y-3);
-    }
-    */
 }
 
 void Phillips6610LCDInv::DrawCancel(byte Selected)
