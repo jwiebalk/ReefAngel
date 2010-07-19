@@ -1,0 +1,26 @@
+TODO List (in no particular order)
+----------------------------------
+* Create Setup Functions
+   - MH Time
+   + MH Time Delay
+   - Std Lights Time
+   - Heater Temp Setup
+   - Chiller Temp Setup
+   + Overheat Temp Setup 
+   - LED PWM Setup
+   + Wavemaker Setup
+   - Dosing Pump Setup
+   + Feeding Mode Timer
+   + Screensaver Timeout
+   + ATO Timeout
+   - ph Calibration
+* Ability to load values from memory (on startup/change)
+* Ability to assign a function to a specific port
+* Associate Timers to specific port
+* Have specific designation for Feeding, Screensaver, SaveParams Timer
+* Fix DrawOption to display a decimal point one digit in if subunit is given
+* Have sanity check for reading/writing values to memory (ensure value is within range)
+* Have default values programmed in for variables
+
+Completed Items
+---------------
