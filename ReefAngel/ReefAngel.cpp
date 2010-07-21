@@ -193,6 +193,7 @@ void ReefAngelClass::Init()
 	setSyncProvider(RTC.get);   // the function to get the time from the RTC
 	setSyncInterval(SECS_PER_HOUR);  // Changed to sync every hour.
 	now();
+	RAStart=now();
 	LCD.BacklightOn();
 	Relay.AllOff();
 	//EEPROM_writeAnything(PH_Max,900); // 750=PH10.0
@@ -367,7 +368,7 @@ void ReefAngelClass::MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte
     unsigned long MHTimer = MHDelay;
     MHTimer *= SECS_PER_MIN;
     MHTimer *= 1000;
-    if ( millis() > MHTimer )
+    if ( now()-RAStart > MHTimer )
         StandardLights(LightsRelay, OnHour, OnMinute, OffHour, OffMinute);
 }
 

@@ -4,17 +4,16 @@ TODO List (in no particular order)
    - MH Time
    + MH Time Delay
    - Std Lights Time
-   + Heater Temp Setup
-   + Chiller Temp Setup
+   - Heater Temp Setup
+   - Chiller Temp Setup
    + Overheat Temp Setup 
-   + LED PWM Setup
+   - LED PWM Setup
    + Wavemaker Setup
    - Dosing Pump Setup
    + Feeding Mode Timer
    + Screensaver Timeout
    + ATO Timeout
    - ph Calibration
-   - Date / Time
 * Ability to load values from memory (on startup/change)
 * Ability to assign a function to a specific port
 * Associate Timers to specific port
@@ -22,9 +21,6 @@ TODO List (in no particular order)
 * Fix DrawOption to display a decimal point one digit in if subunit is given
 * Have sanity check for reading/writing values to memory (ensure value is within range)
 * Have default values programmed in for variables
-* Ability to have dosing pumps repeat every X seconds/hours instead of having a set on time.  Pump could run once every 30minutes, 1hour, etc.
-* Check on setup displays using bytes (uint8_t) and range checks with negative numbers
-* DrawOption should not draw extra spaces if no unit & subunit are given
 
 Completed Items
 ---------------
