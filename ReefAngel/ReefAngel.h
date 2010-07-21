@@ -97,7 +97,7 @@ template <class T> int EEPROM_readAnything(int ee, T& value);
 // TODO ReefAngel - check where variables are used
 static unsigned long ButtonDebounce;
 static byte oldtick;
-//static unsigned long RAStart;  // moved to .cpp file
+static unsigned long RAStart;
 static bool conn=false;
 
 
