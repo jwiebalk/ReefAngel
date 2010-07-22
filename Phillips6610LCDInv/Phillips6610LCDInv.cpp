@@ -566,11 +566,11 @@ void Phillips6610LCDInv::DrawOption(int Option, byte Selected, byte x, byte y, c
         }
     }
     x2=x1+12-(x1-x)+12;
-    if (unit!="")
+    if(strcmp(unit,"")!=0)
     {
         x2+=8;
     }
-    if (subunit!="")
+    if(strcmp(subunit,"")!=0)
     {
         x3=x2;
         x2=x2+5;
@@ -578,7 +578,7 @@ void Phillips6610LCDInv::DrawOption(int Option, byte Selected, byte x, byte y, c
     bcolor=COLOR_WHITE;
     fcolor=COLOR_BLACK;
     lcd_clear(COLOR_WHITE, x-2, y-8, x2+4, y+15);
-    if (Selected!=0)
+    if (Selected)
     {
         bcolor = COLOR_BLUE;
         fcolor = COLOR_WHITE;

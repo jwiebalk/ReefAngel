@@ -24,7 +24,8 @@ TODO List (in no particular order)
 * Have default values programmed in for variables
 * Ability to have dosing pumps repeat every X seconds/hours instead of having a set time.  Pump could run ever 30minutes, 1hour, etc.
 * Check on setup displays using bytes (uint8_t) and range checks with negative numbers.
-* DrawOption should not draw extra spaces if no unit & subunit are given
+* Finish SetupLightsOptionsDisplay - get : between hours & minutes, align time properly on screen
 
 Completed Items
 ---------------
+* DrawOption should not draw extra spaces if no unit & subunit are given
