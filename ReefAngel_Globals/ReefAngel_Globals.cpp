@@ -33,3 +33,6 @@ int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute)
 {
 	return (ScheduleHour*60) + ScheduleMinute;
 }
+
+// for pure virtual functions
+void __cxa_pure_virtual(void){};

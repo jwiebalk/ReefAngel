@@ -17,7 +17,7 @@
 #ifndef	ReefAngel_h
 #define ReefAngel_h
 
-#define ReefAngel_Version "0.8.5 beta 2"
+#define ReefAngel_Version "0.8.5 beta 2 simon"
 
 //#define wifi
 #include <WProgram.h>
@@ -112,7 +112,8 @@ public:
 	ReefAngel_JoystickClass Joystick;
 	ReefAngel_LEDClass LED;
 	DS1307RTC RTC;
-	ReefAngel_ATOClass ATO;
+	ReefAngel_ATOHighClass HighATO;
+	ReefAngel_ATOLowClass LowATO;
 	ReefAngel_TempSensorClass TempSensor;
 	ReefAngel_MemoryClass Memory;
 	ReefAngel_RelayClass Relay;
@@ -138,6 +139,7 @@ public:
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);
 	void StandardFan(byte FanRelay, int LowTemp, int HighTemp);
 	void StandardATO(byte ATORelay, int ATOTimeout);
+	void SingleATO(bool bLow, byte ATORelay, byte maxruntime, byte hrinterval);
 	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, time_t RunTime);
 	char *Version();
 	void DisplayVersion();

@@ -394,19 +394,17 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 	Is the low switch active (meaning we need to top off) and are we not currently topping off
 	Then we set the timer to be now and start the topping pump
 	*/
-	// TODO remove next line
-    //if (ATO.IsLowActive() && ATO.topping==false)
-    if ( ATO.IsLowActive() && (!ATO.IsTopping()) )
+    if ( LowATO.IsActive() && ( !LowATO.IsTopping()) )
     {
-        ATO.ATOTimer = millis();
-        ATO.StartTopping();
+        LowATO.Timer = millis();
+        LowATO.StartTopping();
         Relay.On(ATORelay);
     }
 
     // If the high switch is activated, this is a safeguard to prevent over running of the top off pump
-    if (ATO.IsHighActive())
+    if ( HighATO.IsActive() )
     {
-		ATO.StopTopping();
+		LowATO.StopTopping();  // stop the low ato timer
 		Relay.Off(ATORelay);
     }
 
@@ -416,11 +414,43 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
     We turn on the status LED and shut off the ATO pump
     This prevents the ATO pump from contniously running.
     */
-	if ( (millis()-ATO.ATOTimer > TempTimeout) && ATO.IsTopping() )
+	if ( (millis()-LowATO.Timer > TempTimeout) && LowATO.IsTopping() )
 	{
 		LED.On();
 		Relay.Off(ATORelay);
 	}
+}
+
+void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte maxruntime, byte hrinterval)
+{
+    // if switch is active, stop the pump because the resevoir is full
+    // when the switch is not active, we need to turn on the relay to fill up resevoir
+    ReefAngel_ATOClass *ato;
+    if ( bLow )
+    {
+        ato = &LowATO;
+    }
+    else
+    {
+        ato = &HighATO;
+    }
+    unsigned long t = maxruntime * 1000;
+    if ( ato->IsActive() )
+    {
+        ato->StopTopping();
+        Relay.Off(ATORelay);
+    }
+    else if ( !ato->IsTopping() )
+    {
+        ato->Timer = millis();
+        ato->StartTopping();
+        Relay.On(ATORelay);
+    }
+    if ( ((millis() - ato->Timer) > t) && ato->IsTopping() )
+    {
+        LED.On();
+        Relay.Off(ATORelay);
+    }
 }
 
 void ReefAngelClass::DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, time_t RunTime)
@@ -976,14 +1006,14 @@ void ReefAngelClass::ProcessButtonPressMain(byte smenu)
             //DisplayMenuEntry("Feeding Mode");
             // turn off ports
             //byte CurrentRelayState = Relay.RelayData;
-            Relay.Off(Sump);
+            Relay.Off(Port8);
             Relay.Off(Port4);
             Relay.Off(Port5);
             Relay.Write();
             // run feeding mode
             FeedingMode();
             // turn on ports
-            Relay.On(Sump);
+            Relay.On(Port8);
             Relay.On(Port4);
             Relay.On(Port5);
             // restore ports
@@ -996,14 +1026,14 @@ void ReefAngelClass::ProcessButtonPressMain(byte smenu)
             //DisplayMenuEntry("Water Change Mode");
             // turn off pumps for water change mode
             //byte CurrentRelayState = Relay.RelayData;
-            Relay.Off(Sump);
+            Relay.Off(Port8);
             Relay.Off(Port4);
             Relay.Off(Port5);
             Relay.Write();
             // Display the water change mode
             WaterChangeMode();
             // turn on the pumps after water change mode
-            Relay.On(Sump);
+            Relay.On(Port8);
             Relay.On(Port4);
             Relay.On(Port5);
             //Relay.RelayData = CurrentRelayState;
@@ -1102,7 +1132,9 @@ void ReefAngelClass::ProcessButtonPressClear(byte smenu)
         {
             // Need delay for clearing & returning screen
             LED.Off();
-            ATO.StopTopping();
+            //ATO.StopTopping();
+            LowATO.StopTopping();
+            HighATO.StopTopping();
             // If displaymenuentry is called, the functionality stays inside it.
             DisplayMenuEntry("Clear ATO Timeout");
             // if we set showmenu=false, the main program loop executes until a button press is signaled
