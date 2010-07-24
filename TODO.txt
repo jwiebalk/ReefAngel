@@ -25,6 +25,9 @@ TODO List (in no particular order)
 * Ability to have dosing pumps repeat every X seconds/hours instead of having a set time.  Pump could run ever 30minutes, 1hour, etc.
 * Check on setup displays using bytes (uint8_t) and range checks with negative numbers.
 * Finish SetupLightsOptionsDisplay - get : between hours & minutes, align time properly on screen
+* Test SingleATO timeout function
+* Implement SingleATO time limitation
+* Add ATO Timeout Clear for Low & High switches instead of 1
 
 Completed Items
 ---------------
