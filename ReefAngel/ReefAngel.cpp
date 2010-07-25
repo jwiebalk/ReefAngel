@@ -434,7 +434,8 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte maxruntime, byte h
     {
         ato = &HighATO;
     }
-    unsigned long t = maxruntime * 1000;
+    unsigned long t = maxruntime;
+    t *= 1000;
     if ( ato->IsActive() )
     {
         ato->StopTopping();
@@ -446,7 +447,7 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte maxruntime, byte h
         ato->StartTopping();
         Relay.On(ATORelay);
     }
-    if ( ((millis() - ato->Timer) > t) && ato->IsTopping() )
+    if ( (millis() - ato->Timer > t) && ato->IsTopping() )
     {
         LED.On();
         Relay.Off(ATORelay);
