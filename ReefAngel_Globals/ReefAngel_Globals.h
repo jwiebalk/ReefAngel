@@ -234,5 +234,10 @@ byte intlength(int intin);
 int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute);
 // for virtual functions
 extern "C" void __cxa_pure_virtual(void);
+// other fixes
+__extension__ typedef int __guard __attribute__((mode (__DI__)));
+extern "C" int __cxa_guard_acquire(__guard *);
+extern "C" void __cxa_guard_release (__guard *);
+extern "C" void __cxa_guard_abort (__guard *);
 
 #endif  // __REEFANGEL_GLOBALS_H__
