@@ -139,7 +139,7 @@ public:
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);
 	void StandardFan(byte FanRelay, int LowTemp, int HighTemp);
 	void StandardATO(byte ATORelay, int ATOTimeout);
-	void SingleATO(bool bLow, byte ATORelay, byte maxruntime, byte hrinterval);
+	void SingleATO(bool bLow, byte ATORelay, byte bTimeout, byte bHrInterval);
 	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, time_t RunTime);
 	char *Version();
 	void DisplayVersion();

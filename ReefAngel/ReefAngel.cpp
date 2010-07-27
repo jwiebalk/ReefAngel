@@ -421,7 +421,7 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 	}
 }
 
-void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte maxruntime, byte hrinterval)
+void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte bTimeout, byte bHrInterval)
 {
     // if switch is active, stop the pump because the resevoir is full
     // when the switch is not active, we need to turn on the relay to fill up resevoir
@@ -434,7 +434,7 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte maxruntime, byte h
     {
         ato = &HighATO;
     }
-    unsigned long t = maxruntime;
+    unsigned long t = bTimeout;
     t *= 1000;
     if ( ato->IsActive() )
     {

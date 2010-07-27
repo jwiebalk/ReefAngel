@@ -20,4 +20,5 @@
 ReefAngel_ATOClass::ReefAngel_ATOClass()
 {
     topping = false;
+    Timer = 0;
 }
