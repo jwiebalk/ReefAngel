@@ -425,6 +425,21 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte bTimeout, byte bHr
 {
     // if switch is active, stop the pump because the resevoir is full
     // when the switch is not active, we need to turn on the relay to fill up resevoir
+    static unsigned long ulLastActivation = 0;
+//    unsigned long hr = bHrInterval;
+//    hr *= SECS_PER_HOUR;
+//    hr *= 1000;
+    unsigned long hr = now() - ulLastActivation;
+    if ( bHrInterval )
+    {
+        // if time between activations is less than or equal to Y hours and 0 minutes
+        // what happens when the current time is the same as the hour interval??
+//        if ( (hour(hr) <= bHrInterval) && (minute(hr) == 0) && (ulLastActivation > 0) )
+//        {
+//            // don't proceed because we aren't allowed to run again.
+//            return;
+//        }
+    }
     ReefAngel_ATOClass *ato;
     if ( bLow )
     {
@@ -444,6 +459,7 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte bTimeout, byte bHr
     else if ( !ato->IsTopping() )
     {
         ato->Timer = millis();
+        ulLastActivation = now();  // set the time for activation
         ato->StartTopping();
         Relay.On(ATORelay);
     }
