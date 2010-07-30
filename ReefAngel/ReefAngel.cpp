@@ -434,7 +434,6 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte 
         {
             iSafeTop += 1440;
         }
-        //if ( iSafeTop > (byteHrInterval * 60) )
         if ( iSafeTop < (byteHrInterval * 60) )
         {
             bCanRun = false;
