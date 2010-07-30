@@ -421,24 +421,24 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 	}
 }
 
-void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte bTimeout, byte bHrInterval)
+void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte byteHrInterval)
 {
     // if switch is active, stop the pump because the resevoir is full
     // when the switch is not active, we need to turn on the relay to fill up resevoir
-    static unsigned long ulLastActivation = 0;
-//    unsigned long hr = bHrInterval;
-//    hr *= SECS_PER_HOUR;
-//    hr *= 1000;
-    unsigned long hr = now() - ulLastActivation;
-    if ( bHrInterval )
+    bool bCanRun = true;
+    static int iLastTop = 0;
+    if ( byteHrInterval )
     {
-        // if time between activations is less than or equal to Y hours and 0 minutes
-        // what happens when the current time is the same as the hour interval??
-//        if ( (hour(hr) <= bHrInterval) && (minute(hr) == 0) && (ulLastActivation > 0) )
-//        {
-//            // don't proceed because we aren't allowed to run again.
-//            return;
-//        }
+        int iSafeTop = NumMins(hour(), minute()) - iLastTop;
+        if ( iSafeTop < 0 )
+        {
+            iSafeTop += 1440;
+        }
+        //if ( iSafeTop > (byteHrInterval * 60) )
+        if ( iSafeTop < (byteHrInterval * 60) )
+        {
+            bCanRun = false;
+        }
     }
     ReefAngel_ATOClass *ato;
     if ( bLow )
@@ -449,19 +449,22 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte bTimeout, byte bHr
     {
         ato = &HighATO;
     }
-    unsigned long t = bTimeout;
+    unsigned long t = byteTimeout;
     t *= 1000;
     if ( ato->IsActive() )
     {
+        iLastTop = NumMins(hour(), minute());
         ato->StopTopping();
         Relay.Off(ATORelay);
     }
     else if ( !ato->IsTopping() )
     {
-        ato->Timer = millis();
-        ulLastActivation = now();  // set the time for activation
-        ato->StartTopping();
-        Relay.On(ATORelay);
+        if ( bCanRun )
+        {
+            ato->Timer = millis();
+            ato->StartTopping();
+            Relay.On(ATORelay);
+        }
     }
     if ( (millis() - ato->Timer > t) && ato->IsTopping() )
     {
