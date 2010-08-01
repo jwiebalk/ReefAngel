@@ -23,14 +23,14 @@
 #include <OneWire.h>
 
 // Outlets on Relay box
-#define Sump        8
-#define Heater      7
-#define Chiller     6
-#define Port5       5
-#define Port4       4
-#define MHlight     3
-#define Actinic     2
-#define AutoTopOff  1
+#define Port8   8
+#define Port7   7
+#define Port6   6
+#define Port5   5
+#define Port4   4
+#define Port3   3
+#define Port2   2
+#define Port1   1
 
 //Analog I/O
 #define VPin                0
@@ -232,5 +232,12 @@ extern OneWire ds;  // Defined in TempSensor.cpp, used for TempSensorClass
 // globally useable functions
 byte intlength(int intin);
 int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute);
+// for virtual functions
+extern "C" void __cxa_pure_virtual(void);
+// other fixes
+__extension__ typedef int __guard __attribute__((mode (__DI__)));
+extern "C" int __cxa_guard_acquire(__guard *);
+extern "C" void __cxa_guard_release (__guard *);
+extern "C" void __cxa_guard_abort (__guard *);
 
 #endif  // __REEFANGEL_GLOBALS_H__

@@ -845,10 +845,10 @@ void ReefAngelClass::DisplayMenuEntry(char *text)
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, text);
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*4, "Press button");
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL+5, MENU_START_ROW*5, "to exit...");
-    do
-    {
-        delay(500);
-    } while ( ! Joystick.IsButtonPressed() );
+//    do
+//    {
+//        delay(500);
+//    } while ( ! Joystick.IsButtonPressed() );
 }
 
 void ReefAngelClass::FeedingMode()
@@ -968,6 +968,7 @@ void ReefAngelClass::ProcessButtonPress(byte smenu)
 
 void ReefAngelClass::ProcessButtonPressMain(byte smenu)
 {
+    showmenu = true;
     ClearScreen(COLOR_WHITE);
     switch ( smenu )
     {
@@ -976,14 +977,14 @@ void ReefAngelClass::ProcessButtonPressMain(byte smenu)
             //DisplayMenuEntry("Feeding Mode");
             // turn off ports
             //byte CurrentRelayState = Relay.RelayData;
-            Relay.Off(Sump);
+            Relay.Off(Port8);
             Relay.Off(Port4);
             Relay.Off(Port5);
             Relay.Write();
             // run feeding mode
             FeedingMode();
             // turn on ports
-            Relay.On(Sump);
+            Relay.On(Port8);
             Relay.On(Port4);
             Relay.On(Port5);
             // restore ports
@@ -996,14 +997,14 @@ void ReefAngelClass::ProcessButtonPressMain(byte smenu)
             //DisplayMenuEntry("Water Change Mode");
             // turn off pumps for water change mode
             //byte CurrentRelayState = Relay.RelayData;
-            Relay.Off(Sump);
+            Relay.Off(Port8);
             Relay.Off(Port4);
             Relay.Off(Port5);
             Relay.Write();
             // Display the water change mode
             WaterChangeMode();
             // turn on the pumps after water change mode
-            Relay.On(Sump);
+            Relay.On(Port8);
             Relay.On(Port4);
             Relay.On(Port5);
             //Relay.RelayData = CurrentRelayState;
@@ -1058,6 +1059,7 @@ void ReefAngelClass::ProcessButtonPressMain(byte smenu)
 
 void ReefAngelClass::ProcessButtonPressOverride(byte smenu)
 {
+    showmenu = false;
     ClearScreen(COLOR_WHITE);
     switch ( smenu )
     {
@@ -1088,6 +1090,7 @@ void ReefAngelClass::ProcessButtonPressOverride(byte smenu)
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             // switch to the previous menu
             SPreviousMenu.Pop(DisplayedMenu);
+            showmenu = true;
             break;
         }
     }
@@ -1095,6 +1098,7 @@ void ReefAngelClass::ProcessButtonPressOverride(byte smenu)
 
 void ReefAngelClass::ProcessButtonPressClear(byte smenu)
 {
+    showmenu = false;
     ClearScreen(COLOR_WHITE);
     switch ( smenu )
     {
@@ -1121,6 +1125,7 @@ void ReefAngelClass::ProcessButtonPressClear(byte smenu)
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             // switch to the previous menu
             SPreviousMenu.Pop(DisplayedMenu);
+            showmenu = true;
             break;
         }
     }
@@ -1136,12 +1141,16 @@ void ReefAngelClass::ProcessButtonPressSetup(byte smenu)
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             SPreviousMenu.Push(DisplayedMenu);
             DisplayedMenu = LightsMenu;
+            showmenu = true;
             break;
         }
         case SetupMenu_Wavemaker:
         {
             DisplayMenuEntry("Setup Wavemaker");
             //SetupWavemakersDisplay();
+            //redraw = true;
+            //showmenu = true;
+            showmenu = false;
             break;
         }
         case SetupMenu_Temps:
@@ -1149,6 +1158,7 @@ void ReefAngelClass::ProcessButtonPressSetup(byte smenu)
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             SPreviousMenu.Push(DisplayedMenu);
             DisplayedMenu = TempsMenu;
+            showmenu = true;
             break;
         }
         case SetupMenu_Timeouts:
@@ -1156,16 +1166,22 @@ void ReefAngelClass::ProcessButtonPressSetup(byte smenu)
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             SPreviousMenu.Push(DisplayedMenu);
             DisplayedMenu = TimeoutsMenu;
+            showmenu = true;
             break;
         }
         case SetupMenu_FeedingTimer:
         {
             DisplayMenuEntry("Setup Feeding Timer");
+            //redraw = true;
+            //showmenu = true;
+            showmenu = false;
             break;
         }
         case SetupMenu_CalibratePH:
         {
             DisplayMenuEntry("Calibrate pH");
+            // set showmenu to true & redraw to true if displaying setup screen
+            showmenu = false;
             break;
         }
 //        case SetupMenu_AssignPorts:
@@ -1176,6 +1192,7 @@ void ReefAngelClass::ProcessButtonPressSetup(byte smenu)
         case SetupMenu_DateTime:
         {
             DisplayMenuEntry("Set Date/Time");
+            showmenu = false;
             break;
         }
         default:
@@ -1183,6 +1200,7 @@ void ReefAngelClass::ProcessButtonPressSetup(byte smenu)
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             // switch to the previous menu
             SPreviousMenu.Pop(DisplayedMenu);
+            showmenu = true;
             break;
         }
     }
@@ -1190,6 +1208,7 @@ void ReefAngelClass::ProcessButtonPressSetup(byte smenu)
 
 void ReefAngelClass::ProcessButtonPressLights(byte smenu)
 {
+    showmenu = false;  // set to true when displaying setup screens
     ClearScreen(COLOR_WHITE);
     switch ( smenu )
     {
@@ -1213,6 +1232,7 @@ void ReefAngelClass::ProcessButtonPressLights(byte smenu)
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             // switch to the previous menu
             SPreviousMenu.Pop(DisplayedMenu);
+            showmenu = true;
             break;
         }
     }
@@ -1220,6 +1240,7 @@ void ReefAngelClass::ProcessButtonPressLights(byte smenu)
 
 void ReefAngelClass::ProcessButtonPressTemps(byte smenu)
 {
+    showmenu = false;
     ClearScreen(COLOR_WHITE);
     switch ( smenu )
     {
@@ -1244,6 +1265,7 @@ void ReefAngelClass::ProcessButtonPressTemps(byte smenu)
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             // switch to the previous menu
             SPreviousMenu.Pop(DisplayedMenu);
+            showmenu = true;
             break;
         }
     }
@@ -1251,6 +1273,7 @@ void ReefAngelClass::ProcessButtonPressTemps(byte smenu)
 
 void ReefAngelClass::ProcessButtonPressTimeouts(byte smenu)
 {
+    showmenu = false;
     ClearScreen(COLOR_WHITE);
     switch ( smenu )
     {
@@ -1269,69 +1292,12 @@ void ReefAngelClass::ProcessButtonPressTimeouts(byte smenu)
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             // switch to the previous menu
             SPreviousMenu.Pop(DisplayedMenu);
+            showmenu = true;
             break;
         }
     }
 }
 
-
-// Setup Screens
-//void ReefAngelClass::SetupWavemakersDisplay()
-//{
-//    ClearScreen(COLOR_WHITE);
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, "Setup Wavemakers:");
-//    // Read wavemaker timer values from memory
-//    int wm1 = 600; //InternalMemory.WM1Timer_read();
-//    int wm2 = 200; //InternalMemory.WM2Timer_read();
-//    bool bSave = false;
-//    DisplayWavemaker1(wm1);
-//    DisplayWavemaker2(wm2);
-//    // Wait for button press to exit
-//    do
-//    {
-//        delay(500);
-//    } while ( ! Joystick.IsButtonPressed() );
-//    // if OK button pressed, save values to memory
-////    if ( bSave )
-////    {
-////        InternalMemory.WM1Timer_write(wm1);
-////        InternalMemory.WM2Timer_write(wm2);
-////    }
-//}
-//
-//void ReefAngelClass::DisplayWavemaker1(int t)
-//{
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*3, "Wavemaker 1");
-//}
-//
-//void ReefAngelClass::DisplayWavemaker2(int t)
-//{
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*4, "Wavemaker 2");
-//}
-//
-//void ReefAngelClass::SetupOverheatDisplay()
-//{
-//    ClearScreen(COLOR_WHITE);
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, "Setup Overheat:");
-//    int o = 1500; //InternalMemory.OverheatTemp_read();
-//    bool bSave = false;
-//    DisplayOverheat(o);
-//    do
-//    {
-//        delay(500);
-//    } while ( ! Joystick.IsButtonPressed() );
-////    if ( bSave )
-////    {
-////        InternalMemory.OverheatTemp_write(o);
-////    }
-//}
-//
-//void ReefAngelClass::DisplayOverheat(int t)
-//{
-//    char buf[32];
-//    sprintf(buf, "Overheat: %d", t);
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*3, buf);
-//}
 
 
 #ifdef wifi
