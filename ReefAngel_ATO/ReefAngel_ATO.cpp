@@ -16,20 +16,9 @@
 
 
 #include "ReefAngel_ATO.h"
-#include <ReefAngel_Globals.h>
-#include <WProgram.h>
 
 ReefAngel_ATOClass::ReefAngel_ATOClass()
 {
     topping = false;
-}
-
-bool ReefAngel_ATOClass::IsLowActive()
-{
-	return !digitalRead(lowATOPin);
-}
-
-bool ReefAngel_ATOClass::IsHighActive()
-{
-	return !digitalRead(highATOPin);
+    Timer = 0;
 }

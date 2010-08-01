@@ -17,6 +17,7 @@
 #ifndef __REEFANGEL_ATO_H__
 #define __REEFANGEL_ATO_H__
 
+#include <ReefAngel_Globals.h>
 
 /*
     Auto Top Off Class
@@ -26,17 +27,27 @@ class ReefAngel_ATOClass
 {
 public:
 	ReefAngel_ATOClass();
-	bool IsLowActive();
-	bool IsHighActive();
-	bool IsTopping() { return topping; }
-	void StartTopping() { topping = true; }
-	void StopTopping() { topping = false; }
-	unsigned long ATOTimer;
+    virtual bool IsActive() = 0;
+	inline bool IsTopping() { return topping; }
+	inline void StartTopping() { topping = true; }
+	inline void StopTopping() { topping = false; }
+	unsigned long Timer;
 
 private:
     bool topping;
 };
 
+class ReefAngel_ATOHighClass : public ReefAngel_ATOClass
+{
+public:
+    inline bool IsActive() { return !digitalRead(highATOPin); }
+};
+
+class ReefAngel_ATOLowClass : public ReefAngel_ATOClass
+{
+public:
+    inline bool IsActive() { return !digitalRead(lowATOPin); }
+};
 
 #endif  // __REEFANGEL_ATO_H__
 
