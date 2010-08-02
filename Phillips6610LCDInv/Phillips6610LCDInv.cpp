@@ -629,3 +629,12 @@ void Phillips6610LCDInv::DrawOK(byte Selected)
     lcd_clear(bcolor,75,110,118,125);
     lcd_draw_text(COLOR_BLACK,bcolor,92,115,"Ok");
 }
+
+void Phillips6610LCDInv::DrawCalibrate(int i, byte x, byte y)
+{
+  char text[5] = {0};
+  lcd_clear(COLOR_WHITE, x, y, x+20, y+10);
+  //strcpy(text,"");
+  itoa(i,text,10);
+  lcd_draw_text(COLOR_RED, COLOR_WHITE, x, y, text);
+}
