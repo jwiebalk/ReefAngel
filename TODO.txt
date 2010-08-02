@@ -1,9 +1,9 @@
 TODO List (in no particular order)
 ----------------------------------
 * Create Setup Functions
-   - MH Time
+   + MH Time
    + MH Time Delay
-   - Std Lights Time
+   + Std Lights Time
    + Heater Temp Setup
    + Chiller Temp Setup
    + Overheat Temp Setup 
@@ -13,7 +13,7 @@ TODO List (in no particular order)
    + Feeding Mode Timer
    + Screensaver Timeout
    + ATO Timeout
-   - ph Calibration
+   + ph Calibration
    - Date / Time
 * Ability to load values from memory (on startup/change)
 * Ability to assign a function to a specific port

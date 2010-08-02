@@ -586,15 +586,7 @@ void ReefAngel_NokiaLCD::DrawEEPromImage(int swidth, int sheight, byte x, byte y
     int count = 0;
     SetBox(x,y,swidth-1+x,sheight-1+y);
     SendCMD(0x2c);
-    //for (int j = 0; j < sheight; j++)
-    //{
-    //  for (int i = 0; i < swidth; i++)
-    //  {
-    //e.lcd_put_pixel(readEEPROM(I2CEEPROM,count+start),i+x,j+y);
-    //    count++;
-    //  }
-    //  WatchDogReset();
-    //}
+
     do
     {
         Wire.beginTransmission(I2CAddr);
@@ -623,4 +615,113 @@ void ReefAngel_NokiaLCD::DrawGraph(byte x, byte y, int I2CAddr, int pointer)
     DrawSingleGraph(LightsTempColor,x,y,I2CAddr,EEPROM.read(pointer)+120);
     DrawSingleGraph(AmbientTempColor,x,y,I2CAddr,EEPROM.read(pointer)+240);
     DrawSingleGraph(PHColor,x,y,I2CAddr,EEPROM.read(pointer)+360);
+}
+
+void ReefAngel_NokiaLCD::DrawOption(int Option, byte Selected, byte x, byte y, char *unit, char *subunit)
+{
+    byte x1,x2=0,x3=0;
+    char text[10]="";
+    char temp[10]="";
+    byte bcolor, fcolor;
+
+    itoa(Option,text,10);
+    if (Option>=10000)
+    {
+        x1 = x;
+    }
+    else if (Option>999)
+    {
+        x1 = x+6;
+    }
+    else if (Option>99)
+    {
+        x1 = x+12;
+    }
+    else if (Option<100 && Option>9)
+    {
+        x1 = x+18;
+    }
+    else if (Option<10)
+    {
+        x1 = x+24;
+        if (unit=="" && subunit=="")
+        {
+            text[0]=0x30;
+            itoa(Option,temp,10);
+            strcat(text,temp);
+            x1 = x+18;
+            //      Option=10; //Just to offset the prefix "0" when # is < 10
+        }
+    }
+    x2=x1+12-(x1-x)+12;
+    if(strcmp(unit,"")!=0)
+    {
+        x2+=8;
+    }
+    if(strcmp(subunit,"")!=0)
+    {
+        x3=x2;
+        x2=x2+5;
+    }
+    bcolor=COLOR_WHITE;
+    fcolor=COLOR_BLACK;
+    Clear(COLOR_WHITE, x-2, y-8, x2+4, y+15);
+    if (Selected)
+    {
+        bcolor = COLOR_BLUE;
+        fcolor = COLOR_WHITE;
+        DrawText(COLOR_BLACK,COLOR_WHITE, x1+((x2-x1-12)/2), y-8, " ^ ");
+        DrawText(COLOR_BLACK,COLOR_WHITE, x1+((x2-x1-12)/2), y+8, " ` ");
+    }
+
+    Clear(bcolor,x1-2,y-2,x2+5,y+8);
+    DrawText(fcolor,bcolor,x1,y,text);
+    DrawText(fcolor,bcolor,x3,y-5,subunit);
+    DrawText(fcolor,bcolor,x2,y,unit);
+    if (subunit!="")
+    {
+        Clear(COLOR_WHITE, x1-2, y-5, x2+6, y-3);
+    }
+}
+
+void ReefAngel_NokiaLCD::DrawCancel(byte Selected)
+{
+    byte bcolor;
+    Clear(COLOR_BLACK,14,109,59,126);
+    if (Selected==0)
+    {
+        //bcolor = COLOR_LIGHTSTEELBLUE;
+        bcolor = COLOR_LIGHTGRAY;
+    }
+    else
+    {
+        bcolor = COLOR_GRAY;
+    }
+    Clear(bcolor,15,110,58,125);
+    DrawText(COLOR_BLACK,bcolor,20,115,"Cancel");
+}
+
+void ReefAngel_NokiaLCD::DrawOK(byte Selected)
+{
+    byte bcolor;
+    Clear(COLOR_BLACK,74,109,119,126);
+    if (Selected==0)
+    {
+        //bcolor = COLOR_LIGHTSTEELBLUE;
+        bcolor = COLOR_LIGHTGRAY;
+    }
+    else
+    {
+        bcolor = COLOR_GRAY;
+    }
+    Clear(bcolor,75,110,118,125);
+    DrawText(COLOR_BLACK,bcolor,92,115,"Ok");
+}
+
+void ReefAngel_NokiaLCD::DrawCalibrate(int i, byte x, byte y)
+{
+  char text[5] = {0};
+  Clear(COLOR_WHITE, x, y, x+20, y+10);
+  itoa(i,text,10);
+  DrawText(COLOR_RED, COLOR_WHITE, x, y, text);
 }

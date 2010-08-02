@@ -31,10 +31,7 @@ class ReefAngel_NokiaLCD
 {
 
 public:
-
-
-
-ReefAngel_NokiaLCD();
+    ReefAngel_NokiaLCD();
 
 	void Init();
 	void Sleep();
@@ -54,7 +51,11 @@ ReefAngel_NokiaLCD();
 	void DrawGraph(byte x, byte y, int I2CAddr, int pointer);
 	void DrawEEPromImage(int swidth, int sheight, byte x, byte y, int I2CAddr, int EEaddr);
 
-    // Setup Screens
+    // For Setup
+    void DrawOption(int Option, byte Selected, byte x, byte y, char *unit, char *subunit);
+    void DrawCancel(byte Selected);
+    void DrawOK(byte Selected);
+    void DrawCalibrate(int i, byte x, byte y);
 
 private:
 	void SetBox(byte x1, byte y1, byte x2, byte y2);

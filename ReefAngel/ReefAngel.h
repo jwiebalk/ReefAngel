@@ -117,6 +117,7 @@ public:
 	ReefAngel_MemoryClass Memory;
 	ReefAngel_RelayClass Relay;
 	ReefAngel_PWMClass PWM;
+	ReefAngel_EEPROMClass InternalMemory;
 	/*
 	Timers:
 	0 - Feeding Mode timer
@@ -166,11 +167,26 @@ public:
     void ProcessButtonPressTimeouts(byte smenu);
 
     // NOTE Setup Screens
-//    void SetupWavemakersDisplay();
-//    void DisplayWavemaker1(int t);
-//    void DisplayWavemaker2(int t);
-//    void SetupOverheatDisplay();
-//    void DisplayOverheat(int t);
+//    void SetupOverheatDisplay();  // single
+//    void SetupMHDelayDisplay();  // single
+//    void SetupFeedingTimeoutDisplay();  // single
+//    void SetupScreensaverTimeoutDisplay();  // single
+//    void SetupATOTimeoutDisplay();  // single
+//    void SetupWavemakersDisplay();  // double
+//    void SetupHeaterDisplay();  // double
+//    void SetupChillerDisplay();  // double
+//    void SetupLEDPWMDisplay();  // double
+    bool SetupSingleOption(int &v, int rangemin, int rangemax,
+                           char* unit, char* subunit, char* title,
+                           char* msg1, char* msg2,
+                           char* footer1, char* footer2);
+    bool SetupDoubleOption(int &v, int &y, int rangemin, int rangemax,
+                           char* unit, char* subunit, char* title,
+                           char* prefix1, char* prefix2,
+                           char* msg1, char* msg2,
+                           char* footer1, char* footer2);
+    void SetupLightsOptionDisplay(bool bMetalHalide);
+    void SetupCalibratePH();
 
 private:
 	byte TempUnit;
@@ -183,8 +199,6 @@ private:
 	byte DisplayedMenu;
 	ReefAngel_ByteStackClass SPreviousMenu;
 	bool redrawmenu;
-
-	ReefAngel_EEPROMClass InternalMemory;
 
 };
 
