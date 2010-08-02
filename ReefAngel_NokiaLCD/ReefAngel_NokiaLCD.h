@@ -17,7 +17,7 @@
 #ifndef	ReefAngel_NokiaLCD_h
 #define ReefAngel_NokiaLCD_h
 
-#include "WProgram.h"
+#include <ReefAngel_Globals.h>
 
 typedef struct  {
   int Temp1;
@@ -55,11 +55,6 @@ ReefAngel_NokiaLCD();
 	void DrawEEPromImage(int swidth, int sheight, byte x, byte y, int I2CAddr, int EEaddr);
 
     // Setup Screens
-//    int ChangeData(int data, int change, int dmin, int dmax);
-//    void KeyChange(int change);
-//    void DrawOption(int Option, byte Selected, byte x, byte y, char *unit, char *subunit);
-//    void DrawCancel(byte Selected);
-//    void DrawOK(byte Selected);
 
 private:
 	void SetBox(byte x1, byte y1, byte x2, byte y2);

@@ -23,25 +23,14 @@ class ReefAngel_TimerClass
 {
 public:
 	ReefAngel_TimerClass();
-	// TODO TimerClass move public vars to private and create functions for them
-	// Maybe create ForceTrigger that sets value to 1
-	// Maybe create ZeroTrigger that sets value to 0
-	// Maybe create IsTriggerZeroed, returns true if 0, false otherwise
-	// Just trying to prevent direct access to Trigger variable to make code easy to read
-	//   and follow instead of having to know what values to set it to get desired response
 	time_t Trigger;
 
 	void Start();
 	bool IsTriggered();
-	void ForceTrigger() { Trigger = 1; }
-	void SetInterval(time_t i) { Interval = i; }
-	bool HasRunToday();  // TODO TimerClass remove fn
-	void ResetHasRun();  // TODO TimerClass remove fn
-	bool IsRunning();
+	inline void ForceTrigger() { Trigger = 1; }
+	inline void SetInterval(int i) { Interval = i; }
 
 private:
-    bool HasRun; // TODO TimerClass remove var
-    bool IsRun;
     time_t Interval;
 };
 

@@ -17,7 +17,7 @@
 #ifndef __REEFANGEL_TEMPSENSOR_H__
 #define __REEFANGEL_TEMPSENSOR_H__
 
-#include <WProgram.h>
+#include <ReefAngel_Globals.h>
 
 class ReefAngel_TempSensorClass
 {

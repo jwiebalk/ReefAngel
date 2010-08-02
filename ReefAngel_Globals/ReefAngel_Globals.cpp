@@ -15,7 +15,6 @@
  */
 
 #include "ReefAngel_Globals.h"
-#include <WProgram.h>
 #include <EEPROM.h>
 
 

@@ -17,17 +17,14 @@
 #ifndef __REEFANGEL_LED_H__
 #define __REEFANGEL_LED_H__
 
+#include <ReefAngel_Globals.h>
 
 class ReefAngel_LEDClass
 {
-
 public:
 	ReefAngel_LEDClass();
-	void On();
-	void Off();
-
-private:
-
+	inline void On() { digitalWrite(ledPin, HIGH); }
+	inline void Off() { digitalWrite(ledPin, LOW); }
 };
 
 

@@ -17,18 +17,18 @@
 #include "ReefAngel_LED.h"
 #include <ReefAngel_Globals.h>
 
- ReefAngel_LEDClass::ReefAngel_LEDClass()
+ReefAngel_LEDClass::ReefAngel_LEDClass()
 {
 	pinMode(ledPin, OUTPUT);
 	digitalWrite(ledPin, LOW);
 }
 
-void ReefAngel_LEDClass::On()
-{
-	digitalWrite(ledPin, HIGH);
-}
-
-void ReefAngel_LEDClass::Off()
-{
-	digitalWrite(ledPin, LOW);
-}
+//void ReefAngel_LEDClass::On()
+//{
+//	digitalWrite(ledPin, HIGH);
+//}
+//
+//void ReefAngel_LEDClass::Off()
+//{
+//	digitalWrite(ledPin, LOW);
+//}

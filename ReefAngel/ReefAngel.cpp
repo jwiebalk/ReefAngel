@@ -188,8 +188,8 @@ void ReefAngelClass::Init()
 	digitalWrite(lowATOPin,HIGH); //pull up resistor on lowATOPin
 	digitalWrite(highATOPin,HIGH); //pull up resistor on highATOPin
 	LCD.Init();  // NOTE consider removing LCD Init because it gets handled in constructor
-	Joystick.Init();  // NOTE consider removing Joystick Init because it gets handled in constructor
-	TempSensor.Init(); // NOTE consider removing TempSensor Init because it gets handled in constructor
+	Joystick.Init();
+	TempSensor.Init();
 	setSyncProvider(RTC.get);   // the function to get the time from the RTC
 	setSyncInterval(SECS_PER_HOUR);  // Changed to sync every hour.
 	now();
@@ -211,7 +211,6 @@ void ReefAngelClass::Init()
 	Timer[5].ForceTrigger();
 
 	conn = false;
-	showmenu = false;
 
     // Initialize the Nested Menus
     InitMenus();
@@ -472,7 +471,7 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte 
     }
 }
 
-void ReefAngelClass::DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, time_t RunTime)
+void ReefAngelClass::DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime)
 {
     /*
     This function configures and sets up the dosing pump and turns it on at the appropriate time
@@ -502,10 +501,10 @@ void ReefAngelClass::DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte On
     }
 }
 
-char *ReefAngelClass::Version()
-{
-	return ReefAngel_Version;
-}
+//char *ReefAngelClass::Version()
+//{
+//	return ReefAngel_Version;
+//}
 
 void ReefAngelClass::DisplayVersion()
 {
@@ -524,38 +523,38 @@ void ReefAngelClass::DisplayVersion()
 #endif  // wifi
 }
 
-void ReefAngelClass::SaveParamsToMemory()
-{
-    // Save parameters to memory and redraw the graph
-    int a = EEPROM.read(T1Pointer);
-    int CurTemp;
-
-    a++;
-    if (a>=120) a=0;
-    Timer[5].Start();
-    CurTemp = map(Params.Temp1, 700, 900, 0, 50); // apply the calibration to the sensor reading
-    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-    LCD.Clear(COLOR_WHITE,0,0,1,1);
-    Memory.Write(a, CurTemp);
-    LCD.Clear(COLOR_WHITE,0,0,1,1);
-    CurTemp = map(Params.Temp2, 650, 1500, 0, 50); // apply the calibration to the sensor reading
-    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-    LCD.Clear(COLOR_WHITE,0,0,1,1);
-    Memory.Write(a+120, CurTemp);
-    LCD.Clear(COLOR_WHITE,0,0,1,1);
-    CurTemp = map(Params.Temp3, 650, 920, 0, 50); // apply the calibration to the sensor reading
-    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-    LCD.Clear(COLOR_WHITE,0,0,1,1);
-    Memory.Write(a+240, CurTemp);
-    LCD.Clear(COLOR_WHITE,0,0,1,1);
-    CurTemp = map(Params.PH, 730, 890, 0, 50); // apply the calibration to the sensor reading
-    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-    LCD.Clear(COLOR_WHITE,0,0,1,1);
-    Memory.Write(a+360, CurTemp);
-    LCD.Clear(COLOR_WHITE,0,0,1,1);
-    EEPROM.write(T1Pointer,a);
-    LCD.DrawGraph(5, 5, I2CEEPROM1, T1Pointer);
-}
+//void ReefAngelClass::SaveParamsToMemory()
+//{
+//    // Save parameters to memory and redraw the graph
+//    int a = EEPROM.read(T1Pointer);
+//    int CurTemp;
+//
+//    a++;
+//    if (a>=120) a=0;
+//    Timer[5].Start();
+//    CurTemp = map(Params.Temp1, 700, 900, 0, 50); // apply the calibration to the sensor reading
+//    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+//    LCD.Clear(COLOR_WHITE,0,0,1,1);
+//    Memory.Write(a, CurTemp);
+//    LCD.Clear(COLOR_WHITE,0,0,1,1);
+//    CurTemp = map(Params.Temp2, 650, 1500, 0, 50); // apply the calibration to the sensor reading
+//    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+//    LCD.Clear(COLOR_WHITE,0,0,1,1);
+//    Memory.Write(a+120, CurTemp);
+//    LCD.Clear(COLOR_WHITE,0,0,1,1);
+//    CurTemp = map(Params.Temp3, 650, 920, 0, 50); // apply the calibration to the sensor reading
+//    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+//    LCD.Clear(COLOR_WHITE,0,0,1,1);
+//    Memory.Write(a+240, CurTemp);
+//    LCD.Clear(COLOR_WHITE,0,0,1,1);
+//    CurTemp = map(Params.PH, 730, 890, 0, 50); // apply the calibration to the sensor reading
+//    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+//    LCD.Clear(COLOR_WHITE,0,0,1,1);
+//    Memory.Write(a+360, CurTemp);
+//    LCD.Clear(COLOR_WHITE,0,0,1,1);
+//    EEPROM.write(T1Pointer,a);
+//    LCD.DrawGraph(5, 5, I2CEEPROM1, T1Pointer);
+//}
 
 void ReefAngelClass::ClearScreen(byte Color)
 {
@@ -573,17 +572,17 @@ bool ReefAngelClass::IsTempOverheat(int temp)
     return false;
 }
 
-void ReefAngelClass::DisplayHomeScreen()
-{
-    // display everything on the home screen except the graph
-    // the graph is drawn/updated when we exit the main menu & when the parameters are saved
-    LCD.DrawDate(6, 112);
-    LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
-    byte TempRelay = Relay.RelayData;
-    TempRelay &= Relay.RelayMaskOff;
-    TempRelay |= Relay.RelayMaskOn;
-    LCD.DrawOutletBox(12, 93, TempRelay);
-}
+//void ReefAngelClass::DisplayHomeScreen()
+//{
+//    // display everything on the home screen except the graph
+//    // the graph is drawn/updated when we exit the main menu & when the parameters are saved
+//    LCD.DrawDate(6, 112);
+//    LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
+//    byte TempRelay = Relay.RelayData;
+//    TempRelay &= Relay.RelayMaskOff;
+//    TempRelay |= Relay.RelayMaskOn;
+//    LCD.DrawOutletBox(12, 93, TempRelay);
+//}
 
 void ReefAngelClass::InitMenus()
 {
@@ -593,7 +592,7 @@ void ReefAngelClass::InitMenus()
     // initialize menus
     DisplayedMenu = DEFAULT_MENU;  // default menu to display
     SelectedMenuItem = DEFAULT_MENU_ITEM;  // default item to have selected
-    redraw = true;
+    redrawmenu = true;
     showmenu = false;  // initially we are showing the main graphic and no menu
 }
 
@@ -631,6 +630,20 @@ void ReefAngelClass::ShowInterface()
         if ( showmenu )
         {
             // showing the menu
+            if ( DisplayedMenu >= Total_Menus )
+            {
+                // somehow we want to display a menu with a non-existant menu
+//                ClearScreen(COLOR_WHITE);
+//                char buf[10];
+//                sprintf(buf, "(%d)", DisplayedMenu);
+//                LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, buf);
+//                delay(1000);
+                redrawmenu = true;
+                // perhaps clear the previous menu list and add in the default menu and display the main menu
+                SPreviousMenu.Clear();
+                SPreviousMenu.Push(DEFAULT_MENU);
+                DisplayedMenu = MAIN_MENU;
+            }
             DisplayMenuHeading(DisplayedMenu);
             DisplayMenu(DisplayedMenu);
         }
@@ -662,10 +675,11 @@ void ReefAngelClass::ShowInterface()
                     // Displays main menu, select first item, save existing menu
                     ClearScreen(COLOR_WHITE);
                     SelectedMenuItem = DEFAULT_MENU_ITEM;
-                    SPreviousMenu.Push(DisplayedMenu);
+                    SPreviousMenu.Clear();
+                    //SPreviousMenu.Push(DEFAULT_MENU);
                     DisplayedMenu = MAIN_MENU;
                     showmenu = true;
-                    redraw = true;
+                    redrawmenu = true;
                     menutimeout = now();
                     // get out of this function and display the menu
                     return;
@@ -678,7 +692,15 @@ void ReefAngelClass::ShowInterface()
                     Timer[3].Start();
                 }
 
-                DisplayHomeScreen();
+                //DisplayHomeScreen();
+                // display everything on the home screen except the graph
+                // the graph is drawn/updated when we exit the main menu & when the parameters are saved
+                LCD.DrawDate(6, 112);
+                LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
+                byte TempRelay = Relay.RelayData;
+                TempRelay &= Relay.RelayMaskOff;
+                TempRelay |= Relay.RelayMaskOn;
+                LCD.DrawOutletBox(12, 93, TempRelay);
 
                 // Process any checks/tests/events that can happen while displaying the home screen
                 // This can be the timers for wavemakers or any overheat temperatures
@@ -686,7 +708,35 @@ void ReefAngelClass::ShowInterface()
                 // process timers
                 if ( Timer[5].IsTriggered() )
                 {
-                    SaveParamsToMemory();
+                    //SaveParamsToMemory();
+                    int a = EEPROM.read(T1Pointer);
+                    int CurTemp;
+
+                    a++;
+                    if (a>=120) a=0;
+                    Timer[5].Start();
+                    CurTemp = map(Params.Temp1, 700, 900, 0, 50); // apply the calibration to the sensor reading
+                    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    Memory.Write(a, CurTemp);
+                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    CurTemp = map(Params.Temp2, 650, 1500, 0, 50); // apply the calibration to the sensor reading
+                    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    Memory.Write(a+120, CurTemp);
+                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    CurTemp = map(Params.Temp3, 650, 920, 0, 50); // apply the calibration to the sensor reading
+                    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    Memory.Write(a+240, CurTemp);
+                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    CurTemp = map(Params.PH, 730, 890, 0, 50); // apply the calibration to the sensor reading
+                    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    Memory.Write(a+360, CurTemp);
+                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    EEPROM.write(T1Pointer,a);
+                    LCD.DrawGraph(5, 5, I2CEEPROM1, T1Pointer);
                 }
 
                 // wavemaker 1 timer
@@ -718,7 +768,7 @@ void ReefAngelClass::ShowInterface()
                 if ( Joystick.IsButtonPressed() )
                 {
                     // button is pressed, so we gotta exit out, show the menu & redraw it too
-                    redraw = true;
+                    redrawmenu = true;
                     showmenu = true;
                     Timer[0].ForceTrigger();
                     Timer[3].Start();
@@ -731,15 +781,15 @@ void ReefAngelClass::ShowInterface()
 
 void ReefAngelClass::DisplayMenu(byte MenuNum)
 {
-    int i;
-    byte bcolor, fcolor;
+    // redrawmenu should only get set from within this function when we move the joystick or press the button
     int qty = menuqtysptr[MenuNum];
     int ptr = menusptr[MenuNum];
 
     if ( Joystick.IsUp() )
     {
         // process UP press
-        if ( --SelectedMenuItem == DEFAULT_MENU )
+        //if ( --SelectedMenuItem == DEFAULT_MENU )
+        if ( (--SelectedMenuItem) > qty )
         {
             // we're moving up and we hit the top of the list
             // gotta wrap down to the bottom of the list
@@ -748,7 +798,7 @@ void ReefAngelClass::DisplayMenu(byte MenuNum)
             // This allows us to add in our last item
             SelectedMenuItem = qty;
         }
-        redraw = true;
+        redrawmenu = true;
         menutimeout = now();
     }
 
@@ -756,13 +806,13 @@ void ReefAngelClass::DisplayMenu(byte MenuNum)
     {
         // process DOWN press
         // > allows for selection of last item, >= skips it
-        if ( ++SelectedMenuItem > qty )
+        if ( (++SelectedMenuItem) > qty )
         {
             // we've hit the bottom of the list
             // wrap around to the top of the list
             SelectedMenuItem = DEFAULT_MENU_ITEM;
         }
-        redraw = true;
+        redrawmenu = true;
         menutimeout = now();
     }
 
@@ -780,15 +830,17 @@ void ReefAngelClass::DisplayMenu(byte MenuNum)
     {
         // button gets pressed, so we need to handle the button press
         ProcessButtonPress(SelectedMenuItem);
-        redraw = true;
+        redrawmenu = true;
         // Don't finish processing the rest of the menu
         return;
     }
 
     // don't redraw the menu if we don't have to
-    if ( ! redraw )
+    if ( ! redrawmenu )
         return;
 
+    int i;
+    byte bcolor, fcolor;
     char buffer[22];
     int x2, y2;
     for ( i = 0; i <= qty; i++ )
@@ -826,13 +878,13 @@ void ReefAngelClass::DisplayMenu(byte MenuNum)
         LCD.DrawText(fcolor, bcolor, MENU_START_COL, (i*MENU_START_ROW)+MENU_HEADING_SIZE, buffer);
     }  // for i
     // once drawn, no need to redraw yet
-    redraw = false;
+    redrawmenu = false;
 }
 
 void ReefAngelClass::DisplayMenuHeading(byte MenuNum)
 {
     // NOTE do we redraw the menu heading or not?  use same logic as with the menu
-    if ( ! redraw )
+    if ( ! redrawmenu )
         return;
 
     char buffer[22];
@@ -931,7 +983,7 @@ void ReefAngelClass::FeedingMode()
 
     // we're finished, so let's clear the screen and return
     ClearScreen(COLOR_WHITE);
-    Timer[3].Start();  // start timer
+    Timer[3].Start();  // start LCD shutoff timer
 }
 
 void ReefAngelClass::WaterChangeMode()
@@ -944,6 +996,7 @@ void ReefAngelClass::WaterChangeMode()
 	    delay(200);
 	} while ( ! Joystick.IsButtonPressed() );
 	ClearScreen(COLOR_WHITE);
+	Timer[3].Start();  // start LCD shutoff timer
 }
 
 void ReefAngelClass::ProcessButtonPress(byte smenu)
@@ -954,7 +1007,7 @@ void ReefAngelClass::ProcessButtonPress(byte smenu)
         default:  // DEFAULT_MENU == 255
 //        {
 //            // Default Screen
-//            break;
+            break;
 //        }
         case MainMenu:
         {
@@ -1007,7 +1060,6 @@ void ReefAngelClass::ProcessButtonPress(byte smenu)
             break;
         }
     }
-    redraw = true;
     // if a button was pressed, we have to reset the timeout after processing the press
     if ( bResetMenuTimeout )
     {
@@ -1085,7 +1137,6 @@ void ReefAngelClass::ProcessButtonPressMain(byte smenu)
         }
         case MainMenu_Version:
         {
-            //DisplayMenuEntry("Version Item");
             DisplayVersion();
             // turn off the menu so we can wait for the button press to exit
             showmenu = false;
@@ -1096,7 +1147,8 @@ void ReefAngelClass::ProcessButtonPressMain(byte smenu)
             // This will be the EXIT choice
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             // switch to the previous menu
-            SPreviousMenu.Pop(DisplayedMenu);
+            SPreviousMenu.Clear();
+            DisplayedMenu = DEFAULT_MENU;
             // disable the menu, display main screen
             showmenu = false;
             // When we exit the main menu, we will redraw the graph
@@ -1158,7 +1210,6 @@ void ReefAngelClass::ProcessButtonPressClear(byte smenu)
             //ATO.StopTopping();
             LowATO.StopTopping();
             HighATO.StopTopping();
-            // If displaymenuentry is called, the functionality stays inside it.
             DisplayMenuEntry("Clear ATO Timeout");
             // if we set showmenu=false, the main program loop executes until a button press is signaled
             break;
@@ -1187,65 +1238,62 @@ void ReefAngelClass::ProcessButtonPressSetup(byte smenu)
     ClearScreen(COLOR_WHITE);
     switch ( smenu )
     {
-        case SetupMenu_Lights:
-        {
-            SelectedMenuItem = DEFAULT_MENU_ITEM;
-            SPreviousMenu.Push(DisplayedMenu);
-            DisplayedMenu = LightsMenu;
-            showmenu = true;
-            break;
-        }
-        case SetupMenu_Wavemaker:
-        {
-            DisplayMenuEntry("Setup Wavemaker");
-            //SetupWavemakersDisplay();
-            //redraw = true;
-            //showmenu = true;
-            showmenu = false;
-            break;
-        }
-        case SetupMenu_Temps:
-        {
-            SelectedMenuItem = DEFAULT_MENU_ITEM;
-            SPreviousMenu.Push(DisplayedMenu);
-            DisplayedMenu = TempsMenu;
-            showmenu = true;
-            break;
-        }
-        case SetupMenu_Timeouts:
-        {
-            SelectedMenuItem = DEFAULT_MENU_ITEM;
-            SPreviousMenu.Push(DisplayedMenu);
-            DisplayedMenu = TimeoutsMenu;
-            showmenu = true;
-            break;
-        }
-        case SetupMenu_FeedingTimer:
-        {
-            DisplayMenuEntry("Setup Feeding Timer");
-            //redraw = true;
-            //showmenu = true;
-            showmenu = false;
-            break;
-        }
-        case SetupMenu_CalibratePH:
-        {
-            DisplayMenuEntry("Calibrate pH");
-            // set showmenu to true & redraw to true if displaying setup screen
-            showmenu = false;
-            break;
-        }
-//        case SetupMenu_AssignPorts:
+//        case SetupMenu_Lights:
 //        {
-//            DisplayMenuEntry("Assign Ports");
+//            SelectedMenuItem = DEFAULT_MENU_ITEM;
+//            SPreviousMenu.Push(DisplayedMenu);
+//            DisplayedMenu = LightsMenu;
+//            showmenu = true;
 //            break;
 //        }
-        case SetupMenu_DateTime:
-        {
-            DisplayMenuEntry("Set Date/Time");
-            showmenu = false;
-            break;
-        }
+//        case SetupMenu_Wavemaker:
+//        {
+//            DisplayMenuEntry("Setup Wavemaker");
+//            //SetupWavemakersDisplay();
+//            //showmenu = true;
+//            showmenu = false;
+//            break;
+//        }
+//        case SetupMenu_Temps:
+//        {
+//            SelectedMenuItem = DEFAULT_MENU_ITEM;
+//            SPreviousMenu.Push(DisplayedMenu);
+//            DisplayedMenu = TempsMenu;
+//            showmenu = true;
+//            break;
+//        }
+//        case SetupMenu_Timeouts:
+//        {
+//            SelectedMenuItem = DEFAULT_MENU_ITEM;
+//            SPreviousMenu.Push(DisplayedMenu);
+//            DisplayedMenu = TimeoutsMenu;
+//            showmenu = true;
+//            break;
+//        }
+//        case SetupMenu_FeedingTimer:
+//        {
+//            DisplayMenuEntry("Setup Feeding Timer");
+//            //showmenu = true;
+//            showmenu = false;
+//            break;
+//        }
+//        case SetupMenu_CalibratePH:
+//        {
+//            DisplayMenuEntry("Calibrate pH");
+//            showmenu = false;
+//            break;
+//        }
+////        case SetupMenu_AssignPorts:
+////        {
+////            DisplayMenuEntry("Assign Ports");
+////            break;
+////        }
+//        case SetupMenu_DateTime:
+//        {
+//            DisplayMenuEntry("Set Date/Time");
+//            showmenu = false;
+//            break;
+//        }
         default:
         {
             SelectedMenuItem = DEFAULT_MENU_ITEM;

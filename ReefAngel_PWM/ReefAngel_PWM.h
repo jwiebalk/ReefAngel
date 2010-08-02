@@ -17,7 +17,7 @@
 #ifndef __REEFANGEL_PWM_H__
 #define __REEFANGEL_PWM_H__
 
-#include <WProgram.h>
+#include <ReefAngel_Globals.h>
 
 class ReefAngel_PWMClass
 {
@@ -25,8 +25,8 @@ public:
 	ReefAngel_PWMClass();
 	void SetActinic(byte value);
 	void SetDaylight(byte value);
-	byte GetActinicValue() { return ActinicPWMValue; }
-	byte GetDaylightValue() { return DaylightPWMValue; }
+	inline byte GetActinicValue() { return ActinicPWMValue; }
+	inline byte GetDaylightValue() { return DaylightPWMValue; }
 
 private:
 	byte ActinicPWMValue;

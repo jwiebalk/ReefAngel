@@ -76,10 +76,18 @@ ReefAngel_ByteStackClass& ReefAngel_ByteStackClass::Push(const uint8_t& x)
 ReefAngel_ByteStackClass& ReefAngel_ByteStackClass::Pop(uint8_t& x)
 {
     //deletes the top element and puts it in x
-    x = top->data;
-    ReefAngel_ByteNodeClass *p = top;
-    top = top->link;
-    free(p);
+    if ( IsEmpty() )
+    {
+        // can't pop the top, so set the value to 0 (or maybe 255)
+        x = 255;
+    }
+    else
+    {
+        x = top->data;
+        ReefAngel_ByteNodeClass *p = top;
+        top = top->link;
+        free(p);
+    }
     return *this;
 }
 

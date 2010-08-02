@@ -20,7 +20,6 @@
 #define ReefAngel_Version "0.8.5 beta 3"
 
 //#define wifi
-#include <WProgram.h>
 #include <ReefAngel_Stack.h>  // NOTE for nested menus
 #include <EEPROM.h>
 #include <ReefAngel_EEPROM.h>  // NOTE read/write internal memory
@@ -140,15 +139,15 @@ public:
 	void StandardFan(byte FanRelay, int LowTemp, int HighTemp);
 	void StandardATO(byte ATORelay, int ATOTimeout);
 	void SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte byteHrInterval = 0);
-	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, time_t RunTime);
-	char *Version();
+	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime);
+//	char *Version();
 	void DisplayVersion();
-	void SaveParamsToMemory();
+//	void SaveParamsToMemory();
 	void ClearScreen(byte Color);
 	bool IsTempOverheat(int temp);
 
     // NOTE for nested menus
-    void DisplayHomeScreen();
+//    void DisplayHomeScreen();
     void InitMenus();
     void LoadAllMenus();
     void ShowInterface();
@@ -183,7 +182,7 @@ private:
 	byte menuqtysptr[Total_Menus];
 	byte DisplayedMenu;
 	ReefAngel_ByteStackClass SPreviousMenu;
-	bool redraw;  // is this needed?
+	bool redrawmenu;
 
 	ReefAngel_EEPROMClass InternalMemory;
 

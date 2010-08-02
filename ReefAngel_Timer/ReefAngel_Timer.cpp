@@ -21,16 +21,13 @@ ReefAngel_TimerClass::ReefAngel_TimerClass()
 {
 	Trigger = 0;
 	Interval = 0;
-	HasRun = false;
-	IsRun = false;
 }
 
 void ReefAngel_TimerClass::Start()
 {
-	if (Interval > 0)
+	if (Interval)
 	{
 	    Trigger = now() + Interval;
-	    IsRun = true;  // timer is currently running
 	}
 }
 
@@ -39,27 +36,10 @@ bool ReefAngel_TimerClass::IsTriggered()
 	if (now()>Trigger && Trigger!=0)
 	{
 		Trigger = 0;
-		HasRun = true;  // timer has run today
-		IsRun = false;  // once triggered, no longer running
 		return true;
 	}
 	else
 	{
 		return false;
 	}
-}
-
-bool ReefAngel_TimerClass::HasRunToday()
-{
-    return HasRun;
-}
-
-void ReefAngel_TimerClass::ResetHasRun()
-{
-    HasRun = false;
-}
-
-bool ReefAngel_TimerClass::IsRunning()
-{
-    return IsRun;
 }

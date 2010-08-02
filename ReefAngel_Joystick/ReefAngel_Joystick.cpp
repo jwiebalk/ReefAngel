@@ -21,12 +21,10 @@ ReefAngel_JoystickClass::ReefAngel_JoystickClass()
 {
 	pinMode(okPin, INPUT);
 	digitalWrite(okPin, HIGH); //pull up resistor on okPin
-
 }
 
 void ReefAngel_JoystickClass::Init()
 {
-    // NOTE consider moving to constructor, see how often init() is called
 	CalV = analogRead(VPin);
 	CalH = analogRead(HPin);
 	ButtonPress = 0;
