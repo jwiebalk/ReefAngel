@@ -106,7 +106,7 @@
 #define DEGREE_C            1
 
 // Menu Defines
-#define Total_Menus         7    // total number of menus
+#define Total_Menus         5    // total number of menus
 #define MENU_HEADING_SIZE   25   // pixels used for Menu Heading
 #define MENU_ITEM_HEIGHT    9    // pixel height of a line of text
 #define MENU_START_COL      7

@@ -17,10 +17,10 @@
 #ifndef	ReefAngel_h
 #define ReefAngel_h
 
-#define ReefAngel_Version "0.8.5 beta 3"
+#define ReefAngel_Version "0.8.5 beta 4"
 
 //#define wifi
-#include <ReefAngel_Stack.h>  // NOTE for nested menus
+//#include <ReefAngel_Stack.h>  // NOTE for nested menus
 #include <EEPROM.h>
 #include <ReefAngel_EEPROM.h>  // NOTE read/write internal memory
 #include <Time.h>
@@ -159,23 +159,23 @@ public:
     void WaterChangeMode();
     void ProcessButtonPress(byte smenu);
     void ProcessButtonPressMain(byte smenu);
-    void ProcessButtonPressOverride(byte smenu);
-    void ProcessButtonPressClear(byte smenu);
+    //void ProcessButtonPressOverride(byte smenu);
+    //void ProcessButtonPressClear(byte smenu);
     void ProcessButtonPressSetup(byte smenu);
     void ProcessButtonPressLights(byte smenu);
     void ProcessButtonPressTemps(byte smenu);
     void ProcessButtonPressTimeouts(byte smenu);
 
     // NOTE Setup Screens
-//    void SetupOverheatDisplay();  // single
-//    void SetupMHDelayDisplay();  // single
-//    void SetupFeedingTimeoutDisplay();  // single
-//    void SetupScreensaverTimeoutDisplay();  // single
-//    void SetupATOTimeoutDisplay();  // single
-//    void SetupWavemakersDisplay();  // double
-//    void SetupHeaterDisplay();  // double
-//    void SetupChillerDisplay();  // double
-//    void SetupLEDPWMDisplay();  // double
+    void SetupOverheatDisplay();  // single
+    void SetupMHDelayDisplay();  // single
+    void SetupFeedingTimeoutDisplay();  // single
+    void SetupLCDTimeoutDisplay();  // single
+    void SetupATOTimeoutDisplay();  // single
+    void SetupWavemakersDisplay();  // double
+    void SetupHeaterDisplay();  // double
+    void SetupChillerDisplay();  // double
+    void SetupLEDPWMDisplay();  // double
     bool SetupSingleOption(int &v, int rangemin, int rangemax,
                            char* unit, char* subunit, char* title,
                            char* msg1, char* msg2,
@@ -197,7 +197,8 @@ private:
 	int menusptr[Total_Menus];
 	byte menuqtysptr[Total_Menus];
 	byte DisplayedMenu;
-	ReefAngel_ByteStackClass SPreviousMenu;
+	byte PreviousMenu;
+	//ReefAngel_ByteStackClass SPreviousMenu;
 	bool redrawmenu;
 
 };

@@ -69,8 +69,6 @@ template <class T> int EEPROM_readAnything(int ee, T& value)
 // the total number must match the max number of menus
 enum Menus {
     MainMenu,
-    OverrideMenu,
-    ClearMenu,
     SetupMenu,
     LightsMenu,
     TempsMenu,
@@ -78,67 +76,50 @@ enum Menus {
 };
 
 // Main Menu
-prog_char mainmenu_0_label[] PROGMEM = "Feeding Mode";
-prog_char mainmenu_1_label[] PROGMEM = "Water Change Mode";
-prog_char mainmenu_2_label[] PROGMEM = "Override ->";
-prog_char mainmenu_3_label[] PROGMEM = "Clear ->";
-prog_char mainmenu_4_label[] PROGMEM = "Setup ->";
-prog_char mainmenu_5_label[] PROGMEM = "Version";
-PROGMEM const char *mainmenu_items[] = {mainmenu_0_label, mainmenu_1_label, mainmenu_2_label, mainmenu_3_label, mainmenu_4_label, mainmenu_5_label/*, mainmenu_6_label*/};
+prog_char mainmenu_0_label[] PROGMEM = "Feeding";
+prog_char mainmenu_1_label[] PROGMEM = "Water Change";
+prog_char mainmenu_2_label[] PROGMEM = "Lights ->";
+prog_char mainmenu_3_label[] PROGMEM = "Temps ->";
+prog_char mainmenu_4_label[] PROGMEM = "Timeouts ->";
+prog_char mainmenu_5_label[] PROGMEM = "Setup ->";
+prog_char mainmenu_6_label[] PROGMEM = "Version";
+PROGMEM const char *mainmenu_items[] = {mainmenu_0_label, mainmenu_1_label, mainmenu_2_label,
+                    mainmenu_3_label, mainmenu_4_label, mainmenu_5_label, mainmenu_6_label};
 enum MainMenuItem {
     MainMenu_FeedingMode,
     MainMenu_WaterChangeMode,
-    MainMenu_Override,
-    MainMenu_Clear,
+    MainMenu_Lights,
+    MainMenu_Temps,
+    MainMenu_Timeouts,
     MainMenu_Setup,
     MainMenu_Version
 };
 
-// Override Menu
-prog_char overridemenu_0_label[] PROGMEM = "Lights On";
-prog_char overridemenu_1_label[] PROGMEM = "Lights Off";
-PROGMEM const char *overridemenu_items[] = {overridemenu_0_label, overridemenu_1_label};
-enum OverrideMenuItem {
-    OverrideMenu_LightsOn,
-    OverrideMenu_LightsOff
-};
-
-// Clear Menu
-prog_char clearmenu_0_label[] PROGMEM = "ATO Timeout";
-prog_char clearmenu_1_label[] PROGMEM = "Overheat";
-PROGMEM const char *clearmenu_items[] = {clearmenu_0_label, clearmenu_1_label};
-enum ClearMenuItem {
-    ClearMenu_ATOTimeout,
-    ClearMenu_Overheat
-};
-
 // Setup Menu
-prog_char setupmenu_0_label[] PROGMEM = "Lights ->";
-prog_char setupmenu_1_label[] PROGMEM = "Wavemaker";
-prog_char setupmenu_2_label[] PROGMEM = "Temps ->";
-prog_char setupmenu_3_label[] PROGMEM = "Timeouts ->";
-prog_char setupmenu_4_label[] PROGMEM = "Feeding Timer";
-prog_char setupmenu_5_label[] PROGMEM = "Calibrate pH";
-prog_char setupmenu_6_label[] PROGMEM = "Date & Time";
-PROGMEM const char *setupmenu_items[] = {setupmenu_0_label, setupmenu_1_label, setupmenu_2_label, setupmenu_3_label,
-                                         setupmenu_4_label, setupmenu_5_label, setupmenu_6_label};
+prog_char setupmenu_0_label[] PROGMEM = "Wavemaker";
+prog_char setupmenu_1_label[] PROGMEM = "Dosing Pump";
+prog_char setupmenu_2_label[] PROGMEM = "Calibrate pH";
+prog_char setupmenu_3_label[] PROGMEM = "Date / Time";
+PROGMEM const char *setupmenu_items[] = {setupmenu_0_label, setupmenu_1_label, setupmenu_2_label, setupmenu_3_label};
 enum SetupMenuItem {
-    SetupMenu_Lights,
     SetupMenu_Wavemaker,
-    SetupMenu_Temps,
-    SetupMenu_Timeouts,
-    SetupMenu_FeedingTimer,
+    SetupMenu_DosingPump,
     SetupMenu_CalibratePH,
     SetupMenu_DateTime
 };
 
 // Lights Menu
-prog_char lightsmenu_0_label[] PROGMEM = "Metal Halides";
-prog_char lightsmenu_1_label[] PROGMEM = "Metal Halides Delay";
-prog_char lightsmenu_2_label[] PROGMEM = "Standard Lights";
-prog_char lightsmenu_3_label[] PROGMEM = "LED PWM";
-PROGMEM const char *lightsmenu_items[] = {lightsmenu_0_label, lightsmenu_1_label, lightsmenu_2_label, lightsmenu_3_label};
+prog_char lightsmenu_0_label[] PROGMEM = "Lights On";
+prog_char lightsmenu_1_label[] PROGMEM = "Lights Off";
+prog_char lightsmenu_2_label[] PROGMEM = "Metal Halides";
+prog_char lightsmenu_3_label[] PROGMEM = "MH On Delay";
+prog_char lightsmenu_4_label[] PROGMEM = "Standard Lights";
+prog_char lightsmenu_5_label[] PROGMEM = "LED PWM";
+PROGMEM const char *lightsmenu_items[] = {lightsmenu_0_label, lightsmenu_1_label, lightsmenu_2_label,
+                            lightsmenu_3_label, lightsmenu_4_label, lightsmenu_5_label};
 enum LightsMenuItem {
+    LightsMenu_On,
+    LightsMenu_Off,
     LightsMenu_MetalHalides,
     LightsMenu_MetalHalideDelay,
     LightsMenu_StandardLights,
@@ -147,22 +128,28 @@ enum LightsMenuItem {
 
 // Temps Menu
 prog_char tempsmenu_0_label[] PROGMEM = "Heater";
-prog_char tempsmenu_1_label[] PROGMEM = "Fan / Chiller";
-prog_char tempsmenu_2_label[] PROGMEM = "Overheat";
-PROGMEM const char *tempsmenu_items[] = {tempsmenu_0_label, tempsmenu_1_label, tempsmenu_2_label};
+prog_char tempsmenu_1_label[] PROGMEM = "Chiller";
+prog_char tempsmenu_2_label[] PROGMEM = "Overheat Set";
+prog_char tempsmenu_3_label[] PROGMEM = "Overheat Clear";
+PROGMEM const char *tempsmenu_items[] = {tempsmenu_0_label, tempsmenu_1_label, tempsmenu_2_label, tempsmenu_3_label};
 enum TempsMenuItem {
     TempsMenu_Heater,
-    TempsMenu_FanChiller,
-    TempsMenu_Overheat
+    TempsMenu_Chiller,
+    TempsMenu_Overheat,
+    TempsMenu_OverheatClr
 };
 
 // Timeouts Menu
-prog_char timeoutsmenu_0_label[] PROGMEM = "Auto Top Off";
-prog_char timeoutsmenu_1_label[] PROGMEM = "Screensaver";
-PROGMEM const char *timeoutsmenu_items[] = {timeoutsmenu_0_label, timeoutsmenu_1_label};
+prog_char timeoutsmenu_0_label[] PROGMEM = "ATO Set";
+prog_char timeoutsmenu_1_label[] PROGMEM = "Feeding";
+prog_char timeoutsmenu_2_label[] PROGMEM = "LCD";
+prog_char timeoutsmenu_3_label[] PROGMEM = "ATO Clear";
+PROGMEM const char *timeoutsmenu_items[] = {timeoutsmenu_0_label, timeoutsmenu_1_label, timeoutsmenu_2_label, timeoutsmenu_3_label};
 enum TimeoutsMenuItem {
-    TimeoutsMenu_AutoTopOff,
-    TimeoutsMenu_Screensaver
+    TimeoutsMenu_ATOSet,
+    TimeoutsMenu_Feeding,
+    TimeoutsMenu_LCD,
+    TimeoutsMenu_ATOClear
 };
 
 ReefAngelClass::ReefAngelClass()
@@ -592,6 +579,7 @@ void ReefAngelClass::InitMenus()
     LoadAllMenus();
 
     // initialize menus
+    PreviousMenu = DEFAULT_MENU;
     DisplayedMenu = DEFAULT_MENU;  // default menu to display
     SelectedMenuItem = DEFAULT_MENU_ITEM;  // default item to have selected
     redrawmenu = true;
@@ -603,10 +591,6 @@ void ReefAngelClass::LoadAllMenus()
     // loads all the menus
     menusptr[MainMenu] = pgm_read_word(&(mainmenu_items[0]));
     menuqtysptr[MainMenu] = SIZE(mainmenu_items);
-    menusptr[OverrideMenu] = pgm_read_word(&(overridemenu_items[0]));
-    menuqtysptr[OverrideMenu] = SIZE(overridemenu_items);
-    menusptr[ClearMenu] = pgm_read_word(&(clearmenu_items[0]));
-    menuqtysptr[ClearMenu] = SIZE(clearmenu_items);
     menusptr[SetupMenu] = pgm_read_word(&(setupmenu_items[0]));
     menuqtysptr[SetupMenu] = SIZE(setupmenu_items);
     menusptr[LightsMenu] = pgm_read_word(&(lightsmenu_items[0]));
@@ -631,21 +615,6 @@ void ReefAngelClass::ShowInterface()
         // are we displaying the menu or not??
         if ( showmenu )
         {
-            // showing the menu
-            if ( DisplayedMenu >= Total_Menus )
-            {
-                // somehow we want to display a menu with a non-existant menu
-//                ClearScreen(COLOR_WHITE);
-//                char buf[10];
-//                sprintf(buf, "(%d)", DisplayedMenu);
-//                LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, buf);
-//                delay(1000);
-                redrawmenu = true;
-                // perhaps clear the previous menu list and add in the default menu and display the main menu
-                SPreviousMenu.Clear();
-                SPreviousMenu.Push(DEFAULT_MENU);
-                DisplayedMenu = MAIN_MENU;
-            }
             DisplayMenuHeading(DisplayedMenu);
             DisplayMenu(DisplayedMenu);
         }
@@ -677,8 +646,9 @@ void ReefAngelClass::ShowInterface()
                     // Displays main menu, select first item, save existing menu
                     ClearScreen(COLOR_WHITE);
                     SelectedMenuItem = DEFAULT_MENU_ITEM;
-                    SPreviousMenu.Clear();
+                    //SPreviousMenu.Clear();
                     //SPreviousMenu.Push(DEFAULT_MENU);
+                    PreviousMenu = DEFAULT_MENU;
                     DisplayedMenu = MAIN_MENU;
                     showmenu = true;
                     redrawmenu = true;
@@ -904,16 +874,6 @@ void ReefAngelClass::DisplayMenuHeading(byte MenuNum)
                 strcpy(buffer, "Main:");
             }
             break;
-        case OverrideMenu:
-            {
-                strcpy(buffer, "Override:");
-            }
-            break;
-        case ClearMenu:
-            {
-                strcpy(buffer, "Clear:");
-            }
-            break;
         case SetupMenu:
             {
                 strcpy(buffer, "Setup:");
@@ -1016,16 +976,6 @@ void ReefAngelClass::ProcessButtonPress(byte smenu)
             ProcessButtonPressMain(smenu);
             break;
         }
-        case OverrideMenu:
-        {
-            ProcessButtonPressOverride(smenu);
-            break;
-        }
-        case ClearMenu:
-        {
-            ProcessButtonPressClear(smenu);
-            break;
-        }
         case SetupMenu:
         {
             ProcessButtonPressSetup(smenu);
@@ -1054,7 +1004,7 @@ void ReefAngelClass::ProcessButtonPress(byte smenu)
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             DisplayedMenu = DEFAULT_MENU;
             showmenu = false;
-            SPreviousMenu.Clear();
+            //SPreviousMenu.Clear();
             ClearScreen(COLOR_WHITE);
             bResetMenuTimeout = false;
             // we are exiting the menu, so draw the graph
@@ -1114,26 +1064,31 @@ void ReefAngelClass::ProcessButtonPressMain(byte smenu)
             Relay.Write();
             break;
         }
-        case MainMenu_Override:
+        case MainMenu_Lights:
         {
-            // switch menus
-            // save the old displayed menu and reset the selected item to be the first in the list
             SelectedMenuItem = DEFAULT_MENU_ITEM;
-            SPreviousMenu.Push(DisplayedMenu);
-            DisplayedMenu = OverrideMenu;
+            PreviousMenu = DisplayedMenu;
+            DisplayedMenu = LightsMenu;
             break;
         }
-        case MainMenu_Clear:
+        case MainMenu_Temps:
         {
             SelectedMenuItem = DEFAULT_MENU_ITEM;
-            SPreviousMenu.Push(DisplayedMenu);
-            DisplayedMenu = ClearMenu;
+            PreviousMenu = DisplayedMenu;
+            DisplayedMenu = TempsMenu;
+            break;
+        }
+        case MainMenu_Timeouts:
+        {
+            SelectedMenuItem = DEFAULT_MENU_ITEM;
+            PreviousMenu = DisplayedMenu;
+            DisplayedMenu = TimeoutsMenu;
             break;
         }
         case MainMenu_Setup:
         {
             SelectedMenuItem = DEFAULT_MENU_ITEM;
-            SPreviousMenu.Push(DisplayedMenu);
+            PreviousMenu = DisplayedMenu;
             DisplayedMenu = SetupMenu;
             break;
         }
@@ -1149,87 +1104,11 @@ void ReefAngelClass::ProcessButtonPressMain(byte smenu)
             // This will be the EXIT choice
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             // switch to the previous menu
-            SPreviousMenu.Clear();
             DisplayedMenu = DEFAULT_MENU;
             // disable the menu, display main screen
             showmenu = false;
             // When we exit the main menu, we will redraw the graph
             LCD.DrawGraph(5, 5, I2CEEPROM1, T1Pointer);  // Redraw graphic of params
-            break;
-        }
-    }
-}
-
-void ReefAngelClass::ProcessButtonPressOverride(byte smenu)
-{
-    showmenu = false;
-    ClearScreen(COLOR_WHITE);
-    switch ( smenu )
-    {
-        case OverrideMenu_LightsOff:
-        {
-            // Reset ports 2 & 3
-            Relay.RelayMaskOn = B00000000;
-            // sets PWM to 0%
-            PWM.SetActinic(0);
-            PWM.SetDaylight(0);
-            Relay.Write();
-            DisplayMenuEntry("Restore Lights");
-            break;
-        }
-        case OverrideMenu_LightsOn:
-        {
-            // turns on ports 2 & 3
-            Relay.RelayMaskOn = B00000110;
-            // sets PWM to 50%
-            PWM.SetActinic(50);
-            PWM.SetDaylight(50);
-            Relay.Write();
-            DisplayMenuEntry("Lights On");
-            break;
-        }
-        default:
-        {
-            SelectedMenuItem = DEFAULT_MENU_ITEM;
-            // switch to the previous menu
-            SPreviousMenu.Pop(DisplayedMenu);
-            showmenu = true;
-            break;
-        }
-    }
-}
-
-void ReefAngelClass::ProcessButtonPressClear(byte smenu)
-{
-    showmenu = false;
-    ClearScreen(COLOR_WHITE);
-    switch ( smenu )
-    {
-        case ClearMenu_ATOTimeout:
-        {
-            // Need delay for clearing & returning screen
-            LED.Off();
-            //ATO.StopTopping();
-            LowATO.StopTopping();
-            HighATO.StopTopping();
-            DisplayMenuEntry("Clear ATO Timeout");
-            // if we set showmenu=false, the main program loop executes until a button press is signaled
-            break;
-        }
-        case ClearMenu_Overheat:
-        {
-            LED.Off();
-            Relay.RelayMaskOff = B11111111;  // Override MHlight auto
-            Relay.Write();
-            DisplayMenuEntry("Clear Overheat");
-            break;
-        }
-        default:
-        {
-            SelectedMenuItem = DEFAULT_MENU_ITEM;
-            // switch to the previous menu
-            SPreviousMenu.Pop(DisplayedMenu);
-            showmenu = true;
             break;
         }
     }
@@ -1241,35 +1120,13 @@ void ReefAngelClass::ProcessButtonPressSetup(byte smenu)
     ClearScreen(COLOR_WHITE);
     switch ( smenu )
     {
-        case SetupMenu_Lights:
-        {
-            SelectedMenuItem = DEFAULT_MENU_ITEM;
-            SPreviousMenu.Push(DisplayedMenu);
-            DisplayedMenu = LightsMenu;
-            break;
-        }
         case SetupMenu_Wavemaker:
         {
-//            SetupWavemakersDisplay();
+            SetupWavemakersDisplay();
             break;
         }
-        case SetupMenu_Temps:
+        case SetupMenu_DosingPump:
         {
-//            SelectedMenuItem = DEFAULT_MENU_ITEM;
-//            SPreviousMenu.Push(DisplayedMenu);
-//            DisplayedMenu = TempsMenu;
-            break;
-        }
-        case SetupMenu_Timeouts:
-        {
-//            SelectedMenuItem = DEFAULT_MENU_ITEM;
-//            SPreviousMenu.Push(DisplayedMenu);
-//            DisplayedMenu = TimeoutsMenu;
-            break;
-        }
-        case SetupMenu_FeedingTimer:
-        {
-//            SetupFeedingTimeoutDisplay();
             break;
         }
         case SetupMenu_CalibratePH:
@@ -1288,7 +1145,7 @@ void ReefAngelClass::ProcessButtonPressSetup(byte smenu)
         {
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             // switch to the previous menu
-            SPreviousMenu.Pop(DisplayedMenu);
+            DisplayedMenu = PreviousMenu;
             break;
         }
     }
@@ -1300,31 +1157,57 @@ void ReefAngelClass::ProcessButtonPressLights(byte smenu)
     ClearScreen(COLOR_WHITE);
     switch ( smenu )
     {
+        case LightsMenu_On:
+        {
+            // turns on ports 2 & 3
+            //         Port Mask 87654321
+            Relay.RelayMaskOn = B00000110;
+            // sets PWM to 50%
+            PWM.SetActinic(50);
+            PWM.SetDaylight(50);
+            Relay.Write();
+            DisplayMenuEntry("Lights On");
+            showmenu = false;
+            break;
+        }
+        case LightsMenu_Off:
+        {
+            // Reset ports 2 & 3
+            //         Port Mask 87654321
+            Relay.RelayMaskOn = B00000000;
+            // sets PWM to 0%
+            PWM.SetActinic(0);
+            PWM.SetDaylight(0);
+            Relay.Write();
+            DisplayMenuEntry("Restore Lights");
+            showmenu = false;
+            break;
+        }
         case LightsMenu_MetalHalides:
         {
-//            SetupLightsOptionDisplay(true);
+            SetupLightsOptionDisplay(true);
             break;
         }
         case LightsMenu_MetalHalideDelay:
         {
-//            SetupMHDelayDisplay();
+            SetupMHDelayDisplay();
             break;
         }
         case LightsMenu_StandardLights:
         {
-//            SetupLightsOptionDisplay(false);
+            SetupLightsOptionDisplay(false);
             break;
         }
         case LightsMenu_LEDPWM:
         {
-//            SetupLEDPWMDisplay();
+            SetupLEDPWMDisplay();
             break;
         }
         default:
         {
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             // switch to the previous menu
-            SPreviousMenu.Pop(DisplayedMenu);
+            DisplayedMenu = PreviousMenu;
             break;
         }
     }
@@ -1338,24 +1221,33 @@ void ReefAngelClass::ProcessButtonPressTemps(byte smenu)
     {
         case TempsMenu_Heater:
         {
-//            SetupHeaterDisplay();
+            SetupHeaterDisplay();
             break;
         }
-        case TempsMenu_FanChiller:
+        case TempsMenu_Chiller:
         {
-//            SetupChillerDisplay();
+            SetupChillerDisplay();
             break;
         }
         case TempsMenu_Overheat:
         {
-//            SetupOverheatDisplay();
+            SetupOverheatDisplay();
+            break;
+        }
+        case TempsMenu_OverheatClr:
+        {
+            LED.Off();
+            Relay.RelayMaskOff = B11111111;  // Override MHlight auto
+            Relay.Write();
+            DisplayMenuEntry("Clear Overheat");
+            showmenu = false;
             break;
         }
         default:
         {
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             // switch to the previous menu
-            SPreviousMenu.Pop(DisplayedMenu);
+            DisplayedMenu = PreviousMenu;
             break;
         }
     }
@@ -1367,21 +1259,36 @@ void ReefAngelClass::ProcessButtonPressTimeouts(byte smenu)
     ClearScreen(COLOR_WHITE);
     switch ( smenu )
     {
-        case TimeoutsMenu_AutoTopOff:
+        case TimeoutsMenu_ATOSet:
         {
-//            SetupATOTimeoutDisplay();
+            SetupATOTimeoutDisplay();
             break;
         }
-        case TimeoutsMenu_Screensaver:
+        case TimeoutsMenu_Feeding:
         {
-//            SetupScreensaverTimeoutDisplay();
+            SetupFeedingTimeoutDisplay();
+            break;
+        }
+        case TimeoutsMenu_LCD:
+        {
+            SetupLCDTimeoutDisplay();
+            break;
+        }
+        case TimeoutsMenu_ATOClear:
+        {
+            // Need delay for clearing & returning screen
+            LED.Off();
+            LowATO.StopTopping();
+            HighATO.StopTopping();
+            DisplayMenuEntry("Clear ATO Timeout");
+            showmenu = false;
             break;
         }
         default:
         {
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             // switch to the previous menu
-            SPreviousMenu.Pop(DisplayedMenu);
+            DisplayedMenu = PreviousMenu;
             break;
         }
     }
@@ -1407,10 +1314,10 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
     bool bDrawButtons = true;
     ClearScreen(COLOR_WHITE);
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, title);
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*2, msg1);
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*3, msg2);
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*8, footer1);
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*9, footer2);
+//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*2, msg1);
+//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*3, msg2);
+//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*8, footer1);
+//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*9, footer2);
     do
     {
         if ( bRedraw )
@@ -1535,16 +1442,16 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
     bool bDrawOpt2 = true;
     int offset = 50;
     ClearScreen(COLOR_WHITE);
-    //LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, title);
+    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, title);
     // main message
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, msg1);
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*2, msg2);
+//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, msg1);
+//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*2, msg2);
     // prefix for each option
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*4, prefix1);
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*6, prefix2);
     // footer to display at the bottom
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*8, footer1);
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*9, footer2);
+//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*8, footer1);
+//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*9, footer2);
     do
     {
         if ( bRedraw )
@@ -1736,15 +1643,15 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
     ClearScreen(COLOR_WHITE);
     // header / title
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, msg);
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*2, "Set the On (Dawn) &"); // line 1
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*3, "Off (Dusk) times:"); // line 2
+//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*2, "Set the On (Dawn) &"); // line 1
+//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*3, "Off (Dusk) times:"); // line 2
     // prefixes, draw in ':' between options
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*5, "On:");
     //LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL+offset_hr, MENU_START_ROW*5, ":");
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*7, "Off:");
     //LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL+offset_hr, MENU_START_ROW*7, ":");
     // footer
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*9, "Hour in 24hr format"); // footer 1
+//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*9, "Hour in 24hr format"); // footer 1
     //LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*9, ""); // footer 2
     do
     {
@@ -2079,121 +1986,130 @@ void ReefAngelClass::SetupCalibratePH()
     }
 }
 
-//void ReefAngelClass::SetupMHDelayDisplay()
-//{
-//    int v = InternalMemory.MHDelay_read();
-//    bool bSave = SetupSingleOption(v, 0, 255, "m", "", "Setup MH Delay",
+void ReefAngelClass::SetupMHDelayDisplay()
+{
+    int v = InternalMemory.MHDelay_read();
+    bool bSave = SetupSingleOption(v, 0, 255, "m", "", "Setup MH Delay",
 //                                   "Configure start", "delay for MH:", "Range: 0-255", "");
-//    if ( bSave )
-//    {
-//        InternalMemory.MHDelay_write((uint8_t)v);
-//    }
-//}
-//
-//void ReefAngelClass::SetupFeedingTimeoutDisplay()
-//{
-//    int v = InternalMemory.FeedingTimer_read();
-//    bool bSave = SetupSingleOption(v, 0, 3600, "s", "", "Feeding Timer",
+                                    "", "", "", "");
+    if ( bSave )
+    {
+        InternalMemory.MHDelay_write((uint8_t)v);
+    }
+}
+
+void ReefAngelClass::SetupFeedingTimeoutDisplay()
+{
+    int v = InternalMemory.FeedingTimer_read();
+    bool bSave = SetupSingleOption(v, 0, 3600, "s", "", "Feeding Timer",
 //                                   "Set time pumps will", "be off to feed:", "Range: 0-3600 (1hr)", "900s == 15min");
-//    if ( bSave )
-//    {
-//        InternalMemory.FeedingTimer_write(v);
-//    }
-//}
-//
-//void ReefAngelClass::SetupScreensaverTimeoutDisplay()
-//{
-//    int v = InternalMemory.ScreenSaverTimer_read();
-//    bool bSave = SetupSingleOption(v, 0, 3600, "s", "", "Screen Timeout",
+                                    "", "", "", "");
+    if ( bSave )
+    {
+        InternalMemory.FeedingTimer_write(v);
+    }
+}
+
+void ReefAngelClass::SetupLCDTimeoutDisplay()
+{
+    int v = InternalMemory.ScreenSaverTimer_read();
+    bool bSave = SetupSingleOption(v, 0, 3600, "s", "", "Screen Timeout",
 //                                   "Turn screen off", "after:", "Range: 0-3600 (1hr)", "600s == 10min");
-//    if ( bSave )
-//    {
-//        InternalMemory.ScreenSaverTimer_write(v);
-//    }
-//}
-//
-//void ReefAngelClass::SetupATOTimeoutDisplay()
-//{
-//    int v = InternalMemory.ATOTimeout_read();
-//    bool bSave = SetupSingleOption(v, 0, 255, "s", "", "ATO Timeout",
+                                    "", "", "", "");
+    if ( bSave )
+    {
+        InternalMemory.ScreenSaverTimer_write(v);
+    }
+}
+
+void ReefAngelClass::SetupATOTimeoutDisplay()
+{
+    int v = InternalMemory.ATOTimeout_read();
+    bool bSave = SetupSingleOption(v, 0, 255, "s", "", "ATO Timeout",
 //                                   "Set max time ATO", "pump will run:", "Range: 0-255", "");
-//    if ( bSave )
-//    {
-//        InternalMemory.ATOTimeout_write((uint8_t)v);
-//    }
-//}
-//
-//void ReefAngelClass::SetupOverheatDisplay()
-//{
-//    int v = InternalMemory.OverheatTemp_read();
-//    bool bSave = SetupSingleOption(v, 800, 2000, "F", ".", "Setup Overheat",
+                                    "", "", "", "");
+    if ( bSave )
+    {
+        InternalMemory.ATOTimeout_write((uint8_t)v);
+    }
+}
+
+void ReefAngelClass::SetupOverheatDisplay()
+{
+    int v = InternalMemory.OverheatTemp_read();
+    bool bSave = SetupSingleOption(v, 800, 2000, "F", ".", "Setup Overheat",
 //                                   "Turn off all lights", "when temp exceeds:", "Range: 800-2000", "1500 == 150.0 F");
-//    if ( bSave )
-//    {
-//        InternalMemory.OverheatTemp_write(v);
-//    }
-//}
-//
-//void ReefAngelClass::SetupWavemakersDisplay()
-//{
-//    int v = InternalMemory.WM1Timer_read();
-//    int y = InternalMemory.WM2Timer_read();
-//    bool bSave = SetupDoubleOption(v, y, 0, 21600, "s", "", "Setup Wavemakers",
-//                                   "WM1:", "WM2:",
+                                    "", "", "", "");
+    if ( bSave )
+    {
+        InternalMemory.OverheatTemp_write(v);
+    }
+}
+
+void ReefAngelClass::SetupWavemakersDisplay()
+{
+    int v = InternalMemory.WM1Timer_read();
+    int y = InternalMemory.WM2Timer_read();
+    bool bSave = SetupDoubleOption(v, y, 0, 21600, "s", "", "Setup Wavemakers",
+                                   "WM1:", "WM2:",
 //                                   "Set run timers for", "the pumps:",
 //                                   "Range: 0-21600", "0s - 6hrs");
-//    if ( bSave )
-//    {
-//        InternalMemory.WM1Timer_write(v);
-//        InternalMemory.WM2Timer_write(y);
-//    }
-//}
-//
-//void ReefAngelClass::SetupHeaterDisplay()
-//{
-//    int v = InternalMemory.HeaterTempOn_read();
-//    int y = InternalMemory.HeaterTempOff_read();
-//    bool bSave = SetupDoubleOption(v, y, 700, 900, "F", ".", "Setup Heater",
-//                                   "On @", "Off @",
+                                    "", "", "", "");
+    if ( bSave )
+    {
+        InternalMemory.WM1Timer_write(v);
+        InternalMemory.WM2Timer_write(y);
+    }
+}
+
+void ReefAngelClass::SetupHeaterDisplay()
+{
+    int v = InternalMemory.HeaterTempOn_read();
+    int y = InternalMemory.HeaterTempOff_read();
+    bool bSave = SetupDoubleOption(v, y, 700, 900, "F", ".", "Setup Heater",
+                                   "On @", "Off @",
 //                                   "Set on & off temp", "for the heater:",
 //                                   "Range: 700-900", "70.0F - 90.0F");
-//    if ( bSave )
-//    {
-//        InternalMemory.HeaterTempOn_write(v);
-//        InternalMemory.HeaterTempOff_write(y);
-//    }
-//}
-//
-//void ReefAngelClass::SetupChillerDisplay()
-//{
-//    int v = InternalMemory.ChillerTempOn_read();
-//    int y = InternalMemory.ChillerTempOff_read();
-//    bool bSave = SetupDoubleOption(v, y, 700, 900, "F", ".", "Setup Chiller",
-//                                   "On @", "Off @",
+                                    "", "", "", "");
+    if ( bSave )
+    {
+        InternalMemory.HeaterTempOn_write(v);
+        InternalMemory.HeaterTempOff_write(y);
+    }
+}
+
+void ReefAngelClass::SetupChillerDisplay()
+{
+    int v = InternalMemory.ChillerTempOn_read();
+    int y = InternalMemory.ChillerTempOff_read();
+    bool bSave = SetupDoubleOption(v, y, 700, 900, "F", ".", "Setup Chiller",
+                                   "On @", "Off @",
 //                                   "Set on & off temp", "for the chiller:",
 //                                   "Range: 700-900", "70.0F - 90.0F");
-//    if ( bSave )
-//    {
-//        InternalMemory.ChillerTempOn_write(v);
-//        InternalMemory.ChillerTempOff_write(y);
-//    }
-//}
-//
-//void ReefAngelClass::SetupLEDPWMDisplay()
-//{
-//    int v = InternalMemory.LEDPWMActinic_read();
-//    int y = InternalMemory.LEDPWMDaylight_read();
-//    bool bSave = SetupDoubleOption(v, y, 0, 100, "%", "", "Setup LED",
-//                                   "Actinic:", "Daylight:",
+                                    "", "", "", "");
+    if ( bSave )
+    {
+        InternalMemory.ChillerTempOn_write(v);
+        InternalMemory.ChillerTempOff_write(y);
+    }
+}
+
+void ReefAngelClass::SetupLEDPWMDisplay()
+{
+    int v = InternalMemory.LEDPWMActinic_read();
+    int y = InternalMemory.LEDPWMDaylight_read();
+    bool bSave = SetupDoubleOption(v, y, 0, 100, "%", "", "Setup LED",
+                                   "Actinic:", "Daylight:",
 //                                   "Set the % for", "the LEDs:",
 //                                   "Range: 0-100%", "");
-//    if ( bSave )
-//    {
-//        InternalMemory.LEDPWMActinic_write((uint8_t)v);
-//        InternalMemory.LEDPWMDaylight_write((uint8_t)y);
-//    }
-//}
-//
+                                   "", "", "", "");
+    if ( bSave )
+    {
+        InternalMemory.LEDPWMActinic_write((uint8_t)v);
+        InternalMemory.LEDPWMDaylight_write((uint8_t)y);
+    }
+}
+
 
 #ifdef wifi
 
