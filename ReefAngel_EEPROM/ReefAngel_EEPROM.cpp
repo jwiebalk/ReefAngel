@@ -214,14 +214,14 @@ void ReefAngel_EEPROMClass::FeedingTimer_write(int value)
     write_int(Mem_I_FeedingTimer, value);
 }
 
-int ReefAngel_EEPROMClass::ScreenSaverTimer_read()
+int ReefAngel_EEPROMClass::LCDTimer_read()
 {
-    return read_int(Mem_I_ScreenSaverTimer);
+    return read_int(Mem_I_LCDTimer);
 }
 
-void ReefAngel_EEPROMClass::ScreenSaverTimer_write(const int value)
+void ReefAngel_EEPROMClass::LCDTimer_write(const int value)
 {
-    write_int(Mem_I_ScreenSaverTimer, value);
+    write_int(Mem_I_LCDTimer, value);
 }
 
 int ReefAngel_EEPROMClass::OverheatTemp_read()

@@ -68,8 +68,8 @@ class ReefAngel_EEPROMClass : public EEPROMClass {
         void WM2Timer_write(const int value);
         int FeedingTimer_read();
         void FeedingTimer_write(const int value);
-        int ScreenSaverTimer_read();
-        void ScreenSaverTimer_write(const int value);
+        int LCDTimer_read();
+        void LCDTimer_write(const int value);
         int OverheatTemp_read();
         void OverheatTemp_write(const int value);
         int HeaterTempOn_read();

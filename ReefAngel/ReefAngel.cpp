@@ -183,18 +183,18 @@ void ReefAngelClass::Init()
 	Relay.AllOff();
 	//EEPROM_writeAnything(PH_Max,900); // 750=PH10.0
 	//EEPROM_writeAnything(PH_Min,540); // 480=PH7.0
-	EEPROM_readAnything(PH_Min,PHMin);
-	EEPROM_readAnything(PH_Max,PHMax);
-    //PHMin = InternalMemory.PHMin_read();
-    //PHMax = InternalMemory.PHMax_read();
+//	EEPROM_readAnything(PH_Min,PHMin);
+//	EEPROM_readAnything(PH_Max,PHMax);
+    PHMin = InternalMemory.PHMin_read();
+    PHMax = InternalMemory.PHMax_read();
 	taddr = 0;
 	EEPROM_readAnything(T1Pointer,taddr);
 	if (taddr>120 || taddr<0) EEPROM_writeAnything(T1Pointer,t);
 
-	Timer[0].SetInterval(900); // Default Feeding timer
-	//Timer[0].SetInterval(InternalMemory.FeedingTimer_read());
-	Timer[3].SetInterval(600); // set timer to x seconds - Timer 3 is used for sleep mode
-	//Timer[0].SetInterval(InternalMemory.ScreenSaverTimer_read());
+//	Timer[0].SetInterval(900); // Default Feeding timer
+	Timer[0].SetInterval(InternalMemory.FeedingTimer_read());
+//	Timer[3].SetInterval(600); // set timer to x seconds - Timer 3 is used for sleep mode
+	Timer[0].SetInterval(InternalMemory.LCDTimer_read());
 	Timer[3].Start();  // start timer
 	Timer[5].SetInterval(720);  // Store Params
 	Timer[5].ForceTrigger();
@@ -490,11 +490,6 @@ void ReefAngelClass::DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte On
     }
 }
 
-//char *ReefAngelClass::Version()
-//{
-//	return ReefAngel_Version;
-//}
-
 void ReefAngelClass::DisplayVersion()
 {
     // Display the Software Version
@@ -512,66 +507,11 @@ void ReefAngelClass::DisplayVersion()
 #endif  // wifi
 }
 
-//void ReefAngelClass::SaveParamsToMemory()
-//{
-//    // Save parameters to memory and redraw the graph
-//    int a = EEPROM.read(T1Pointer);
-//    int CurTemp;
-//
-//    a++;
-//    if (a>=120) a=0;
-//    Timer[5].Start();
-//    CurTemp = map(Params.Temp1, 700, 900, 0, 50); // apply the calibration to the sensor reading
-//    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-//    LCD.Clear(COLOR_WHITE,0,0,1,1);
-//    Memory.Write(a, CurTemp);
-//    LCD.Clear(COLOR_WHITE,0,0,1,1);
-//    CurTemp = map(Params.Temp2, 650, 1500, 0, 50); // apply the calibration to the sensor reading
-//    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-//    LCD.Clear(COLOR_WHITE,0,0,1,1);
-//    Memory.Write(a+120, CurTemp);
-//    LCD.Clear(COLOR_WHITE,0,0,1,1);
-//    CurTemp = map(Params.Temp3, 650, 920, 0, 50); // apply the calibration to the sensor reading
-//    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-//    LCD.Clear(COLOR_WHITE,0,0,1,1);
-//    Memory.Write(a+240, CurTemp);
-//    LCD.Clear(COLOR_WHITE,0,0,1,1);
-//    CurTemp = map(Params.PH, 730, 890, 0, 50); // apply the calibration to the sensor reading
-//    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-//    LCD.Clear(COLOR_WHITE,0,0,1,1);
-//    Memory.Write(a+360, CurTemp);
-//    LCD.Clear(COLOR_WHITE,0,0,1,1);
-//    EEPROM.write(T1Pointer,a);
-//    LCD.DrawGraph(5, 5, I2CEEPROM1, T1Pointer);
-//}
-
 void ReefAngelClass::ClearScreen(byte Color)
 {
     // clears the entire screen
     LCD.Clear(Color, 0, 0, 131, 131);
 }
-
-bool ReefAngelClass::IsTempOverheat(int temp)
-{
-    // TODO use overheat value from memory
-    if ( temp >= 1500)  // if temp >= 150.0F
-    {
-        return true;
-    }
-    return false;
-}
-
-//void ReefAngelClass::DisplayHomeScreen()
-//{
-//    // display everything on the home screen except the graph
-//    // the graph is drawn/updated when we exit the main menu & when the parameters are saved
-//    LCD.DrawDate(6, 112);
-//    LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
-//    byte TempRelay = Relay.RelayData;
-//    TempRelay &= Relay.RelayMaskOff;
-//    TempRelay |= Relay.RelayMaskOn;
-//    LCD.DrawOutletBox(12, 93, TempRelay);
-//}
 
 void ReefAngelClass::InitMenus()
 {
@@ -664,7 +604,6 @@ void ReefAngelClass::ShowInterface()
                     Timer[3].Start();
                 }
 
-                //DisplayHomeScreen();
                 // display everything on the home screen except the graph
                 // the graph is drawn/updated when we exit the main menu & when the parameters are saved
                 LCD.DrawDate(6, 112);
@@ -725,7 +664,7 @@ void ReefAngelClass::ShowInterface()
                 }
 
                 // if temp2 exceeds overheat temp
-                if ( IsTempOverheat(Params.Temp2) )
+                if ( Params.Temp2 >= InternalMemory.OverheatTemp_read() )
                 {
                     // turn off MH lights (port 3)
                     LED.On();
@@ -789,7 +728,7 @@ void ReefAngelClass::DisplayMenu(byte MenuNum)
     }
 
     // TODO Have ability to customize menu timeout delay
-    if ( (now() - menutimeout) > 10 )
+    if ( (now() - menutimeout) > MENU_TIMEOUT )
     {
         // menu timeout returns to the main screen
         // skip all the other menu checks
@@ -1297,9 +1236,7 @@ void ReefAngelClass::ProcessButtonPressTimeouts(byte smenu)
 // Setup Menu Screens
 // Setup Screens
 bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
-                       char* unit, char* subunit, char* title,
-                       char* msg1, char* msg2,
-                       char* footer1, char* footer2)
+                       char* unit, char* subunit, char* title)
 {
     // return true to save value stored in out in memory
     enum choices {
@@ -1314,10 +1251,6 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
     bool bDrawButtons = true;
     ClearScreen(COLOR_WHITE);
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, title);
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*2, msg1);
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*3, msg2);
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*8, footer1);
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*9, footer2);
     do
     {
         if ( bRedraw )
@@ -1422,9 +1355,7 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
 
 bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangemax,
                        char* unit, char* subunit, char* title,
-                       char* prefix1, char* prefix2,
-                       char* msg1, char* msg2,
-                       char* footer1, char* footer2)
+                       char* prefix1, char* prefix2)
 {
     // return true to save value stored in out in memory
     enum choices {
@@ -1443,15 +1374,9 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
     int offset = 50;
     ClearScreen(COLOR_WHITE);
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, title);
-    // main message
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, msg1);
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*2, msg2);
     // prefix for each option
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*4, prefix1);
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*6, prefix2);
-    // footer to display at the bottom
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*8, footer1);
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*9, footer2);
     do
     {
         if ( bRedraw )
@@ -1643,16 +1568,11 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
     ClearScreen(COLOR_WHITE);
     // header / title
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, msg);
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*2, "Set the On (Dawn) &"); // line 1
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*3, "Off (Dusk) times:"); // line 2
     // prefixes, draw in ':' between options
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*5, "On:");
     //LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL+offset_hr, MENU_START_ROW*5, ":");
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*7, "Off:");
     //LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL+offset_hr, MENU_START_ROW*7, ":");
-    // footer
-//    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*9, "Hour in 24hr format"); // footer 1
-    //LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*9, ""); // footer 2
     do
     {
         if ( bRedraw )
@@ -1933,7 +1853,6 @@ void ReefAngelClass::SetupCalibratePH()
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, "Calibrate PH");
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*3, "PH 7.0");
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*7, "PH 10.0");
-    // start with COL = 50, MENU_START_COL + 45
     do
     {
         iP = analogRead(PHPin);
@@ -1989,9 +1908,7 @@ void ReefAngelClass::SetupCalibratePH()
 void ReefAngelClass::SetupMHDelayDisplay()
 {
     int v = InternalMemory.MHDelay_read();
-    bool bSave = SetupSingleOption(v, 0, 255, "m", "", "Setup MH Delay",
-//                                   "Configure start", "delay for MH:", "Range: 0-255", "");
-                                    "", "", "", "");
+    bool bSave = SetupSingleOption(v, 0, 255, "m", "", "Setup MH Delay");
     if ( bSave )
     {
         InternalMemory.MHDelay_write((uint8_t)v);
@@ -2001,9 +1918,7 @@ void ReefAngelClass::SetupMHDelayDisplay()
 void ReefAngelClass::SetupFeedingTimeoutDisplay()
 {
     int v = InternalMemory.FeedingTimer_read();
-    bool bSave = SetupSingleOption(v, 0, 3600, "s", "", "Feeding Timer",
-//                                   "Set time pumps will", "be off to feed:", "Range: 0-3600 (1hr)", "900s == 15min");
-                                    "", "", "", "");
+    bool bSave = SetupSingleOption(v, 0, 3600, "s", "", "Feeding Timer");
     if ( bSave )
     {
         InternalMemory.FeedingTimer_write(v);
@@ -2012,22 +1927,18 @@ void ReefAngelClass::SetupFeedingTimeoutDisplay()
 
 void ReefAngelClass::SetupLCDTimeoutDisplay()
 {
-    int v = InternalMemory.ScreenSaverTimer_read();
-    bool bSave = SetupSingleOption(v, 0, 3600, "s", "", "Screen Timeout",
-//                                   "Turn screen off", "after:", "Range: 0-3600 (1hr)", "600s == 10min");
-                                    "", "", "", "");
+    int v = InternalMemory.LCDTimer_read();
+    bool bSave = SetupSingleOption(v, 0, 3600, "s", "", "Screen Timeout");
     if ( bSave )
     {
-        InternalMemory.ScreenSaverTimer_write(v);
+        InternalMemory.LCDTimer_write(v);
     }
 }
 
 void ReefAngelClass::SetupATOTimeoutDisplay()
 {
     int v = InternalMemory.ATOTimeout_read();
-    bool bSave = SetupSingleOption(v, 0, 255, "s", "", "ATO Timeout",
-//                                   "Set max time ATO", "pump will run:", "Range: 0-255", "");
-                                    "", "", "", "");
+    bool bSave = SetupSingleOption(v, 0, 255, "s", "", "ATO Timeout");
     if ( bSave )
     {
         InternalMemory.ATOTimeout_write((uint8_t)v);
@@ -2037,9 +1948,7 @@ void ReefAngelClass::SetupATOTimeoutDisplay()
 void ReefAngelClass::SetupOverheatDisplay()
 {
     int v = InternalMemory.OverheatTemp_read();
-    bool bSave = SetupSingleOption(v, 800, 2000, "F", ".", "Setup Overheat",
-//                                   "Turn off all lights", "when temp exceeds:", "Range: 800-2000", "1500 == 150.0 F");
-                                    "", "", "", "");
+    bool bSave = SetupSingleOption(v, 800, 2000, "F", ".", "Setup Overheat");
     if ( bSave )
     {
         InternalMemory.OverheatTemp_write(v);
@@ -2051,10 +1960,7 @@ void ReefAngelClass::SetupWavemakersDisplay()
     int v = InternalMemory.WM1Timer_read();
     int y = InternalMemory.WM2Timer_read();
     bool bSave = SetupDoubleOption(v, y, 0, 21600, "s", "", "Setup Wavemakers",
-                                   "WM1:", "WM2:",
-//                                   "Set run timers for", "the pumps:",
-//                                   "Range: 0-21600", "0s - 6hrs");
-                                    "", "", "", "");
+                                   "WM1:", "WM2:");
     if ( bSave )
     {
         InternalMemory.WM1Timer_write(v);
@@ -2067,10 +1973,7 @@ void ReefAngelClass::SetupHeaterDisplay()
     int v = InternalMemory.HeaterTempOn_read();
     int y = InternalMemory.HeaterTempOff_read();
     bool bSave = SetupDoubleOption(v, y, 700, 900, "F", ".", "Setup Heater",
-                                   "On @", "Off @",
-//                                   "Set on & off temp", "for the heater:",
-//                                   "Range: 700-900", "70.0F - 90.0F");
-                                    "", "", "", "");
+                                   "On @", "Off @");
     if ( bSave )
     {
         InternalMemory.HeaterTempOn_write(v);
@@ -2083,10 +1986,7 @@ void ReefAngelClass::SetupChillerDisplay()
     int v = InternalMemory.ChillerTempOn_read();
     int y = InternalMemory.ChillerTempOff_read();
     bool bSave = SetupDoubleOption(v, y, 700, 900, "F", ".", "Setup Chiller",
-                                   "On @", "Off @",
-//                                   "Set on & off temp", "for the chiller:",
-//                                   "Range: 700-900", "70.0F - 90.0F");
-                                    "", "", "", "");
+                                   "On @", "Off @");
     if ( bSave )
     {
         InternalMemory.ChillerTempOn_write(v);
@@ -2099,10 +1999,7 @@ void ReefAngelClass::SetupLEDPWMDisplay()
     int v = InternalMemory.LEDPWMActinic_read();
     int y = InternalMemory.LEDPWMDaylight_read();
     bool bSave = SetupDoubleOption(v, y, 0, 100, "%", "", "Setup LED",
-                                   "Actinic:", "Daylight:",
-//                                   "Set the % for", "the LEDs:",
-//                                   "Range: 0-100%", "");
-                                   "", "", "", "");
+                                   "Actinic:", "Daylight:");
     if ( bSave )
     {
         InternalMemory.LEDPWMActinic_write((uint8_t)v);

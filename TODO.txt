@@ -15,10 +15,8 @@ TODO List (in no particular order)
    + ATO Timeout
    + ph Calibration
    - Date / Time
-* Ability to load values from memory (on startup/change)
 * Ability to assign a function to a specific port
 * Associate Timers to specific port
-* Have specific designation for Feeding, Screensaver, SaveParams Timer
 * Fix DrawOption to display a decimal point one digit in if subunit is given
 * Have sanity check for reading/writing values to memory (ensure value is within range)
 * Have default values programmed in for variables
@@ -26,6 +24,8 @@ TODO List (in no particular order)
 * Check on setup displays using bytes (uint8_t) and range checks with negative numbers.
 * Finish SetupLightsOptionsDisplay - get : between hours & minutes, align time properly on screen
 * Add ATO Timeout Clear for Low & High switches instead of 1
+* Improve DrawOption to limit the width of the clear box
+* Test wavemaker interval to have 0 equal always on
 
 Completed Items
 ---------------
@@ -33,3 +33,5 @@ Completed Items
 * Fix Menu navigation on main branch to work properly when selecting an item at any level below the main menu (should be working in NestedMenusFunctions.pde file)
 * Test SingleATO timeout function
 * Implement SingleATO time limitation
+* Ability to load values from memory (on startup/change)
+* Have specific designation for Feeding, Screensaver, SaveParams Timer

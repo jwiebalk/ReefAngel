@@ -78,7 +78,7 @@
 #define Mem_B_DP1Timer            VarsStart+12
 #define Mem_B_DP2Timer            VarsStart+13
 #define Mem_I_FeedingTimer        VarsStart+14
-#define Mem_I_ScreenSaverTimer    VarsStart+16
+#define Mem_I_LCDTimer            VarsStart+16
 #define Mem_I_OverheatTemp        VarsStart+18
 #define Mem_B_LEDPWMDaylight      VarsStart+20
 #define Mem_B_LEDPWMActinic       VarsStart+21
@@ -107,6 +107,7 @@
 
 // Menu Defines
 #define Total_Menus         5    // total number of menus
+#define MENU_TIMEOUT        10   // timeout for menu to return to main screen
 #define MENU_HEADING_SIZE   25   // pixels used for Menu Heading
 #define MENU_ITEM_HEIGHT    9    // pixel height of a line of text
 #define MENU_START_COL      7

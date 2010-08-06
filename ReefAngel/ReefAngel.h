@@ -20,7 +20,6 @@
 #define ReefAngel_Version "0.8.5 beta 4"
 
 //#define wifi
-//#include <ReefAngel_Stack.h>  // NOTE for nested menus
 #include <EEPROM.h>
 #include <ReefAngel_EEPROM.h>  // NOTE read/write internal memory
 #include <Time.h>
@@ -141,14 +140,10 @@ public:
 	void StandardATO(byte ATORelay, int ATOTimeout);
 	void SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte byteHrInterval = 0);
 	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime);
-//	char *Version();
 	void DisplayVersion();
-//	void SaveParamsToMemory();
 	void ClearScreen(byte Color);
-	bool IsTempOverheat(int temp);
 
     // NOTE for nested menus
-//    void DisplayHomeScreen();
     void InitMenus();
     void LoadAllMenus();
     void ShowInterface();
@@ -159,8 +154,6 @@ public:
     void WaterChangeMode();
     void ProcessButtonPress(byte smenu);
     void ProcessButtonPressMain(byte smenu);
-    //void ProcessButtonPressOverride(byte smenu);
-    //void ProcessButtonPressClear(byte smenu);
     void ProcessButtonPressSetup(byte smenu);
     void ProcessButtonPressLights(byte smenu);
     void ProcessButtonPressTemps(byte smenu);
@@ -177,14 +170,10 @@ public:
     void SetupChillerDisplay();  // double
     void SetupLEDPWMDisplay();  // double
     bool SetupSingleOption(int &v, int rangemin, int rangemax,
-                           char* unit, char* subunit, char* title,
-                           char* msg1, char* msg2,
-                           char* footer1, char* footer2);
+                           char* unit, char* subunit, char* title);
     bool SetupDoubleOption(int &v, int &y, int rangemin, int rangemax,
                            char* unit, char* subunit, char* title,
-                           char* prefix1, char* prefix2,
-                           char* msg1, char* msg2,
-                           char* footer1, char* footer2);
+                           char* prefix1, char* prefix2);
     void SetupLightsOptionDisplay(bool bMetalHalide);
     void SetupCalibratePH();
 
@@ -198,7 +187,6 @@ private:
 	byte menuqtysptr[Total_Menus];
 	byte DisplayedMenu;
 	byte PreviousMenu;
-	//ReefAngel_ByteStackClass SPreviousMenu;
 	bool redrawmenu;
 
 };
