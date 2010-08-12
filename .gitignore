@@ -19,3 +19,5 @@ TimeAlarms/
 Wire/
 # ignore this zip script, may get deleted in the future
 ziplib.bat
+# ignore .patch files
+*.patch
