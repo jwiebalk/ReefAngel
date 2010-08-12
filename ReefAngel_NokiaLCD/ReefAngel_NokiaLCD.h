@@ -52,7 +52,7 @@ public:
 	void DrawEEPromImage(int swidth, int sheight, byte x, byte y, int I2CAddr, int EEaddr);
 
     // For Setup
-    void DrawOption(int Option, byte Selected, byte x, byte y, char *unit, char *subunit);
+    void DrawOption(int Option, byte Selected, byte x, byte y, char *unit, char *subunit/*, byte maxdigits = 2*/);
     void DrawCancel(byte Selected);
     void DrawOK(byte Selected);
     void DrawCalibrate(int i, byte x, byte y);

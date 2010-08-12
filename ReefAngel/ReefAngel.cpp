@@ -543,7 +543,6 @@ void ReefAngelClass::LoadAllMenus()
 
 void ReefAngelClass::ShowInterface()
 {
-    // Let's mimic StandardGUI()
     Refresh();
 
     if ( conn )
@@ -586,8 +585,6 @@ void ReefAngelClass::ShowInterface()
                     // Displays main menu, select first item, save existing menu
                     ClearScreen(COLOR_WHITE);
                     SelectedMenuItem = DEFAULT_MENU_ITEM;
-                    //SPreviousMenu.Clear();
-                    //SPreviousMenu.Push(DEFAULT_MENU);
                     PreviousMenu = DEFAULT_MENU;
                     DisplayedMenu = MAIN_MENU;
                     showmenu = true;
@@ -1236,7 +1233,7 @@ void ReefAngelClass::ProcessButtonPressTimeouts(byte smenu)
 // Setup Menu Screens
 // Setup Screens
 bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
-                       char* unit, char* subunit, char* title)
+                       char* unit, char* subunit, char* title/*, byte maxdigits*/)
 {
     // return true to save value stored in out in memory
     enum choices {
@@ -1244,7 +1241,7 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
         OK,
         CANCEL
     };
-    int sel = OPT;
+    byte sel = OPT;
     bool bSave = false;
     bool bDone = false;
     bool bRedraw = true;
@@ -1259,7 +1256,7 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
             {
                 case OPT:
                 {
-                    LCD.DrawOption(v, 1, MENU_START_COL+35, MENU_START_ROW*5, unit, subunit);
+                    LCD.DrawOption(v, 1, MENU_START_COL+35, MENU_START_ROW*5, unit, subunit/*, maxdigits*/);
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(0);
@@ -1271,7 +1268,7 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
                 {
                     if ( bDrawButtons )
                     {
-                        LCD.DrawOption(v, 0, MENU_START_COL+35, MENU_START_ROW*5, unit, subunit);
+                        LCD.DrawOption(v, 0, MENU_START_COL+35, MENU_START_ROW*5, unit, subunit/*, maxdigits*/);
                         LCD.DrawOK(1);
                         LCD.DrawCancel(0);
                     }
@@ -1281,7 +1278,7 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
                 {
                     if ( bDrawButtons )
                     {
-                        LCD.DrawOption(v, 0, MENU_START_COL+35, MENU_START_ROW*5, unit, subunit);
+                        LCD.DrawOption(v, 0, MENU_START_COL+35, MENU_START_ROW*5, unit, subunit/*, maxdigits*/);
                         LCD.DrawOK(0);
                         LCD.DrawCancel(1);
                     }
@@ -1330,7 +1327,7 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
             bRedraw = true;
             bDrawButtons = true;
             sel--;
-            if ( sel < OPT )
+            if ( sel > CANCEL )
             {
                 sel = CANCEL;
             }
@@ -1355,7 +1352,7 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
 
 bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangemax,
                        char* unit, char* subunit, char* title,
-                       char* prefix1, char* prefix2)
+                       char* prefix1, char* prefix2/*, byte maxdigits*/)
 {
     // return true to save value stored in out in memory
     enum choices {
@@ -1364,14 +1361,14 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
         OK,
         CANCEL
     };
-    int sel = OPT1;
+    byte sel = OPT1;
     bool bSave = false;
     bool bDone = false;
     bool bRedraw = true;
     bool bDrawButtons = true;
     bool bDrawOpt1 = true;
     bool bDrawOpt2 = true;
-    int offset = 50;
+    byte offset = 50;
     ClearScreen(COLOR_WHITE);
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, title);
     // prefix for each option
@@ -1386,9 +1383,9 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
                 case OPT1:
                     {
                         if ( bDrawOpt2 )
-                            LCD.DrawOption(y, 0, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit);
+                            LCD.DrawOption(y, 0, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit/*, maxdigits*/);
                         if ( bDrawOpt1 )
-                            LCD.DrawOption(v, 1, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit);
+                            LCD.DrawOption(v, 1, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit/*, maxdigits*/);
                         if ( bDrawButtons )
                         {
                             LCD.DrawOK(0);
@@ -1399,9 +1396,9 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
                 case OPT2:
                     {
                         if ( bDrawOpt1 )
-                            LCD.DrawOption(v, 0, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit);
+                            LCD.DrawOption(v, 0, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit/*, maxdigits*/);
                         if ( bDrawOpt2 )
-                            LCD.DrawOption(y, 1, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit);
+                            LCD.DrawOption(y, 1, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit/*, maxdigits*/);
                         if ( bDrawButtons )
                         {
                             LCD.DrawOK(0);
@@ -1413,8 +1410,8 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
                     {
                         if ( bDrawButtons )
                         {
-                            LCD.DrawOption(v, 0, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit);
-                            LCD.DrawOption(y, 0, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit);
+                            LCD.DrawOption(v, 0, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit/*, maxdigits*/);
+                            LCD.DrawOption(y, 0, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit/*, maxdigits*/);
                             LCD.DrawOK(1);
                             LCD.DrawCancel(0);
                         }
@@ -1424,8 +1421,8 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
                     {
                         if ( bDrawButtons )
                         {
-                            LCD.DrawOption(v, 0, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit);
-                            LCD.DrawOption(y, 0, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit);
+                            LCD.DrawOption(v, 0, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit/*, maxdigits*/);
+                            LCD.DrawOption(y, 0, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit/*, maxdigits*/);
                             LCD.DrawOK(0);
                             LCD.DrawCancel(1);
                         }
@@ -1502,7 +1499,7 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
             bDrawOpt2 = true;
             // move left, if we are on opt1, wrap around to cancel
             sel--;
-            if ( sel < OPT1 )
+            if ( sel > CANCEL )
             {
                 sel = CANCEL;
             }
@@ -1536,7 +1533,7 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
         OK,
         CANCEL
     };
-    int sel = OPT1;
+    byte sel = OPT1;
     bool bSave = false;
     bool bDone = false;
     bool bRedraw = true;
@@ -1547,8 +1544,8 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
     bool bDrawOpt4 = true;
     uint8_t h1, h2, m1, m2;
     char msg[20];
-    int offset_hr = 25;
-    int offset_min = offset_hr+31;
+    byte offset_hr = 25;
+    byte offset_min = offset_hr+31;
     if ( bMetalHalide )
     {
         strcpy(msg, "Metal Halide Setup");
@@ -1743,7 +1740,7 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
             if ( sel == OPT1 )
             {
                 h1--;
-                if ( h1 == 255 )
+                if ( h1 > 23 )
                 {
                     h1 = 23;
                 }
@@ -1752,7 +1749,7 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
             else if ( sel == OPT2 )
             {
                 m1--;
-                if ( m1 == 255 )
+                if ( m1 > 59 )
                 {
                     m1 = 59;
                 }
@@ -1761,7 +1758,7 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
             else if ( sel == OPT3 )
             {
                 h2--;
-                if ( h2 == 255 )
+                if ( h2 > 23 )
                 {
                     h2 = 23;
                 }
@@ -1770,7 +1767,7 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
             else if ( sel == OPT4 )
             {
                 m2--;
-                if ( m2 == 255 )
+                if ( m2 > 59 )
                 {
                     m2 = 59;
                 }
@@ -1802,7 +1799,7 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
             bDrawOpt4 = true;
             // move left, if we are on opt1, wrap around to cancel
             sel--;
-            if ( sel < OPT1 )
+            if ( sel > CANCEL )
             {
                 sel = CANCEL;
             }
