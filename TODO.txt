@@ -24,8 +24,9 @@ TODO List (in no particular order)
 * Check on setup displays using bytes (uint8_t) and range checks with negative numbers.
 * Finish SetupLightsOptionsDisplay - get : between hours & minutes, align time properly on screen
 * Add ATO Timeout Clear for Low & High switches instead of 1
-* Improve DrawOption to limit the width of the clear box
 * Test wavemaker interval to have 0 equal always on
+* Get Joystick button press to work again (quit working after adding in updated DrawOption)
+  Revert back to beta 4 and save diffs to see what broke
 
 Completed Items
 ---------------
@@ -35,3 +36,4 @@ Completed Items
 * Implement SingleATO time limitation
 * Ability to load values from memory (on startup/change)
 * Have specific designation for Feeding, Screensaver, SaveParams Timer
+* Improve DrawOption to limit the width of the clear box
