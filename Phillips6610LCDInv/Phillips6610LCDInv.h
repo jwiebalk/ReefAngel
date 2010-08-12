@@ -27,7 +27,7 @@ void sendCMD(byte data);
 void sendData(byte data);
 
 
-void DrawOption(int Option, byte Selected, byte x, byte y, char *unit, char *subunit);
+void DrawOption(int Option, byte Selected, byte x, byte y, char *unit, char *subunit, byte maxdigits);
 void DrawCancel(byte Selected);
 void DrawOK(byte Selected);
 void DrawCalibrate(int i, byte x, byte y);

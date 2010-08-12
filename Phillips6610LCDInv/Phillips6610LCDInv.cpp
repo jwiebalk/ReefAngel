@@ -529,68 +529,78 @@ void Phillips6610LCDInv::lcd_put_pixel(byte color, byte x, byte y)
 
 
 
-void Phillips6610LCDInv::DrawOption(int Option, byte Selected, byte x, byte y, char *unit, char *subunit)
+void Phillips6610LCDInv::DrawOption(int Option, byte Selected, byte x, byte y, char *unit, char *subunit, byte maxdigits)
 {
     byte x1,x2=0,x3=0;
     char text[10]="";
     char temp[10]="";
-    byte bcolor, fcolor;
+    byte bcolor, fcolor, width;
+    byte offset[6] = {0, 6, 6, 12, 18, 24};
 
     itoa(Option,text,10);
-    if (Option>=10000)
+    if (Option >= 10000)
     {
-        x1 = x;
+        x1 = x+24;
     }
-    else if (Option>999)
-    {
-        x1 = x+6;
-    }
-    else if (Option>99)
-    {
-        x1 = x+12;
-    }
-    else if (Option<100 && Option>9)
+    else if (Option > 999)
     {
         x1 = x+18;
     }
-    else if (Option<10)
+    else if (Option > 99)
     {
-        x1 = x+24;
-        if (unit=="" && subunit=="")
+        x1 = x+12;
+    }
+    else if (Option < 100 && Option > 9)
+    {
+        x1 = x+6;
+    }
+    else if (Option < 10)
+    {
+        x1 = x;
+        if ( (strcmp(unit,"")==0) && (strcmp(subunit,"")==0) )
         {
             text[0]=0x30;
             itoa(Option,temp,10);
             strcat(text,temp);
-            x1 = x+18;
+            x1 = x+6;
             //      Option=10; //Just to offset the prefix "0" when # is < 10
         }
     }
-    x2=x1+12-(x1-x)+12;
-    if(strcmp(unit,"")!=0)
+    x2 = x1;
+    width = offset[maxdigits]+5;
+    if ( strcmp(unit,"") !=0 )
     {
-        x2+=8;
+        x2 += 8;
+        width += 8;
     }
-    if(strcmp(subunit,"")!=0)
+    if ( strcmp(subunit,"") !=0 )
     {
-        x3=x2;
-        x2=x2+5;
+        x3 = x2;
+        // if there is no unit, move the subunit over
+        if ( strcmp(unit,"") == 0 )
+        {
+            x3 += 5;
+        }
+        x2 += 5;
+        width += 5;
     }
-    bcolor=COLOR_WHITE;
-    fcolor=COLOR_BLACK;
-    lcd_clear(COLOR_WHITE, x-2, y-8, x2+4, y+15);
+    bcolor = COLOR_WHITE;
+    fcolor = COLOR_BLACK;
+    lcd_clear(COLOR_WHITE, x-1, y-8, x+width, y+15);
     if (Selected)
     {
         bcolor = COLOR_BLUE;
         fcolor = COLOR_WHITE;
-        lcd_draw_text(COLOR_BLACK,COLOR_WHITE, x1+((x2-x1-12)/2), y-8, " ^ ");
-        lcd_draw_text(COLOR_BLACK,COLOR_WHITE, x1+((x2-x1-12)/2), y+8, " ` ");
+        lcd_draw_text(COLOR_BLACK,COLOR_WHITE, x+((x2-x-12)/2), y-8, " ^ ");
+        lcd_draw_text(COLOR_BLACK,COLOR_WHITE, x+((x2-x-12)/2), y+8, " ` ");
     }
 
-    lcd_clear(bcolor,x1-2,y-2,x2+5,y+8);
-    lcd_draw_text(fcolor,bcolor,x1,y,text);
+    // should always print text at X and clear to X1
+    lcd_clear(bcolor,x-1,y-2,x2+5,y+8);
+    lcd_draw_text(fcolor,bcolor,x,y,text);
     lcd_draw_text(fcolor,bcolor,x3,y-5,subunit);
     lcd_draw_text(fcolor,bcolor,x2,y,unit);
-    if (subunit!="")
+    if ( strcmp(subunit,"") != 0 )
     {
         lcd_clear(COLOR_WHITE, x1-2, y-5, x2+6, y-3);
     }
