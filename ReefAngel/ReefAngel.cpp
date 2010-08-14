@@ -183,18 +183,17 @@ void ReefAngelClass::Init()
 	Relay.AllOff();
 	//EEPROM_writeAnything(PH_Max,900); // 750=PH10.0
 	//EEPROM_writeAnything(PH_Min,540); // 480=PH7.0
-//	EEPROM_readAnything(PH_Min,PHMin);
-//	EEPROM_readAnything(PH_Max,PHMax);
     PHMin = InternalMemory.PHMin_read();
     PHMax = InternalMemory.PHMax_read();
 	taddr = 0;
 	EEPROM_readAnything(T1Pointer,taddr);
 	if (taddr>120 || taddr<0) EEPROM_writeAnything(T1Pointer,t);
 
-//	Timer[0].SetInterval(900); // Default Feeding timer
-	Timer[0].SetInterval(InternalMemory.FeedingTimer_read());
-//	Timer[3].SetInterval(600); // set timer to x seconds - Timer 3 is used for sleep mode
-	Timer[0].SetInterval(InternalMemory.LCDTimer_read());
+// for some reason SetInternal from InternalMemory Reads right here cause joystick to stop working
+	Timer[0].SetInterval(900); // Default Feeding timer
+	//Timer[0].SetInterval(InternalMemory.FeedingTimer_read());
+	Timer[3].SetInterval(600); // set timer to x seconds - Timer 3 is used for sleep mode
+	//Timer[0].SetInterval(InternalMemory.LCDTimer_read());
 	Timer[3].Start();  // start timer
 	Timer[5].SetInterval(720);  // Store Params
 	Timer[5].ForceTrigger();
@@ -1232,8 +1231,8 @@ void ReefAngelClass::ProcessButtonPressTimeouts(byte smenu)
 
 // Setup Menu Screens
 // Setup Screens
-bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
-                       char* unit, char* subunit, char* title/*, byte maxdigits*/)
+bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax, byte maxdigits,
+                       char* unit, char* subunit, char* title)
 {
     // return true to save value stored in out in memory
     enum choices {
@@ -1256,7 +1255,7 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
             {
                 case OPT:
                 {
-                    LCD.DrawOption(v, 1, MENU_START_COL+35, MENU_START_ROW*5, unit, subunit/*, maxdigits*/);
+                    LCD.DrawOption(v, 1, MENU_START_COL+35, MENU_START_ROW*5, unit, subunit, maxdigits);
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(0);
@@ -1268,7 +1267,7 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
                 {
                     if ( bDrawButtons )
                     {
-                        LCD.DrawOption(v, 0, MENU_START_COL+35, MENU_START_ROW*5, unit, subunit/*, maxdigits*/);
+                        LCD.DrawOption(v, 0, MENU_START_COL+35, MENU_START_ROW*5, unit, subunit, maxdigits);
                         LCD.DrawOK(1);
                         LCD.DrawCancel(0);
                     }
@@ -1278,7 +1277,7 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
                 {
                     if ( bDrawButtons )
                     {
-                        LCD.DrawOption(v, 0, MENU_START_COL+35, MENU_START_ROW*5, unit, subunit/*, maxdigits*/);
+                        LCD.DrawOption(v, 0, MENU_START_COL+35, MENU_START_ROW*5, unit, subunit, maxdigits);
                         LCD.DrawOK(0);
                         LCD.DrawCancel(1);
                     }
@@ -1350,9 +1349,9 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax,
     return bSave;
 }
 
-bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangemax,
+bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangemax, byte maxdigits,
                        char* unit, char* subunit, char* title,
-                       char* prefix1, char* prefix2/*, byte maxdigits*/)
+                       char* prefix1, char* prefix2)
 {
     // return true to save value stored in out in memory
     enum choices {
@@ -1366,8 +1365,6 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
     bool bDone = false;
     bool bRedraw = true;
     bool bDrawButtons = true;
-    bool bDrawOpt1 = true;
-    bool bDrawOpt2 = true;
     byte offset = 50;
     ClearScreen(COLOR_WHITE);
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, title);
@@ -1382,10 +1379,8 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
             {
                 case OPT1:
                     {
-                        if ( bDrawOpt2 )
-                            LCD.DrawOption(y, 0, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit/*, maxdigits*/);
-                        if ( bDrawOpt1 )
-                            LCD.DrawOption(v, 1, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit/*, maxdigits*/);
+                        LCD.DrawOption(y, 0, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit, maxdigits);
+                        LCD.DrawOption(v, 1, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit, maxdigits);
                         if ( bDrawButtons )
                         {
                             LCD.DrawOK(0);
@@ -1395,10 +1390,8 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
                     }
                 case OPT2:
                     {
-                        if ( bDrawOpt1 )
-                            LCD.DrawOption(v, 0, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit/*, maxdigits*/);
-                        if ( bDrawOpt2 )
-                            LCD.DrawOption(y, 1, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit/*, maxdigits*/);
+                        LCD.DrawOption(v, 0, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit, maxdigits);
+                        LCD.DrawOption(y, 1, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit, maxdigits);
                         if ( bDrawButtons )
                         {
                             LCD.DrawOK(0);
@@ -1410,8 +1403,8 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
                     {
                         if ( bDrawButtons )
                         {
-                            LCD.DrawOption(v, 0, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit/*, maxdigits*/);
-                            LCD.DrawOption(y, 0, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit/*, maxdigits*/);
+                            LCD.DrawOption(v, 0, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit, maxdigits);
+                            LCD.DrawOption(y, 0, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit, maxdigits);
                             LCD.DrawOK(1);
                             LCD.DrawCancel(0);
                         }
@@ -1421,8 +1414,8 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
                     {
                         if ( bDrawButtons )
                         {
-                            LCD.DrawOption(v, 0, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit/*, maxdigits*/);
-                            LCD.DrawOption(y, 0, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit/*, maxdigits*/);
+                            LCD.DrawOption(v, 0, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit, maxdigits);
+                            LCD.DrawOption(y, 0, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit, maxdigits);
                             LCD.DrawOK(0);
                             LCD.DrawCancel(1);
                         }
@@ -1431,8 +1424,6 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
             }
             bRedraw = false;
             bDrawButtons = false;
-            bDrawOpt1 = false;
-            bDrawOpt2 = false;
         } // if bRedraw
         if ( Joystick.IsUp() )
         {
@@ -1444,7 +1435,6 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
                 {
                     v = rangemin;
                 }
-                bDrawOpt1 = true;
             }
             else if ( sel == OPT2 )
             {
@@ -1453,7 +1443,6 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
                 {
                     y = rangemin;
                 }
-                bDrawOpt2 = true;
             }
         }
         if ( Joystick.IsDown() )
@@ -1466,7 +1455,6 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
                 {
                     v = rangemax;
                 }
-                bDrawOpt1 = true;
             }
             else if ( sel == OPT2 )
             {
@@ -1475,15 +1463,12 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
                 {
                     y = rangemax;
                 }
-                bDrawOpt2 = true;
             }
         }
         if ( Joystick.IsRight() )
         {
             bRedraw = true;
             bDrawButtons = true;  // only redraw the buttons if we are moving right or left
-            bDrawOpt1 = true;
-            bDrawOpt2 = true;
             // move right, if we are on cancel, wrap around to opt1
             sel++;
             if ( sel > CANCEL )
@@ -1495,8 +1480,6 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
         {
             bRedraw = true;
             bDrawButtons = true;
-            bDrawOpt1 = true;
-            bDrawOpt2 = true;
             // move left, if we are on opt1, wrap around to cancel
             sel--;
             if ( sel > CANCEL )
@@ -1905,7 +1888,7 @@ void ReefAngelClass::SetupCalibratePH()
 void ReefAngelClass::SetupMHDelayDisplay()
 {
     int v = InternalMemory.MHDelay_read();
-    bool bSave = SetupSingleOption(v, 0, 255, "m", "", "Setup MH Delay");
+    bool bSave = SetupSingleOption(v, 0, 255, 3, "m", "", "Setup MH Delay");
     if ( bSave )
     {
         InternalMemory.MHDelay_write((uint8_t)v);
@@ -1915,7 +1898,7 @@ void ReefAngelClass::SetupMHDelayDisplay()
 void ReefAngelClass::SetupFeedingTimeoutDisplay()
 {
     int v = InternalMemory.FeedingTimer_read();
-    bool bSave = SetupSingleOption(v, 0, 3600, "s", "", "Feeding Timer");
+    bool bSave = SetupSingleOption(v, 0, 3600, 4, "s", "", "Feeding Timer");
     if ( bSave )
     {
         InternalMemory.FeedingTimer_write(v);
@@ -1925,7 +1908,7 @@ void ReefAngelClass::SetupFeedingTimeoutDisplay()
 void ReefAngelClass::SetupLCDTimeoutDisplay()
 {
     int v = InternalMemory.LCDTimer_read();
-    bool bSave = SetupSingleOption(v, 0, 3600, "s", "", "Screen Timeout");
+    bool bSave = SetupSingleOption(v, 0, 3600, 4, "s", "", "Screen Timeout");
     if ( bSave )
     {
         InternalMemory.LCDTimer_write(v);
@@ -1935,7 +1918,7 @@ void ReefAngelClass::SetupLCDTimeoutDisplay()
 void ReefAngelClass::SetupATOTimeoutDisplay()
 {
     int v = InternalMemory.ATOTimeout_read();
-    bool bSave = SetupSingleOption(v, 0, 255, "s", "", "ATO Timeout");
+    bool bSave = SetupSingleOption(v, 0, 255, 3, "s", "", "ATO Timeout");
     if ( bSave )
     {
         InternalMemory.ATOTimeout_write((uint8_t)v);
@@ -1945,7 +1928,7 @@ void ReefAngelClass::SetupATOTimeoutDisplay()
 void ReefAngelClass::SetupOverheatDisplay()
 {
     int v = InternalMemory.OverheatTemp_read();
-    bool bSave = SetupSingleOption(v, 800, 2000, "F", ".", "Setup Overheat");
+    bool bSave = SetupSingleOption(v, 800, 2000, 4, "F", ".", "Setup Overheat");
     if ( bSave )
     {
         InternalMemory.OverheatTemp_write(v);
@@ -1956,7 +1939,7 @@ void ReefAngelClass::SetupWavemakersDisplay()
 {
     int v = InternalMemory.WM1Timer_read();
     int y = InternalMemory.WM2Timer_read();
-    bool bSave = SetupDoubleOption(v, y, 0, 21600, "s", "", "Setup Wavemakers",
+    bool bSave = SetupDoubleOption(v, y, 0, 21600, 5, "s", "", "Setup Wavemakers",
                                    "WM1:", "WM2:");
     if ( bSave )
     {
@@ -1969,7 +1952,7 @@ void ReefAngelClass::SetupHeaterDisplay()
 {
     int v = InternalMemory.HeaterTempOn_read();
     int y = InternalMemory.HeaterTempOff_read();
-    bool bSave = SetupDoubleOption(v, y, 700, 900, "F", ".", "Setup Heater",
+    bool bSave = SetupDoubleOption(v, y, 700, 900, 3, "F", ".", "Setup Heater",
                                    "On @", "Off @");
     if ( bSave )
     {
@@ -1982,7 +1965,7 @@ void ReefAngelClass::SetupChillerDisplay()
 {
     int v = InternalMemory.ChillerTempOn_read();
     int y = InternalMemory.ChillerTempOff_read();
-    bool bSave = SetupDoubleOption(v, y, 700, 900, "F", ".", "Setup Chiller",
+    bool bSave = SetupDoubleOption(v, y, 700, 900, 3, "F", ".", "Setup Chiller",
                                    "On @", "Off @");
     if ( bSave )
     {
@@ -1995,7 +1978,7 @@ void ReefAngelClass::SetupLEDPWMDisplay()
 {
     int v = InternalMemory.LEDPWMActinic_read();
     int y = InternalMemory.LEDPWMDaylight_read();
-    bool bSave = SetupDoubleOption(v, y, 0, 100, "%", "", "Setup LED",
+    bool bSave = SetupDoubleOption(v, y, 0, 100, 3, "%", "", "Setup LED",
                                    "Actinic:", "Daylight:");
     if ( bSave )
     {

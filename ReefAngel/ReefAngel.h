@@ -169,11 +169,11 @@ public:
     void SetupHeaterDisplay();  // double
     void SetupChillerDisplay();  // double
     void SetupLEDPWMDisplay();  // double
-    bool SetupSingleOption(int &v, int rangemin, int rangemax,
-                           char* unit, char* subunit, char* title/*, byte maxdigits*/);
-    bool SetupDoubleOption(int &v, int &y, int rangemin, int rangemax,
+    bool SetupSingleOption(int &v, int rangemin, int rangemax, byte maxdigits,
+                           char* unit, char* subunit, char* title);
+    bool SetupDoubleOption(int &v, int &y, int rangemin, int rangemax, byte maxdigits,
                            char* unit, char* subunit, char* title,
-                           char* prefix1, char* prefix2/*, byte maxdigits*/);
+                           char* prefix1, char* prefix2);
     void SetupLightsOptionDisplay(bool bMetalHalide);
     void SetupCalibratePH();
 
