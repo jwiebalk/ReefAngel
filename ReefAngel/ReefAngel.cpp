@@ -1521,8 +1521,8 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
     bool bDrawButtons = true;
     uint8_t h1, h2, m1, m2;
     char msg[20];
-    byte offset_hr = 25;
-    byte offset_min = offset_hr+31;
+    byte offset_hr = 45;
+    byte offset_min = offset_hr+20;
     if ( bMetalHalide )
     {
         strcpy(msg, "Metal Halide Setup");
@@ -1544,9 +1544,9 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, msg);
     // prefixes, draw in ':' between options
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*5, "On:");
-    //LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL+offset_hr, MENU_START_ROW*5, ":");
+    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL+offset_hr+13, MENU_START_ROW*5, ":");
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*7, "Off:");
-    //LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL+offset_hr, MENU_START_ROW*7, ":");
+    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL+offset_hr+13, MENU_START_ROW*7, ":");
     do
     {
         if ( bRedraw )
@@ -1557,10 +1557,8 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                 {
                     // draw the second line items before the first line items
                     // so the UP & DOWN arrows show properly
-                    // Options 3 & 4 - Off Time
                     LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
                     LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
-                    // Options 1 & 2 - On Time
                     LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
                     LCD.DrawOption(h1, 1, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
                     if ( bDrawButtons )
@@ -1574,10 +1572,8 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                 {
                     // draw the second line items before the first line items
                     // so the UP & DOWN arrows show properly
-                    // Options 3 & 4 - Off Time
                     LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
                     LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
-                    // Options 1 & 2 - On Time
                     LCD.DrawOption(m1, 1, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
                     LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
                     if ( bDrawButtons )
@@ -1591,10 +1587,8 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                 {
                     // draw the first line items before the second line items
                     // so the UP & DOWN arrows show properly
-                    // Options 1 & 2 - On Time
                     LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
                     LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
-                    // Options 3 & 4 - Off Time
                     LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
                     LCD.DrawOption(h2, 1, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
                     if ( bDrawButtons )
@@ -1608,10 +1602,8 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                 {
                     // draw the first line items before the second line items
                     // so the UP & DOWN arrows show properly
-                    // Options 1 & 2 - On Time
                     LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
                     LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
-                    // Options 3 & 4 - Off Time
                     LCD.DrawOption(m2, 1, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
                     LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
                     if ( bDrawButtons )
