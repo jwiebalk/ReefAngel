@@ -939,7 +939,6 @@ void ReefAngelClass::ProcessButtonPress(byte smenu)
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             DisplayedMenu = DEFAULT_MENU;
             showmenu = false;
-            //SPreviousMenu.Clear();
             ClearScreen(COLOR_WHITE);
             bResetMenuTimeout = false;
             // we are exiting the menu, so draw the graph
@@ -1521,10 +1520,6 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
     bool bDone = false;
     bool bRedraw = true;
     bool bDrawButtons = true;
-    bool bDrawOpt1 = true;
-    bool bDrawOpt2 = true;
-    bool bDrawOpt3 = true;
-    bool bDrawOpt4 = true;
     uint8_t h1, h2, m1, m2;
     char msg[20];
     byte offset_hr = 25;
@@ -1564,14 +1559,10 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                     // draw the second line items before the first line items
                     // so the UP & DOWN arrows show properly
                     // Options 3 & 4 - Off Time
-                    if ( bDrawOpt4 )
                         LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
-                    if ( bDrawOpt3 )
                         LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
                     // Options 1 & 2 - On Time
-                    if ( bDrawOpt2 )
                         LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
-                    if ( bDrawOpt1 )
                         LCD.DrawOption(h1, 1, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
                     if ( bDrawButtons )
                     {
@@ -1585,14 +1576,10 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                     // draw the second line items before the first line items
                     // so the UP & DOWN arrows show properly
                     // Options 3 & 4 - Off Time
-                    if ( bDrawOpt4 )
                         LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
-                    if ( bDrawOpt3 )
                         LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
                     // Options 1 & 2 - On Time
-                    if ( bDrawOpt2 )
                         LCD.DrawOption(m1, 1, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
-                    if ( bDrawOpt1 )
                         LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
                     if ( bDrawButtons )
                     {
@@ -1606,14 +1593,10 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                     // draw the first line items before the second line items
                     // so the UP & DOWN arrows show properly
                     // Options 1 & 2 - On Time
-                    if ( bDrawOpt2 )
                         LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
-                    if ( bDrawOpt1 )
                         LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
                     // Options 3 & 4 - Off Time
-                    if ( bDrawOpt4 )
                         LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
-                    if ( bDrawOpt3 )
                         LCD.DrawOption(h2, 1, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
                     if ( bDrawButtons )
                     {
@@ -1627,14 +1610,10 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                     // draw the first line items before the second line items
                     // so the UP & DOWN arrows show properly
                     // Options 1 & 2 - On Time
-                    if ( bDrawOpt2 )
                         LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
-                    if ( bDrawOpt1 )
                         LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
                     // Options 3 & 4 - Off Time
-                    if ( bDrawOpt4 )
                         LCD.DrawOption(m2, 1, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
-                    if ( bDrawOpt3 )
                         LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
                     if ( bDrawButtons )
                     {
@@ -1672,10 +1651,6 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
             }
             bRedraw = false;
             bDrawButtons = false;
-            bDrawOpt1 = false;
-            bDrawOpt2 = false;
-            bDrawOpt3 = false;
-            bDrawOpt4 = false;
         }
         if ( Joystick.IsUp() )
         {
@@ -1687,7 +1662,6 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                 {
                     h1 = 0;
                 }
-                bDrawOpt1 = true;
             }
             else if ( sel == OPT2 )
             {
@@ -1696,7 +1670,6 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                 {
                     m1 = 0;
                 }
-                bDrawOpt2 = true;
             }
             else if ( sel == OPT3 )
             {
@@ -1705,7 +1678,6 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                 {
                     h2 = 0;
                 }
-                bDrawOpt3 = true;
             }
             else if ( sel == OPT4 )
             {
@@ -1714,7 +1686,6 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                 {
                     m2 = 0;
                 }
-                bDrawOpt4 = true;
             }
         }
         if ( Joystick.IsDown() )
@@ -1727,7 +1698,6 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                 {
                     h1 = 23;
                 }
-                bDrawOpt1 = true;
             }
             else if ( sel == OPT2 )
             {
@@ -1736,7 +1706,6 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                 {
                     m1 = 59;
                 }
-                bDrawOpt2 = true;
             }
             else if ( sel == OPT3 )
             {
@@ -1745,7 +1714,6 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                 {
                     h2 = 23;
                 }
-                bDrawOpt3 = true;
             }
             else if ( sel == OPT4 )
             {
@@ -1754,17 +1722,12 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                 {
                     m2 = 59;
                 }
-                bDrawOpt4 = true;
             }
         }
         if ( Joystick.IsRight() )
         {
             bRedraw = true;
             bDrawButtons = true;  // only redraw the buttons if we are moving right or left
-            bDrawOpt1 = true;
-            bDrawOpt2 = true;
-            bDrawOpt3 = true;
-            bDrawOpt4 = true;
             // move right, if we are on cancel, wrap around to opt1
             sel++;
             if ( sel > CANCEL )
@@ -1776,10 +1739,6 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
         {
             bRedraw = true;
             bDrawButtons = true;
-            bDrawOpt1 = true;
-            bDrawOpt2 = true;
-            bDrawOpt3 = true;
-            bDrawOpt4 = true;
             // move left, if we are on opt1, wrap around to cancel
             sel--;
             if ( sel > CANCEL )

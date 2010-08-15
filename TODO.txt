@@ -25,8 +25,6 @@ TODO List (in no particular order)
 * Finish SetupLightsOptionsDisplay - get : between hours & minutes, align time properly on screen
 * Add ATO Timeout Clear for Low & High switches instead of 1
 * Test wavemaker interval to have 0 equal always on
-* Get Joystick button press to work again (quit working after adding in updated DrawOption)
-  Revert back to beta 4 and save diffs to see what broke
 
 Completed Items
 ---------------
