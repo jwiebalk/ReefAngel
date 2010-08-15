@@ -86,6 +86,7 @@ static char m_pushback[32];
 static char m_pushbackDepth=0;
 static byte reqtype=0;
 static unsigned long timeout;
+static bool conn=false;
 #endif
 
 
@@ -94,9 +95,7 @@ template <class T> int EEPROM_readAnything(int ee, T& value);
 
 // TODO ReefAngel - check where variables are used
 static unsigned long ButtonDebounce;
-static byte oldtick;
 static unsigned long RAStart;
-static bool conn=false;
 
 
 class ReefAngelClass

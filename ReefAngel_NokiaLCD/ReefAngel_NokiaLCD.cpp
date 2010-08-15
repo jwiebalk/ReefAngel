@@ -28,11 +28,6 @@
 #define SDA 5         // Digital 5 --> SDATA
 #define RESET 6       // Digital 6 --> #RESET
 
-// already defined in Globals.h
-//#define actinicPWMPin       9
-//#define daylightPWMPin      10
-
-
 // Phillips PCF8833 Command Set
 #define NOP      0x00 	// nop
 #define SWRESET  0x01 	// software reset
@@ -83,23 +78,6 @@
 #define RDID1    0xDA 	// read ID1
 #define RDID2    0xDB 	// read ID2
 #define RDID3    0xDC 	// read ID3
-
-// Moved to Globals.h for shared code
-////a few basic colors
-//#define RED			0xE0
-//#define GREEN			0x1C
-//#define BLUE			0x03
-//#define YELLOW			0xFC
-//#define MAGENTA			0xE3
-//#define CYAN			0x1F
-//#define BLACK			0x00
-//#define WHITE			0xFF
-//#define WaterTempColor      0xE0
-//#define LightsTempColor     0xCC
-//#define AmbientTempColor    0xAA
-//#define PHColor             0x34
-//#define DPColor             0x88
-//#define APColor             0x49
 
 #define cbi(reg, bit) (reg&=~(1<<bit))
 #define sbi(reg, bit) (reg|= (1<<bit))
@@ -655,7 +633,6 @@ void ReefAngel_NokiaLCD::DrawOption(int Option, byte Selected, byte x, byte y, c
         }
     }
     x2 = x1;
-    //x2 = x1+12-(x1-x)+12;
     width = offset[maxdigits]+5;
     if ( strcmp(unit,"") !=0 )
     {
@@ -676,22 +653,17 @@ void ReefAngel_NokiaLCD::DrawOption(int Option, byte Selected, byte x, byte y, c
     bcolor = COLOR_WHITE;
     fcolor = COLOR_BLACK;
     Clear(COLOR_WHITE, x-1, y-8, x+width, y+15);
-    //Clear(COLOR_WHITE, x-2, y-8, x2+4, y+15);
     if (Selected)
     {
         bcolor = COLOR_BLUE;
         fcolor = COLOR_WHITE;
         DrawText(COLOR_BLACK,COLOR_WHITE, x+((x2-x-12)/2), y-8, " ^ ");
         DrawText(COLOR_BLACK,COLOR_WHITE, x+((x2-x-12)/2), y+8, " ` ");
-//        DrawText(COLOR_BLACK,COLOR_WHITE, x1+((x2-x1-12)/2), y-8, " ^ ");
-//        DrawText(COLOR_BLACK,COLOR_WHITE, x1+((x2-x1-12)/2), y+8, " ` ");
     }
 
     // should always print text at X and clear to X1
     Clear(bcolor,x-1,y-2,x2+5,y+8);
-    //Clear(bcolor,x1-2,y-2,x2+5,y+8);
     DrawText(fcolor,bcolor,x,y,text);
-    //DrawText(fcolor,bcolor,x1,y,text);
     DrawText(fcolor,bcolor,x3,y-5,subunit);
     DrawText(fcolor,bcolor,x2,y,unit);
     if ( strcmp(subunit,"") != 0 )

@@ -156,7 +156,6 @@ ReefAngelClass::ReefAngelClass()
 {
 	PCMSK0 |= 32;
 	PCICR |= 1;
-	oldtick=0;
 
 	// Initialize some variables
 	TempUnit = DEGREE_F;
@@ -164,7 +163,7 @@ ReefAngelClass::ReefAngelClass()
 
 void ReefAngelClass::Init()
 {
-	byte taddr;
+	byte taddr = 0;
 	byte t = 0;
 
 	Wire.begin();
@@ -172,7 +171,7 @@ void ReefAngelClass::Init()
 	pinMode(Piezo, OUTPUT);
 	digitalWrite(lowATOPin,HIGH); //pull up resistor on lowATOPin
 	digitalWrite(highATOPin,HIGH); //pull up resistor on highATOPin
-	LCD.Init();  // NOTE consider removing LCD Init because it gets handled in constructor
+	LCD.Init();
 	Joystick.Init();
 	TempSensor.Init();
 	setSyncProvider(RTC.get);   // the function to get the time from the RTC
@@ -185,20 +184,20 @@ void ReefAngelClass::Init()
 	//EEPROM_writeAnything(PH_Min,540); // 480=PH7.0
     PHMin = InternalMemory.PHMin_read();
     PHMax = InternalMemory.PHMax_read();
-	taddr = 0;
 	EEPROM_readAnything(T1Pointer,taddr);
-	if (taddr>120 || taddr<0) EEPROM_writeAnything(T1Pointer,t);
+	// since byte can never be negative, taddr<0 is a pointless check
+	//if (taddr>120 || taddr<0) EEPROM_writeAnything(T1Pointer,t);
+	if (taddr>120) EEPROM_writeAnything(T1Pointer,t);
 
-// for some reason SetInternal from InternalMemory Reads right here cause joystick to stop working
-	Timer[0].SetInterval(900); // Default Feeding timer
-	//Timer[0].SetInterval(InternalMemory.FeedingTimer_read());
-	Timer[3].SetInterval(600); // set timer to x seconds - Timer 3 is used for sleep mode
-	//Timer[0].SetInterval(InternalMemory.LCDTimer_read());
+	Timer[0].SetInterval(InternalMemory.FeedingTimer_read());  // Default Feeding timer
+	Timer[3].SetInterval(InternalMemory.LCDTimer_read());  // LCD Sleep Mode timer
 	Timer[3].Start();  // start timer
 	Timer[5].SetInterval(720);  // Store Params
 	Timer[5].ForceTrigger();
 
+#ifdef wifi
 	conn = false;
+#endif  // wifi
 
     // Initialize the Nested Menus
     InitMenus();
@@ -206,7 +205,6 @@ void ReefAngelClass::Init()
 
 void ReefAngelClass::Refresh()
 {
-	int tRead;
 	now();
 
 #ifdef wifi
@@ -300,7 +298,7 @@ void ReefAngelClass::Refresh()
     if (conn && millis()-timeout>1000) conn=false;
   }
 
-#endif
+#endif  // wifi
 
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	LCD.Clear(COLOR_WHITE,0,0,1,1);
@@ -544,12 +542,14 @@ void ReefAngelClass::ShowInterface()
 {
     Refresh();
 
+#ifdef wifi
     if ( conn )
     {
         // do something special when there is a connection
     }
     else
     {
+#endif  // wifi
         // are we displaying the menu or not??
         if ( showmenu )
         {
@@ -615,7 +615,6 @@ void ReefAngelClass::ShowInterface()
                 // process timers
                 if ( Timer[5].IsTriggered() )
                 {
-                    //SaveParamsToMemory();
                     int a = EEPROM.read(T1Pointer);
                     int CurTemp;
 
@@ -682,20 +681,21 @@ void ReefAngelClass::ShowInterface()
                 }
             }  // if DisplayedMenu == DEFAULT_MENU
         }  // if showmenu
+#ifdef wifi
     }  // if conn
+#endif  // wifi
 
 }
 
 void ReefAngelClass::DisplayMenu(byte MenuNum)
 {
     // redrawmenu should only get set from within this function when we move the joystick or press the button
-    int qty = menuqtysptr[MenuNum];
+    byte qty = menuqtysptr[MenuNum];
     int ptr = menusptr[MenuNum];
 
     if ( Joystick.IsUp() )
     {
         // process UP press
-        //if ( --SelectedMenuItem == DEFAULT_MENU )
         if ( (--SelectedMenuItem) > qty )
         {
             // we're moving up and we hit the top of the list
@@ -746,10 +746,9 @@ void ReefAngelClass::DisplayMenu(byte MenuNum)
     if ( ! redrawmenu )
         return;
 
-    int i;
+    byte i;
     byte bcolor, fcolor;
     char buffer[22];
-    int x2, y2;
     for ( i = 0; i <= qty; i++ )
     {
         bcolor = COLOR_WHITE;
@@ -1559,11 +1558,11 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                     // draw the second line items before the first line items
                     // so the UP & DOWN arrows show properly
                     // Options 3 & 4 - Off Time
-                        LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
-                        LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
                     // Options 1 & 2 - On Time
-                        LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
-                        LCD.DrawOption(h1, 1, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
+                    LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
+                    LCD.DrawOption(h1, 1, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(0);
@@ -1576,11 +1575,11 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                     // draw the second line items before the first line items
                     // so the UP & DOWN arrows show properly
                     // Options 3 & 4 - Off Time
-                        LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
-                        LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
                     // Options 1 & 2 - On Time
-                        LCD.DrawOption(m1, 1, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
-                        LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
+                    LCD.DrawOption(m1, 1, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
+                    LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(0);
@@ -1593,11 +1592,11 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                     // draw the first line items before the second line items
                     // so the UP & DOWN arrows show properly
                     // Options 1 & 2 - On Time
-                        LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
-                        LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
+                    LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
+                    LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
                     // Options 3 & 4 - Off Time
-                        LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
-                        LCD.DrawOption(h2, 1, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(h2, 1, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(0);
@@ -1610,11 +1609,11 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                     // draw the first line items before the second line items
                     // so the UP & DOWN arrows show properly
                     // Options 1 & 2 - On Time
-                        LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
-                        LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
+                    LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "");
+                    LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
                     // Options 3 & 4 - Off Time
-                        LCD.DrawOption(m2, 1, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
-                        LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(m2, 1, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(0);
@@ -1786,7 +1785,8 @@ void ReefAngelClass::SetupCalibratePH()
     bool bDone = false;
     bool bDrawButtons = true;
     int iTPHMin = 1024, iTPHMax = 0;
-    int iP = 0, offset = 65;
+    int iP = 0;
+    byte offset = 65;
     // draw labels
     ClearScreen(COLOR_WHITE);
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, "Calibrate PH");
@@ -1823,7 +1823,7 @@ void ReefAngelClass::SetupCalibratePH()
         if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
         {
             // toggle the selection
-            bOKSel = ! bOKSel;
+            bOKSel = !bOKSel;
             bDrawButtons = true;
         }
         if ( Joystick.IsButtonPressed() )
@@ -1898,8 +1898,7 @@ void ReefAngelClass::SetupWavemakersDisplay()
 {
     int v = InternalMemory.WM1Timer_read();
     int y = InternalMemory.WM2Timer_read();
-    bool bSave = SetupDoubleOption(v, y, 0, 21600, 5, "s", "", "Setup Wavemakers",
-                                   "WM1:", "WM2:");
+    bool bSave = SetupDoubleOption(v, y, 0, 21600, 5, "s", "", "Setup Wavemakers", "WM1:", "WM2:");
     if ( bSave )
     {
         InternalMemory.WM1Timer_write(v);
@@ -1911,8 +1910,7 @@ void ReefAngelClass::SetupHeaterDisplay()
 {
     int v = InternalMemory.HeaterTempOn_read();
     int y = InternalMemory.HeaterTempOff_read();
-    bool bSave = SetupDoubleOption(v, y, 700, 900, 3, "F", ".", "Setup Heater",
-                                   "On @", "Off @");
+    bool bSave = SetupDoubleOption(v, y, 700, 900, 3, "F", ".", "Setup Heater", "On @", "Off @");
     if ( bSave )
     {
         InternalMemory.HeaterTempOn_write(v);
@@ -1924,8 +1922,7 @@ void ReefAngelClass::SetupChillerDisplay()
 {
     int v = InternalMemory.ChillerTempOn_read();
     int y = InternalMemory.ChillerTempOff_read();
-    bool bSave = SetupDoubleOption(v, y, 700, 900, 3, "F", ".", "Setup Chiller",
-                                   "On @", "Off @");
+    bool bSave = SetupDoubleOption(v, y, 700, 900, 3, "F", ".", "Setup Chiller", "On @", "Off @");
     if ( bSave )
     {
         InternalMemory.ChillerTempOn_write(v);
@@ -1937,8 +1934,7 @@ void ReefAngelClass::SetupLEDPWMDisplay()
 {
     int v = InternalMemory.LEDPWMActinic_read();
     int y = InternalMemory.LEDPWMDaylight_read();
-    bool bSave = SetupDoubleOption(v, y, 0, 100, 3, "%", "", "Setup LED",
-                                   "Actinic:", "Daylight:");
+    bool bSave = SetupDoubleOption(v, y, 0, 100, 3, "%", "", "Setup LED", "Actinic:", "Daylight:");
     if ( bSave )
     {
         InternalMemory.LEDPWMActinic_write((uint8_t)v);
