@@ -21,8 +21,6 @@ TODO List (in no particular order)
 * Have sanity check for reading/writing values to memory (ensure value is within range)
 * Have default values programmed in for variables
 * Ability to have dosing pumps repeat every X seconds/hours instead of having a set time.  Pump could run ever 30minutes, 1hour, etc.
-* Check on setup displays using bytes (uint8_t) and range checks with negative numbers.
-* Finish SetupLightsOptionsDisplay - get : between hours & minutes, align time properly on screen
 * Add ATO Timeout Clear for Low & High switches instead of 1
 * Test wavemaker interval to have 0 equal always on
 
@@ -35,3 +33,5 @@ Completed Items
 * Ability to load values from memory (on startup/change)
 * Have specific designation for Feeding, Screensaver, SaveParams Timer
 * Improve DrawOption to limit the width of the clear box
+* Finish SetupLightsOptionsDisplay - get : between hours & minutes, align time properly on screen
+* Check on setup displays using bytes (uint8_t) and range checks with negative numbers.
