@@ -33,6 +33,23 @@ int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute)
 	return (ScheduleHour*60) + ScheduleMinute;
 }
 
+bool IsLeapYear(int year)
+{
+    if (year % 4 != 0)
+    {
+        return false;
+    }
+    else if (year % 400 == 0)
+    {
+        return true;
+    }
+    else if (year % 100 == 0)
+    {
+        return false;
+    }
+    return true;
+}
+
 // for pure virtual functions
 void __cxa_pure_virtual(void){};
 // other fixes

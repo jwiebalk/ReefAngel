@@ -233,6 +233,8 @@ extern OneWire ds;  // Defined in TempSensor.cpp, used for TempSensorClass
 // globally useable functions
 byte intlength(int intin);
 int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute);
+bool IsLeapYear(int year);
+
 // for virtual functions
 extern "C" void __cxa_pure_virtual(void);
 // other fixes
