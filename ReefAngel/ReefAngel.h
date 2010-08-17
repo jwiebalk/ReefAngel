@@ -19,6 +19,7 @@
 
 #define ReefAngel_Version "0.8.5 beta 4"
 
+//#define DisplayImages  // do we display the graphics for feeding or water change mode
 //#define wifi
 #include <EEPROM.h>
 #include <ReefAngel_EEPROM.h>  // NOTE read/write internal memory
@@ -146,28 +147,19 @@ public:
     void InitMenus();
     void LoadAllMenus();
     void ShowInterface();
-    void DisplayMenu(byte MenuNum);
-    void DisplayMenuHeading(byte MenuNum);
+    void DisplayMenu();
+    void DisplayMenuHeading();
     void DisplayMenuEntry(char *text);
     void FeedingMode();
     void WaterChangeMode();
-    void ProcessButtonPress(byte smenu);
-    void ProcessButtonPressMain(byte smenu);
-    void ProcessButtonPressSetup(byte smenu);
-    void ProcessButtonPressLights(byte smenu);
-    void ProcessButtonPressTemps(byte smenu);
-    void ProcessButtonPressTimeouts(byte smenu);
+    void ProcessButtonPress();
+    void ProcessButtonPressMain();
+    void ProcessButtonPressSetup();
+    void ProcessButtonPressLights();
+    void ProcessButtonPressTemps();
+    void ProcessButtonPressTimeouts();
 
     // NOTE Setup Screens
-    void SetupOverheatDisplay();  // single
-    void SetupMHDelayDisplay();  // single
-    void SetupFeedingTimeoutDisplay();  // single
-    void SetupLCDTimeoutDisplay();  // single
-    void SetupATOTimeoutDisplay();  // single
-    void SetupWavemakersDisplay();  // double
-    void SetupHeaterDisplay();  // double
-    void SetupChillerDisplay();  // double
-    void SetupLEDPWMDisplay();  // double
     bool SetupSingleOption(int &v, int rangemin, int rangemax, byte maxdigits,
                            char* unit, char* subunit, char* title);
     bool SetupDoubleOption(int &v, int &y, int rangemin, int rangemax, byte maxdigits,
@@ -175,6 +167,7 @@ public:
                            char* prefix1, char* prefix2);
     void SetupLightsOptionDisplay(bool bMetalHalide);
     void SetupCalibratePH();
+    void SetupDateTime();
 
 private:
 	byte TempUnit;

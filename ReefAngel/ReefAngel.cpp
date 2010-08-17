@@ -553,8 +553,8 @@ void ReefAngelClass::ShowInterface()
         // are we displaying the menu or not??
         if ( showmenu )
         {
-            DisplayMenuHeading(DisplayedMenu);
-            DisplayMenu(DisplayedMenu);
+            DisplayMenuHeading();
+            DisplayMenu();
         }
         else
         {
@@ -687,11 +687,11 @@ void ReefAngelClass::ShowInterface()
 
 }
 
-void ReefAngelClass::DisplayMenu(byte MenuNum)
+void ReefAngelClass::DisplayMenu()
 {
     // redrawmenu should only get set from within this function when we move the joystick or press the button
-    byte qty = menuqtysptr[MenuNum];
-    int ptr = menusptr[MenuNum];
+    byte qty = menuqtysptr[DisplayedMenu];
+    int ptr = menusptr[DisplayedMenu];
 
     if ( Joystick.IsUp() )
     {
@@ -736,7 +736,7 @@ void ReefAngelClass::DisplayMenu(byte MenuNum)
     if ( Joystick.IsButtonPressed() )
     {
         // button gets pressed, so we need to handle the button press
-        ProcessButtonPress(SelectedMenuItem);
+        ProcessButtonPress();
         redrawmenu = true;
         // Don't finish processing the rest of the menu
         return;
@@ -760,7 +760,7 @@ void ReefAngelClass::DisplayMenu(byte MenuNum)
         else
         {
             // the last item in the list is either Exit or Prev Menu
-            if ( MenuNum == MainMenu )
+            if ( DisplayedMenu == MainMenu )
             {
                 strcpy(buffer, "Exit");
             }
@@ -787,7 +787,7 @@ void ReefAngelClass::DisplayMenu(byte MenuNum)
     redrawmenu = false;
 }
 
-void ReefAngelClass::DisplayMenuHeading(byte MenuNum)
+void ReefAngelClass::DisplayMenuHeading()
 {
     // NOTE do we redraw the menu heading or not?  use same logic as with the menu
     if ( ! redrawmenu )
@@ -795,7 +795,7 @@ void ReefAngelClass::DisplayMenuHeading(byte MenuNum)
 
     char buffer[22];
 
-    switch ( MenuNum )
+    switch ( DisplayedMenu )
     {
         default:
 //            {
@@ -840,8 +840,7 @@ void ReefAngelClass::DisplayMenuEntry(char *text)
 {
     ClearScreen(COLOR_WHITE);
     LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, text);
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*4, "Press button");
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL+5, MENU_START_ROW*5, "to exit...");
+    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*4, "Press to exit...");
 //    do
 //    {
 //        delay(500);
@@ -852,7 +851,9 @@ void ReefAngelClass::FeedingMode()
 {
 	LCD.DrawText(COLOR_BLUE, COLOR_WHITE, 30, 10, "Feeding Mode");
 	Timer[0].Start();  //Start Feeding Mode timer
+#ifdef DisplayImages
     LCD.DrawEEPromImage(40,50, 40, 30, I2CEEPROM2, I2CEEPROM2_Feeding);
+#endif  // DisplayImages
 
     int t;
     bool bDone = false;
@@ -885,7 +886,9 @@ void ReefAngelClass::FeedingMode()
 void ReefAngelClass::WaterChangeMode()
 {
 	LCD.DrawText(COLOR_BLUE, COLOR_WHITE, 20, 10, "Water Change Mode");
+#ifdef DisplayImages
 	LCD.DrawEEPromImage(51,55, 40, 30, I2CEEPROM2, I2CEEPROM2_Water_Change);
+#endif  // DisplayImages
 	do
 	{
 	    // just wait for the button to be pressed
@@ -895,7 +898,7 @@ void ReefAngelClass::WaterChangeMode()
 	Timer[3].Start();  // start LCD shutoff timer
 }
 
-void ReefAngelClass::ProcessButtonPress(byte smenu)
+void ReefAngelClass::ProcessButtonPress()
 {
     bool bResetMenuTimeout = true;
     switch ( DisplayedMenu )
@@ -907,27 +910,27 @@ void ReefAngelClass::ProcessButtonPress(byte smenu)
 //        }
         case MainMenu:
         {
-            ProcessButtonPressMain(smenu);
+            ProcessButtonPressMain();
             break;
         }
         case SetupMenu:
         {
-            ProcessButtonPressSetup(smenu);
+            ProcessButtonPressSetup();
             break;
         }
         case LightsMenu:
         {
-            ProcessButtonPressLights(smenu);
+            ProcessButtonPressLights();
             break;
         }
         case TempsMenu:
         {
-            ProcessButtonPressTemps(smenu);
+            ProcessButtonPressTemps();
             break;
         }
         case TimeoutsMenu:
         {
-            ProcessButtonPressTimeouts(smenu);
+            ProcessButtonPressTimeouts();
             break;
         }
         case EXCEED_TIMEOUT_MENU:
@@ -952,11 +955,11 @@ void ReefAngelClass::ProcessButtonPress(byte smenu)
     }
 }
 
-void ReefAngelClass::ProcessButtonPressMain(byte smenu)
+void ReefAngelClass::ProcessButtonPressMain()
 {
     showmenu = true;
     ClearScreen(COLOR_WHITE);
-    switch ( smenu )
+    switch ( SelectedMenuItem )
     {
         case MainMenu_FeedingMode:
         {
@@ -1047,15 +1050,26 @@ void ReefAngelClass::ProcessButtonPressMain(byte smenu)
     }
 }
 
-void ReefAngelClass::ProcessButtonPressSetup(byte smenu)
+void ReefAngelClass::ProcessButtonPressSetup()
 {
     showmenu = true;
     ClearScreen(COLOR_WHITE);
-    switch ( smenu )
+    switch ( SelectedMenuItem )
     {
         case SetupMenu_Wavemaker:
         {
-            SetupWavemakersDisplay();
+            int v = InternalMemory.WM1Timer_read();
+            int y = InternalMemory.WM2Timer_read();
+            if ( SetupDoubleOption(v, y, 0, 21600, 5, "s", "", "Setup Wavemakers", "WM1:", "WM2:") )
+            {
+                InternalMemory.WM1Timer_write(v);
+                InternalMemory.WM2Timer_write(y);
+                // after we set the values we need to update the timers
+                Timer[1].SetInterval(v);
+                Timer[1].Start();
+                Timer[2].SetInterval(y);
+                Timer[2].Start();
+            }
             break;
         }
         case SetupMenu_DosingPump:
@@ -1069,9 +1083,7 @@ void ReefAngelClass::ProcessButtonPressSetup(byte smenu)
         }
         case SetupMenu_DateTime:
         {
-//            // TODO need to implement set date & time
-//            DisplayMenuEntry("Set Date/Time");
-//            showmenu = false;
+            SetupDateTime();
             break;
         }
         default:
@@ -1084,11 +1096,11 @@ void ReefAngelClass::ProcessButtonPressSetup(byte smenu)
     }
 }
 
-void ReefAngelClass::ProcessButtonPressLights(byte smenu)
+void ReefAngelClass::ProcessButtonPressLights()
 {
     showmenu = true;  // set to true when displaying setup screens
     ClearScreen(COLOR_WHITE);
-    switch ( smenu )
+    switch ( SelectedMenuItem )
     {
         case LightsMenu_On:
         {
@@ -1123,7 +1135,11 @@ void ReefAngelClass::ProcessButtonPressLights(byte smenu)
         }
         case LightsMenu_MetalHalideDelay:
         {
-            SetupMHDelayDisplay();
+            int v = InternalMemory.MHDelay_read();
+            if ( SetupSingleOption(v, 0, 255, 3, "m", "", "Setup MH Delay") )
+            {
+                InternalMemory.MHDelay_write((uint8_t)v);
+            }
             break;
         }
         case LightsMenu_StandardLights:
@@ -1133,7 +1149,13 @@ void ReefAngelClass::ProcessButtonPressLights(byte smenu)
         }
         case LightsMenu_LEDPWM:
         {
-            SetupLEDPWMDisplay();
+            int v = InternalMemory.LEDPWMActinic_read();
+            int y = InternalMemory.LEDPWMDaylight_read();
+            if ( SetupDoubleOption(v, y, 0, 100, 3, "%", "", "Setup LED", "Actinic:", "Daylight:") )
+            {
+                InternalMemory.LEDPWMActinic_write((uint8_t)v);
+                InternalMemory.LEDPWMDaylight_write((uint8_t)y);
+            }
             break;
         }
         default:
@@ -1146,25 +1168,41 @@ void ReefAngelClass::ProcessButtonPressLights(byte smenu)
     }
 }
 
-void ReefAngelClass::ProcessButtonPressTemps(byte smenu)
+void ReefAngelClass::ProcessButtonPressTemps()
 {
     showmenu = true;
     ClearScreen(COLOR_WHITE);
-    switch ( smenu )
+    switch ( SelectedMenuItem )
     {
         case TempsMenu_Heater:
         {
-            SetupHeaterDisplay();
+            int v = InternalMemory.HeaterTempOn_read();
+            int y = InternalMemory.HeaterTempOff_read();
+            if ( SetupDoubleOption(v, y, 700, 900, 3, "F", ".", "Setup Heater", "On @", "Off @") )
+            {
+                InternalMemory.HeaterTempOn_write(v);
+                InternalMemory.HeaterTempOff_write(y);
+            }
             break;
         }
         case TempsMenu_Chiller:
         {
-            SetupChillerDisplay();
+            int v = InternalMemory.ChillerTempOn_read();
+            int y = InternalMemory.ChillerTempOff_read();
+            if ( SetupDoubleOption(v, y, 700, 900, 3, "F", ".", "Setup Chiller", "On @", "Off @") )
+            {
+                InternalMemory.ChillerTempOn_write(v);
+                InternalMemory.ChillerTempOff_write(y);
+            }
             break;
         }
         case TempsMenu_Overheat:
         {
-            SetupOverheatDisplay();
+            int v = InternalMemory.OverheatTemp_read();
+            if ( SetupSingleOption(v, 800, 2000, 4, "F", ".", "Setup Overheat") )
+            {
+                InternalMemory.OverheatTemp_write(v);
+            }
             break;
         }
         case TempsMenu_OverheatClr:
@@ -1186,25 +1224,42 @@ void ReefAngelClass::ProcessButtonPressTemps(byte smenu)
     }
 }
 
-void ReefAngelClass::ProcessButtonPressTimeouts(byte smenu)
+void ReefAngelClass::ProcessButtonPressTimeouts()
 {
     showmenu = true;
     ClearScreen(COLOR_WHITE);
-    switch ( smenu )
+    switch ( SelectedMenuItem )
     {
         case TimeoutsMenu_ATOSet:
         {
-            SetupATOTimeoutDisplay();
+            int v = InternalMemory.ATOTimeout_read();
+            if ( SetupSingleOption(v, 0, 255, 3, "s", "", "ATO Timeout") )
+            {
+                InternalMemory.ATOTimeout_write((uint8_t)v);
+            }
             break;
         }
         case TimeoutsMenu_Feeding:
         {
-            SetupFeedingTimeoutDisplay();
+            int v = InternalMemory.FeedingTimer_read();
+            if ( SetupSingleOption(v, 0, 3600, 4, "s", "", "Feeding Timer") )
+            {
+                InternalMemory.FeedingTimer_write(v);
+                // update the feeding timer value
+                Timer[0].SetInterval(v);
+            }
             break;
         }
         case TimeoutsMenu_LCD:
         {
-            SetupLCDTimeoutDisplay();
+            int v = InternalMemory.LCDTimer_read();
+            if ( SetupSingleOption(v, 0, 3600, 4, "s", "", "Screen Timeout") )
+            {
+                InternalMemory.LCDTimer_write(v);
+                // update the timer value
+                Timer[3].SetInterval(v);
+                Timer[3].Start();
+            }
             break;
         }
         case TimeoutsMenu_ATOClear:
@@ -1836,104 +1891,347 @@ void ReefAngelClass::SetupCalibratePH()
     }
 }
 
-void ReefAngelClass::SetupMHDelayDisplay()
+void ReefAngelClass::SetupDateTime()
 {
-    int v = InternalMemory.MHDelay_read();
-    bool bSave = SetupSingleOption(v, 0, 255, 3, "m", "", "Setup MH Delay");
+    enum choices {
+        MONTH,
+        DAY,
+        YEAR,
+        HOUR,
+        MINUTE,
+        OK,
+        CANCEL
+    };
+    byte sel = MONTH;
+    bool bSave = false;
+    bool bDone = false;
+    bool bRedraw = true;
+    bool bDrawButtons = true;
+    byte Year, Month, Day, Hour, Minute;
+    byte MonthDays[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+
+    Year = year() - 2000;
+    Month = month();
+    Day = day();
+    Hour = hour();
+    Minute = minute();
+
+    ClearScreen(COLOR_WHITE);
+    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, "Set Date & Time");
+    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, 10, 45,"Date:");
+    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, 10, 75,"Time:");
+    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, 62, 45, "/");
+    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, 82, 45, "/");
+    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, 62, 75, ":");
+
+    do
+    {
+        if ( bRedraw )
+        {
+            switch ( sel )
+            {
+                case MONTH:
+                {
+                    LCD.DrawOption(Month, 1, 49, 45, "", "", 2);
+                    LCD.DrawOption(Day, 0, 69, 45, "", "", 2);
+                    LCD.DrawOption(Year, 0, 89, 45, "", "", 2);
+                    LCD.DrawOption(Hour, 0, 49, 75, "", "", 2);
+                    LCD.DrawOption(Minute, 0, 69, 75, "", "", 2);
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(0);
+                        LCD.DrawCancel(0);
+                    }
+                    break;
+                }
+                case DAY:
+                {
+                    LCD.DrawOption(Month, 0, 49, 45, "", "", 2);
+                    LCD.DrawOption(Day, 1, 69, 45, "", "", 2);
+                    LCD.DrawOption(Year, 0, 89, 45, "", "", 2);
+                    LCD.DrawOption(Hour, 0, 49, 75, "", "", 2);
+                    LCD.DrawOption(Minute, 0, 69, 75, "", "", 2);
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(0);
+                        LCD.DrawCancel(0);
+                    }
+                    break;
+                }
+                case YEAR:
+                {
+                    LCD.DrawOption(Month, 0, 49, 45, "", "", 2);
+                    LCD.DrawOption(Day, 0, 69, 45, "", "", 2);
+                    LCD.DrawOption(Year, 1, 89, 45, "", "", 2);
+                    LCD.DrawOption(Hour, 0, 49, 75, "", "", 2);
+                    LCD.DrawOption(Minute, 0, 69, 75, "", "", 2);
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(0);
+                        LCD.DrawCancel(0);
+                    }
+                    break;
+                }
+                case HOUR:
+                {
+                    LCD.DrawOption(Month, 0, 49, 45, "", "", 2);
+                    LCD.DrawOption(Day, 0, 69, 45, "", "", 2);
+                    LCD.DrawOption(Year, 0, 89, 45, "", "", 2);
+                    LCD.DrawOption(Hour, 1, 49, 75, "", "", 2);
+                    LCD.DrawOption(Minute, 0, 69, 75, "", "", 2);
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(0);
+                        LCD.DrawCancel(0);
+                    }
+                    break;
+                }
+                case MINUTE:
+                {
+                    LCD.DrawOption(Month, 0, 49, 45, "", "", 2);
+                    LCD.DrawOption(Day, 0, 69, 45, "", "", 2);
+                    LCD.DrawOption(Year, 0, 89, 45, "", "", 2);
+                    LCD.DrawOption(Hour, 0, 49, 75, "", "", 2);
+                    LCD.DrawOption(Minute, 1, 69, 75, "", "", 2);
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(0);
+                        LCD.DrawCancel(0);
+                    }
+                    break;
+                }
+                case OK:
+                {
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOption(Month, 0, 49, 45, "", "", 2);
+                        LCD.DrawOption(Day, 0, 69, 45, "", "", 2);
+                        LCD.DrawOption(Year, 0, 89, 45, "", "", 2);
+                        LCD.DrawOption(Hour, 0, 49, 75, "", "", 2);
+                        LCD.DrawOption(Minute, 0, 69, 75, "", "", 2);
+                        LCD.DrawOK(1);
+                        LCD.DrawCancel(0);
+                    }
+                    break;
+                }
+                case CANCEL:
+                {
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOption(Month, 0, 49, 45, "", "", 2);
+                        LCD.DrawOption(Day, 0, 69, 45, "", "", 2);
+                        LCD.DrawOption(Year, 0, 89, 45, "", "", 2);
+                        LCD.DrawOption(Hour, 0, 49, 75, "", "", 2);
+                        LCD.DrawOption(Minute, 0, 69, 75, "", "", 2);
+                        LCD.DrawOK(0);
+                        LCD.DrawCancel(1);
+                    }
+                    break;
+                }
+            }
+
+            bRedraw = false;
+            bDrawButtons = false;
+        }
+        if ( Joystick.IsUp() )
+        {
+            switch ( sel )
+            {
+                case MONTH:
+                {
+                    Month++;
+                    if ( Month > 12 )
+                    {
+                        Month = 1;
+                    }
+                    break;
+                }
+                case DAY:
+                {
+                    Day++;
+                    // lookup days in a month table
+                    if ( ! IsLeapYear(2000+Year) )
+                    {
+                        // not leap year
+                        if ( Day > MonthDays[Month] )
+                        {
+                            Day = 1;
+                        }
+                    }
+                    else
+                    {
+                        // leap year, only special case is February
+                        if ( Month == 2 )
+                        {
+                            if ( Day > 29 )
+                            {
+                                Day = 1;
+                            }
+                        }
+                        else
+                        {
+                            if ( Day > MonthDays[Month] )
+                            {
+                                Day = 1;
+                            }
+                        }
+                    }
+                    break;
+                }
+                case YEAR:
+                {
+                    Year++;
+                    if ( Year > 99 )
+                    {
+                        Year = 0;
+                    }
+                    break;
+                }
+                case HOUR:
+                {
+                    Hour++;
+                    if ( Hour > 23 )
+                    {
+                        Hour = 0;
+                    }
+                    break;
+                }
+                case MINUTE:
+                {
+                    Minute++;
+                    if ( Minute > 59 )
+                    {
+                        Minute = 0;
+                    }
+                    break;
+                }
+            }
+            bRedraw = true;
+        }
+        if ( Joystick.IsDown() )
+        {
+            switch ( sel )
+            {
+                case MONTH:
+                {
+                    Month--;
+                    if ( Month < 1 || Month > 12 )
+                    {
+                        Month = 12;
+                    }
+                    break;
+                }
+                case DAY:
+                {
+                    Day--;
+                    // lookup days in a month table
+                    if ( ! IsLeapYear(2000+Year) )
+                    {
+                        // not leap year
+                        if ( Day < 1 || Day > MonthDays[Month] )
+                        {
+                            Day = MonthDays[Month];
+                        }
+                    }
+                    else
+                    {
+                        // leap year, only special case is February
+                        if ( Month == 2 )
+                        {
+                            if ( Day < 1 || Day > MonthDays[Month] )
+                            {
+                                Day = 29;
+                            }
+                        }
+                        else
+                        {
+                            if ( Day < 1 || Day > MonthDays[Month] )
+                            {
+                                Day = MonthDays[Month];
+                            }
+                        }
+                    }
+                    break;
+                }
+                case YEAR:
+                {
+                    Year--;
+                    if ( Year > 99 )
+                    {
+                        Year = 99;
+                    }
+                    break;
+                }
+                case HOUR:
+                {
+                    Hour--;
+                    if ( Hour > 23 )
+                    {
+                        Hour = 23;
+                    }
+                    break;
+                }
+                case MINUTE:
+                {
+                    Minute--;
+                    if ( Minute > 59 )
+                    {
+                        Minute = 59;
+                    }
+                    break;
+                }
+            }
+            bRedraw = true;
+        }
+        if ( Joystick.IsLeft() )
+        {
+            bRedraw = true;
+            bDrawButtons = true;
+            sel--;
+            if ( sel > CANCEL )
+            {
+                sel = CANCEL;
+            }
+        }
+        if ( Joystick.IsRight() )
+        {
+            bRedraw = true;
+            bDrawButtons = true;
+            sel++;
+            if ( sel > CANCEL )
+            {
+                sel = MONTH;
+            }
+        }
+        if ( Joystick.IsButtonPressed() )
+        {
+            if ( sel == OK )
+            {
+                bDone = true;
+                bSave = true;
+            }
+            else if ( sel == CANCEL )
+            {
+                bDone = true;
+            }
+        }
+    } while ( ! bDone );
+
     if ( bSave )
     {
-        InternalMemory.MHDelay_write((uint8_t)v);
+        ClearScreen(COLOR_WHITE);
+        LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, "Set Date & Time");
+        delay(1000);
+        // Set Date & Time
+        setTime(Hour, Minute, 0, Day, Month, Year);
+        now();
+        RTC.set(now());
+        setSyncProvider(RTC.get);   // the function to get the time from the RTC
+        now();
+//        LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, "Saved");
+//        delay(1000);
     }
 }
-
-void ReefAngelClass::SetupFeedingTimeoutDisplay()
-{
-    int v = InternalMemory.FeedingTimer_read();
-    bool bSave = SetupSingleOption(v, 0, 3600, 4, "s", "", "Feeding Timer");
-    if ( bSave )
-    {
-        InternalMemory.FeedingTimer_write(v);
-    }
-}
-
-void ReefAngelClass::SetupLCDTimeoutDisplay()
-{
-    int v = InternalMemory.LCDTimer_read();
-    bool bSave = SetupSingleOption(v, 0, 3600, 4, "s", "", "Screen Timeout");
-    if ( bSave )
-    {
-        InternalMemory.LCDTimer_write(v);
-    }
-}
-
-void ReefAngelClass::SetupATOTimeoutDisplay()
-{
-    int v = InternalMemory.ATOTimeout_read();
-    bool bSave = SetupSingleOption(v, 0, 255, 3, "s", "", "ATO Timeout");
-    if ( bSave )
-    {
-        InternalMemory.ATOTimeout_write((uint8_t)v);
-    }
-}
-
-void ReefAngelClass::SetupOverheatDisplay()
-{
-    int v = InternalMemory.OverheatTemp_read();
-    bool bSave = SetupSingleOption(v, 800, 2000, 4, "F", ".", "Setup Overheat");
-    if ( bSave )
-    {
-        InternalMemory.OverheatTemp_write(v);
-    }
-}
-
-void ReefAngelClass::SetupWavemakersDisplay()
-{
-    int v = InternalMemory.WM1Timer_read();
-    int y = InternalMemory.WM2Timer_read();
-    bool bSave = SetupDoubleOption(v, y, 0, 21600, 5, "s", "", "Setup Wavemakers", "WM1:", "WM2:");
-    if ( bSave )
-    {
-        InternalMemory.WM1Timer_write(v);
-        InternalMemory.WM2Timer_write(y);
-    }
-}
-
-void ReefAngelClass::SetupHeaterDisplay()
-{
-    int v = InternalMemory.HeaterTempOn_read();
-    int y = InternalMemory.HeaterTempOff_read();
-    bool bSave = SetupDoubleOption(v, y, 700, 900, 3, "F", ".", "Setup Heater", "On @", "Off @");
-    if ( bSave )
-    {
-        InternalMemory.HeaterTempOn_write(v);
-        InternalMemory.HeaterTempOff_write(y);
-    }
-}
-
-void ReefAngelClass::SetupChillerDisplay()
-{
-    int v = InternalMemory.ChillerTempOn_read();
-    int y = InternalMemory.ChillerTempOff_read();
-    bool bSave = SetupDoubleOption(v, y, 700, 900, 3, "F", ".", "Setup Chiller", "On @", "Off @");
-    if ( bSave )
-    {
-        InternalMemory.ChillerTempOn_write(v);
-        InternalMemory.ChillerTempOff_write(y);
-    }
-}
-
-void ReefAngelClass::SetupLEDPWMDisplay()
-{
-    int v = InternalMemory.LEDPWMActinic_read();
-    int y = InternalMemory.LEDPWMDaylight_read();
-    bool bSave = SetupDoubleOption(v, y, 0, 100, 3, "%", "", "Setup LED", "Actinic:", "Daylight:");
-    if ( bSave )
-    {
-        InternalMemory.LEDPWMActinic_write((uint8_t)v);
-        InternalMemory.LEDPWMDaylight_write((uint8_t)y);
-    }
-}
-
 
 #ifdef wifi
 
