@@ -14,7 +14,7 @@ TODO List (in no particular order)
    + Screensaver Timeout
    + ATO Timeout
    + ph Calibration
-   - Date / Time
+   + Date / Time
 * Ability to assign a function to a specific port
 * Associate Timers to specific port
 * Fix DrawOption to display a decimal point one digit in if subunit is given

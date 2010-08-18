@@ -95,6 +95,8 @@ enum MainMenuItem {
     MainMenu_Version
 };
 
+#ifdef DosingPumpSetup
+#ifdef WavemakerSetup
 // Setup Menu
 prog_char setupmenu_0_label[] PROGMEM = "Wavemaker";
 prog_char setupmenu_1_label[] PROGMEM = "Dosing Pump";
@@ -107,6 +109,41 @@ enum SetupMenuItem {
     SetupMenu_CalibratePH,
     SetupMenu_DateTime
 };
+#else // WavemakerSetup
+// Setup Menu
+prog_char setupmenu_0_label[] PROGMEM = "Dosing Pump";
+prog_char setupmenu_1_label[] PROGMEM = "Calibrate pH";
+prog_char setupmenu_2_label[] PROGMEM = "Date / Time";
+PROGMEM const char *setupmenu_items[] = {setupmenu_0_label, setupmenu_1_label, setupmenu_2_label};
+enum SetupMenuItem {
+    SetupMenu_DosingPump,
+    SetupMenu_CalibratePH,
+    SetupMenu_DateTime
+};
+#endif  // WavemakerSetup
+#else  // DosingPumpSetup
+#ifdef WavemakerSetup
+// Setup Menu
+prog_char setupmenu_0_label[] PROGMEM = "Wavemaker";
+prog_char setupmenu_1_label[] PROGMEM = "Calibrate pH";
+prog_char setupmenu_2_label[] PROGMEM = "Date / Time";
+PROGMEM const char *setupmenu_items[] = {setupmenu_0_label, setupmenu_1_label, setupmenu_2_label};
+enum SetupMenuItem {
+    SetupMenu_Wavemaker,
+    SetupMenu_CalibratePH,
+    SetupMenu_DateTime
+};
+#else  // WavemakerSetup
+// Setup Menu
+prog_char setupmenu_0_label[] PROGMEM = "Calibrate pH";
+prog_char setupmenu_1_label[] PROGMEM = "Date / Time";
+PROGMEM const char *setupmenu_items[] = {setupmenu_0_label, setupmenu_1_label};
+enum SetupMenuItem {
+    SetupMenu_CalibratePH,
+    SetupMenu_DateTime
+};
+#endif  // WavemakerSetup
+#endif  // DosingPumpSetup
 
 // Lights Menu
 prog_char lightsmenu_0_label[] PROGMEM = "Lights On";
@@ -126,6 +163,7 @@ enum LightsMenuItem {
     LightsMenu_LEDPWM
 };
 
+#ifdef OverheatSetup
 // Temps Menu
 prog_char tempsmenu_0_label[] PROGMEM = "Heater";
 prog_char tempsmenu_1_label[] PROGMEM = "Chiller";
@@ -138,7 +176,20 @@ enum TempsMenuItem {
     TempsMenu_Overheat,
     TempsMenu_OverheatClr
 };
+#else  // OverheatSetup
+// Temps Menu
+prog_char tempsmenu_0_label[] PROGMEM = "Heater";
+prog_char tempsmenu_1_label[] PROGMEM = "Chiller";
+prog_char tempsmenu_2_label[] PROGMEM = "Overheat Clear";
+PROGMEM const char *tempsmenu_items[] = {tempsmenu_0_label, tempsmenu_1_label, tempsmenu_2_label};
+enum TempsMenuItem {
+    TempsMenu_Heater,
+    TempsMenu_Chiller,
+    TempsMenu_OverheatClr
+};
+#endif  // OverheatSetup
 
+#ifdef SetupExtras
 // Timeouts Menu
 prog_char timeoutsmenu_0_label[] PROGMEM = "ATO Set";
 prog_char timeoutsmenu_1_label[] PROGMEM = "Feeding";
@@ -151,6 +202,16 @@ enum TimeoutsMenuItem {
     TimeoutsMenu_LCD,
     TimeoutsMenu_ATOClear
 };
+#else
+// Timeouts Menu
+prog_char timeoutsmenu_0_label[] PROGMEM = "ATO Set";
+prog_char timeoutsmenu_1_label[] PROGMEM = "ATO Clear";
+PROGMEM const char *timeoutsmenu_items[] = {timeoutsmenu_0_label, timeoutsmenu_1_label};
+enum TimeoutsMenuItem {
+    TimeoutsMenu_ATOSet,
+    TimeoutsMenu_ATOClear
+};
+#endif  // SetupExtras
 
 ReefAngelClass::ReefAngelClass()
 {
@@ -189,8 +250,13 @@ void ReefAngelClass::Init()
 	//if (taddr>120 || taddr<0) EEPROM_writeAnything(T1Pointer,t);
 	if (taddr>120) EEPROM_writeAnything(T1Pointer,t);
 
+#ifdef SetupExtras
 	Timer[0].SetInterval(InternalMemory.FeedingTimer_read());  // Default Feeding timer
 	Timer[3].SetInterval(InternalMemory.LCDTimer_read());  // LCD Sleep Mode timer
+#else
+	Timer[0].SetInterval(900);  // Default Feeding timer
+	Timer[3].SetInterval(600);  // LCD Sleep Mode timer
+#endif  // SetupExtras
 	Timer[3].Start();  // start timer
 	Timer[5].SetInterval(720);  // Store Params
 	Timer[5].ForceTrigger();
@@ -659,7 +725,11 @@ void ReefAngelClass::ShowInterface()
                 }
 
                 // if temp2 exceeds overheat temp
+#ifdef OverheatSetup
                 if ( Params.Temp2 >= InternalMemory.OverheatTemp_read() )
+#else  // OverheatSetup
+                if ( Params.Temp2 >= 1500 )  // 150.0 F is the default
+#endif // OverheatSetup
                 {
                     // turn off MH lights (port 3)
                     LED.On();
@@ -1056,6 +1126,7 @@ void ReefAngelClass::ProcessButtonPressSetup()
     ClearScreen(COLOR_WHITE);
     switch ( SelectedMenuItem )
     {
+#ifdef WavemakerSetup
         case SetupMenu_Wavemaker:
         {
             int v = InternalMemory.WM1Timer_read();
@@ -1072,10 +1143,14 @@ void ReefAngelClass::ProcessButtonPressSetup()
             }
             break;
         }
+#endif  // WavemakerSetup
+#ifdef DosingPumpSetup
         case SetupMenu_DosingPump:
         {
+            SetupDosingPump();
             break;
         }
+#endif  // DosingPumpSetup
         case SetupMenu_CalibratePH:
         {
             SetupCalibratePH();
@@ -1196,6 +1271,7 @@ void ReefAngelClass::ProcessButtonPressTemps()
             }
             break;
         }
+#ifdef OverheatSetup
         case TempsMenu_Overheat:
         {
             int v = InternalMemory.OverheatTemp_read();
@@ -1205,6 +1281,7 @@ void ReefAngelClass::ProcessButtonPressTemps()
             }
             break;
         }
+#endif  // OverheatSetup
         case TempsMenu_OverheatClr:
         {
             LED.Off();
@@ -1239,6 +1316,7 @@ void ReefAngelClass::ProcessButtonPressTimeouts()
             }
             break;
         }
+#ifdef SetupExtras
         case TimeoutsMenu_Feeding:
         {
             int v = InternalMemory.FeedingTimer_read();
@@ -1262,6 +1340,7 @@ void ReefAngelClass::ProcessButtonPressTimeouts()
             }
             break;
         }
+#endif  // SetupExtras
         case TimeoutsMenu_ATOClear:
         {
             // Need delay for clearing & returning screen
@@ -2219,19 +2298,20 @@ void ReefAngelClass::SetupDateTime()
 
     if ( bSave )
     {
-        ClearScreen(COLOR_WHITE);
-        LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, "Set Date & Time");
-        delay(1000);
         // Set Date & Time
         setTime(Hour, Minute, 0, Day, Month, Year);
         now();
         RTC.set(now());
         setSyncProvider(RTC.get);   // the function to get the time from the RTC
-        now();
-//        LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, "Saved");
-//        delay(1000);
     }
 }
+
+#ifdef DosingPumpSetup
+void ReefAngelClass::SetupDosingPump()
+{
+}
+#endif  // DosingPumpSetup
+
 
 #ifdef wifi
 

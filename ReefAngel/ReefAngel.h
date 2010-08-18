@@ -17,9 +17,41 @@
 #ifndef	ReefAngel_h
 #define ReefAngel_h
 
-#define ReefAngel_Version "0.8.5 beta 4"
+#define ReefAngel_Version "0.8.5 beta 5"
 
-//#define DisplayImages  // do we display the graphics for feeding or water change mode
+/*
+If your sketch/compile size is getting too big or if you are running out of RAM and having bizarre events
+happen with the controller, you may want to not display the graphics on screen which can save some memory.
+Just comment out the next line to prevent any graphics from being display, you will have text only screens
+during water changes and feeding modes.
+*/
+#define DisplayImages  // do we display the graphics for feeding or water change mode
+/*
+The next line is for displaying the setup screens to configure the values for the Feeding Mode timer and
+the LCD shutoff timer.  The defaults are fine, BUT if you would like to have the ability to change them
+from the setup screen, uncomment the next line.  This will increase the file size.  If you do not plan
+to change these values often (or at all), keep the next line commented out.
+*/
+//#define SetupExtras  // feeding mode & screensaver timeout setup. ACTIVATE WITH CAUTION
+
+/*
+Since we may or may not need to always configure the Wavemakers or Dosing Pumps, give the option to
+turn off the setup screens to keep the compile size down.  You can still use the Dosing Pump or Wavemakers,
+you just will not have the setup screens available to configure the values.  You will have to manually set
+the intervals inside the Sketch (hardcode or have it read from memory if the memory contains the correct values).
+Comment out the appropriate line to remove the corresponding setup screens.
+*/
+#define DosingPumpSetup
+#define WavemakerSetup
+
+/*
+Overheat Temperature is fairly constant.  This value will most likely not get changed very often (if ever).
+The default value is set to 150.0F.  Once this value is reached, all the lights will get shutoff.  If you
+would like the ability to change this value from the menus, uncomment the next line.  Otherwise you will have
+to hardcode the value in the ShowInterface Function
+*/
+//#define OverheatSetup
+
 //#define wifi
 #include <EEPROM.h>
 #include <ReefAngel_EEPROM.h>  // NOTE read/write internal memory
@@ -168,6 +200,9 @@ public:
     void SetupLightsOptionDisplay(bool bMetalHalide);
     void SetupCalibratePH();
     void SetupDateTime();
+#ifdef DosingPumpSetup
+    void SetupDosingPump();
+#endif  // DosingPumpSetup
 
 private:
 	byte TempUnit;
