@@ -26,6 +26,7 @@ Just comment out the next line to prevent any graphics from being display, you w
 during water changes and feeding modes.
 */
 #define DisplayImages  // do we display the graphics for feeding or water change mode
+
 /*
 The next line is for displaying the setup screens to configure the values for the Feeding Mode timer and
 the LCD shutoff timer.  The defaults are fine, BUT if you would like to have the ability to change them
@@ -41,7 +42,7 @@ you just will not have the setup screens available to configure the values.  You
 the intervals inside the Sketch (hardcode or have it read from memory if the memory contains the correct values).
 Comment out the appropriate line to remove the corresponding setup screens.
 */
-#define DosingPumpSetup
+//#define DosingPumpSetup
 #define WavemakerSetup
 
 /*
@@ -123,8 +124,8 @@ static bool conn=false;
 #endif
 
 
-template <class T> int EEPROM_writeAnything(int ee, const T& value);
-template <class T> int EEPROM_readAnything(int ee, T& value);
+//template <class T> int EEPROM_writeAnything(int ee, const T& value);
+//template <class T> int EEPROM_readAnything(int ee, T& value);
 
 // TODO ReefAngel - check where variables are used
 static unsigned long ButtonDebounce;
@@ -177,7 +178,6 @@ public:
 
     // NOTE for nested menus
     void InitMenus();
-    void LoadAllMenus();
     void ShowInterface();
     void DisplayMenu();
     void DisplayMenuHeading();

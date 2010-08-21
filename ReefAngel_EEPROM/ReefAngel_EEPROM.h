@@ -60,6 +60,8 @@ class ReefAngel_EEPROMClass : public EEPROMClass {
         void DP2OnHour_write(const uint8_t value);
         uint8_t DP2OnMinute_read();
         void DP2OnMinute_write(const uint8_t value);
+        uint8_t T1Pointer_read();
+        void T1Pointer_write(const uint8_t value);
 
         // Functions that read/write an int
         int WM1Timer_read();

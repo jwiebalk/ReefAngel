@@ -46,23 +46,23 @@ SIGNAL(PCINT0_vect) {
 
 }
 
-template <class T> int EEPROM_writeAnything(int ee, const T& value)
-{
-    const byte* p = (const byte*)(const void*)&value;
-    int i;
-    for (i = 0; i < sizeof(value); i++)
-	  EEPROM.write(ee++, *p++);
-    return i;
-}
-
-template <class T> int EEPROM_readAnything(int ee, T& value)
-{
-    byte* p = (byte*)(void*)&value;
-    int i;
-    for (i = 0; i < sizeof(value); i++)
-	  *p++ = EEPROM.read(ee++);
-    return i;
-}
+//template <class T> int EEPROM_writeAnything(int ee, const T& value)
+//{
+//    const byte* p = (const byte*)(const void*)&value;
+//    int i;
+//    for (i = 0; i < sizeof(value); i++)
+//	  EEPROM.write(ee++, *p++);
+//    return i;
+//}
+//
+//template <class T> int EEPROM_readAnything(int ee, T& value)
+//{
+//    byte* p = (byte*)(void*)&value;
+//    int i;
+//    for (i = 0; i < sizeof(value); i++)
+//	  *p++ = EEPROM.read(ee++);
+//    return i;
+//}
 
 // NOTE for nested menus
 // Associate a menu name to a numeric value
@@ -245,10 +245,12 @@ void ReefAngelClass::Init()
 	//EEPROM_writeAnything(PH_Min,540); // 480=PH7.0
     PHMin = InternalMemory.PHMin_read();
     PHMax = InternalMemory.PHMax_read();
-	EEPROM_readAnything(T1Pointer,taddr);
+	//EEPROM_readAnything(T1Pointer,taddr);
+	taddr = InternalMemory.T1Pointer_read();
 	// since byte can never be negative, taddr<0 is a pointless check
 	//if (taddr>120 || taddr<0) EEPROM_writeAnything(T1Pointer,t);
-	if (taddr>120) EEPROM_writeAnything(T1Pointer,t);
+	//if (taddr>120) EEPROM_writeAnything(T1Pointer,t);
+	if (taddr>120) InternalMemory.T1Pointer_write(t);
 
 #ifdef SetupExtras
 	Timer[0].SetInterval(InternalMemory.FeedingTimer_read());  // Default Feeding timer
@@ -578,19 +580,6 @@ void ReefAngelClass::ClearScreen(byte Color)
 
 void ReefAngelClass::InitMenus()
 {
-    // load the menus
-    LoadAllMenus();
-
-    // initialize menus
-    PreviousMenu = DEFAULT_MENU;
-    DisplayedMenu = DEFAULT_MENU;  // default menu to display
-    SelectedMenuItem = DEFAULT_MENU_ITEM;  // default item to have selected
-    redrawmenu = true;
-    showmenu = false;  // initially we are showing the main graphic and no menu
-}
-
-void ReefAngelClass::LoadAllMenus()
-{
     // loads all the menus
     menusptr[MainMenu] = pgm_read_word(&(mainmenu_items[0]));
     menuqtysptr[MainMenu] = SIZE(mainmenu_items);
@@ -602,6 +591,13 @@ void ReefAngelClass::LoadAllMenus()
     menuqtysptr[TempsMenu] = SIZE(tempsmenu_items);
     menusptr[TimeoutsMenu] = pgm_read_word(&(timeoutsmenu_items[0]));
     menuqtysptr[TimeoutsMenu] = SIZE(timeoutsmenu_items);
+
+    // initialize menus
+    PreviousMenu = DEFAULT_MENU;
+    DisplayedMenu = DEFAULT_MENU;  // default menu to display
+    SelectedMenuItem = DEFAULT_MENU_ITEM;  // default item to have selected
+    redrawmenu = true;
+    showmenu = false;  // initially we are showing the main graphic and no menu
 }
 
 void ReefAngelClass::ShowInterface()
@@ -2302,7 +2298,6 @@ void ReefAngelClass::SetupDateTime()
         setTime(Hour, Minute, 0, Day, Month, Year);
         now();
         RTC.set(now());
-        setSyncProvider(RTC.get);   // the function to get the time from the RTC
     }
 }
 

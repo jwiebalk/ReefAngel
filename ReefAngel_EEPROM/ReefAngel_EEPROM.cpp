@@ -183,6 +183,16 @@ void ReefAngel_EEPROMClass::DP2OnMinute_write(const uint8_t value)
     write(Mem_B_DP2OnMinute, value);
 }
 
+uint8_t ReefAngel_EEPROMClass::T1Pointer_read()
+{
+    return read(T1Pointer);
+}
+
+void ReefAngel_EEPROMClass::T1Pointer_write(const uint8_t value)
+{
+    write(T1Pointer, value);
+}
+
 // Int Functions
 int ReefAngel_EEPROMClass::WM1Timer_read()
 {
