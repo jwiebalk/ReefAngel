@@ -15,7 +15,6 @@
  */
 
 #include "ReefAngel_Globals.h"
-#include <EEPROM.h>
 
 
 byte intlength(int intin)

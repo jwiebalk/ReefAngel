@@ -59,11 +59,21 @@
 #define I2CEEPROM2_Feeding           9919  //3000-4999
 #define I2CEEPROM2_Water_Change      11919  //15300-18104
 
-// EEProm locations
-// Byte variables need 1 block
-// Int variables need 2 blocks
-// When adding more variables, use the previous value plus 1 or 2
-//  depending on the previous values storage requirement
+/*
+EEPROM locations
+
+To Read/Write to these locations, use the InternalMemory variable.
+Most (if not all) of these memory locations have a read/write function already created.
+
+If a memory location does not have a specific function to read/write to it, you may use the
+read/write or read_int/write_int functions to read/write to the memory location.
+
+Byte variables need 1 block
+Int variables need 2 blocks
+
+When adding more variables, use the previous value plus 1 or 2
+  depending on the previous values storage requirement
+*/
 #define VarsStart                 800
 #define Mem_B_MHOnHour            VarsStart
 #define Mem_B_MHOnMinute          VarsStart+1

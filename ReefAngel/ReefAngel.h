@@ -54,7 +54,6 @@ to hardcode the value in the ShowInterface Function
 //#define OverheatSetup
 
 //#define wifi
-#include <EEPROM.h>
 #include <ReefAngel_EEPROM.h>  // NOTE read/write internal memory
 #include <Time.h>
 #include <ReefAngel_NokiaLCD.h>
@@ -123,8 +122,6 @@ static unsigned long timeout;
 static bool conn=false;
 #endif
 
-
-// TODO ReefAngel - check where variables are used
 static unsigned long ButtonDebounce;
 static unsigned long RAStart;
 
@@ -146,7 +143,6 @@ public:
 	ReefAngel_MemoryClass Memory;
 	ReefAngel_RelayClass Relay;
 	ReefAngel_PWMClass PWM;
-	ReefAngel_EEPROMClass InternalMemory;
 	/*
 	Timers:
 	0 - Feeding Mode timer

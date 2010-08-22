@@ -18,13 +18,13 @@
 #define __REEFANGEL_EEPROM_H__
 
 #include <inttypes.h>
-#include <EEPROM.h>
+#include <avr/eeprom.h>
 
 /*
 This class reads/writes to the internal EEPROM memory
 */
 
-class ReefAngel_EEPROMClass : public EEPROMClass {
+class ReefAngel_EEPROMClass {
     public:
         // Functions that read / write a byte (uint8_t)
         uint8_t MHOnHour_read();
@@ -90,9 +90,13 @@ class ReefAngel_EEPROMClass : public EEPROMClass {
         int PHMin_read();
         void PHMin_write(const int value);
 
-    private:
+        // Functions that do the reading/writing to memory
+        uint8_t read(uint8_t);
+        void write(uint8_t, const uint8_t);
         int read_int(int);
         void write_int(int, const int);
 };
+
+extern ReefAngel_EEPROMClass InternalMemory;
 
 #endif  // __REEFANGEL_EEPROM_H__

@@ -18,7 +18,7 @@
 #include <Time.h>
 #include "ReefAngel_NokiaLCD.h"
 #include <Wire.h>
-#include <EEPROM.h>
+#include <ReefAngel_EEPROM.h>
 
 // Define Software SPI Pin Signal
 
@@ -337,7 +337,7 @@ void ReefAngel_NokiaLCD::Init()
     SendCMD(COLMOD);
     SendData(2);   //16-Bit per Pixel
 
-    Clear(0xff,0,0,131,131);
+    Clear(DefaultBGColor,0,0,131,131);
 
 }
 
@@ -582,18 +582,19 @@ void ReefAngel_NokiaLCD::DrawEEPromImage(int swidth, int sheight, byte x, byte y
     while (count < swidth*sheight);
 }
 
-void ReefAngel_NokiaLCD::DrawGraph(byte x, byte y, int I2CAddr, int pointer)
+void ReefAngel_NokiaLCD::DrawGraph(byte x, byte y)
 {
+    // Draws the main screen graph
     Clear(DefaultBGColor,0,y,131,y+50);
-    Clear(DefaultFGColor,x,y,x,y+50);  // TODO vertical bar border for graph
+    Clear(DefaultFGColor,x,y,x,y+50);
     for (byte i=6; i<=131; i+=3)
     {
         PutPixel(0x49, i, y+25);
     }
-    DrawSingleGraph(T1TempColor,x,y,I2CAddr,EEPROM.read(pointer));
-    DrawSingleGraph(T2TempColor,x,y,I2CAddr,EEPROM.read(pointer)+120);
-    DrawSingleGraph(T3TempColor,x,y,I2CAddr,EEPROM.read(pointer)+240);
-    DrawSingleGraph(PHColor,x,y,I2CAddr,EEPROM.read(pointer)+360);
+    DrawSingleGraph(T1TempColor,x,y,I2CEEPROM1,InternalMemory.T1Pointer_read());
+    DrawSingleGraph(T2TempColor,x,y,I2CEEPROM1,InternalMemory.T1Pointer_read()+120);
+    DrawSingleGraph(T3TempColor,x,y,I2CEEPROM1,InternalMemory.T1Pointer_read()+240);
+    DrawSingleGraph(PHColor,x,y,I2CEEPROM1,InternalMemory.T1Pointer_read()+360);
 }
 
 void ReefAngel_NokiaLCD::DrawOption(int Option, byte Selected, byte x, byte y, char *unit, char *subunit, byte maxdigits)
@@ -712,5 +713,5 @@ void ReefAngel_NokiaLCD::DrawCalibrate(int i, byte x, byte y)
   char text[5] = {0};
   Clear(DefaultBGColor, x, y, x+20, y+10);
   itoa(i,text,10);
-  DrawText(CalibrateColor, DefaultBGColor, x, y, text);  // TODO calibration colors
+  DrawText(CalibrateColor, DefaultBGColor, x, y, text);
 }

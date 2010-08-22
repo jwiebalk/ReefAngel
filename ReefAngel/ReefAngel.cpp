@@ -248,7 +248,6 @@ void ReefAngelClass::Init()
 	conn = false;
 #endif  // wifi
 
-    ClearScreen(DefaultBGColor);
     // Initialize the Nested Menus
     InitMenus();
 }
@@ -687,7 +686,7 @@ void ReefAngelClass::ShowInterface()
                     Memory.Write(a+360, CurTemp);
                     LCD.Clear(DefaultBGColor,0,0,1,1);
                     InternalMemory.T1Pointer_write(a);
-                    LCD.DrawGraph(5, 5, I2CEEPROM1, T1Pointer);
+                    LCD.DrawGraph(5, 5);
                 }
 
                 // wavemaker 1 timer
@@ -989,7 +988,7 @@ void ReefAngelClass::ProcessButtonPress()
             ClearScreen(DefaultBGColor);
             bResetMenuTimeout = false;
             // we are exiting the menu, so draw the graph
-            LCD.DrawGraph(5, 5, I2CEEPROM1, T1Pointer);  // Redraw graphic of params
+            LCD.DrawGraph(5, 5);  // Redraw graphic of params
             break;
         }
     }
@@ -1087,7 +1086,7 @@ void ReefAngelClass::ProcessButtonPressMain()
             // disable the menu, display main screen
             showmenu = false;
             // When we exit the main menu, we will redraw the graph
-            LCD.DrawGraph(5, 5, I2CEEPROM1, T1Pointer);  // Redraw graphic of params
+            LCD.DrawGraph(5, 5);  // Redraw graphic of params
             break;
         }
     }

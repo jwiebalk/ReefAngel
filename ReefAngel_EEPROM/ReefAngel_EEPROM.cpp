@@ -305,24 +305,24 @@ void ReefAngel_EEPROMClass::PHMin_write(const int value)
 }
 
 // Private functions
+uint8_t ReefAngel_EEPROMClass::read(uint8_t address)
+{
+    return eeprom_read_byte((unsigned char *) address);
+}
+
+void ReefAngel_EEPROMClass::write(uint8_t address, const uint8_t value)
+{
+    eeprom_write_byte((unsigned char *) address, value);
+}
+
 int ReefAngel_EEPROMClass::read_int(int address)
 {
-    int value = 0;
-    uint8_t* p = (uint8_t*)&value;
-    int i;
-    for ( i = 0; i < sizeof(int); i++ )
-    {
-        *p++ = read(address++);
-    }
-    return value;
+    return eeprom_read_word((const uint16_t *) address);
 }
 
 void ReefAngel_EEPROMClass::write_int(int address, const int value)
 {
-    uint8_t* p = (uint8_t*)&value;
-    for ( int i = 0; i < sizeof(int); i++ )
-    {
-        write(address++, *p++);
-    }
-    return;
+    eeprom_write_word((uint16_t *) address, (uint16_t) value);
 }
+
+ReefAngel_EEPROMClass InternalMemory;

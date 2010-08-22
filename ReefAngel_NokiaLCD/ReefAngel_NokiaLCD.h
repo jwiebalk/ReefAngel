@@ -48,7 +48,7 @@ public:
 	void DrawDate(byte x, byte y);
 	void DrawOutletBox(byte x, byte y,byte RelayData);
 	void DrawMonitor(byte x, byte y, ParamsStruct Params, byte DaylightPWMValue, byte ActinicPWMValue);
-	void DrawGraph(byte x, byte y, int I2CAddr, int pointer);
+	void DrawGraph(byte x, byte y);
 	void DrawEEPromImage(int swidth, int sheight, byte x, byte y, int I2CAddr, int EEaddr);
 
     // For Setup
