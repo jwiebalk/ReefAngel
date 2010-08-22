@@ -30,7 +30,6 @@ public:
 	void Toggle(byte ID);
 	void Write();
 
-	// TODO RelayClass consider moving byte vars to private and have functions to access them
 	byte RelayData;
 	byte RelayMaskOn;
 	byte RelayMaskOff;

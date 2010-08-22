@@ -496,13 +496,13 @@ void ReefAngel_NokiaLCD::DrawOutletBox(byte x, byte y,byte RelayData)
     Clear(OutletBorderColor,x,y+12,x+104,y+12);
     for (byte a=0;a<8;a++)
     {
-        byte bcolor = OutletOffBGColor;  // TODO OutletOffBGColor
-        byte fcolor = OutletOffFGColor;  // TODO OutletOffFGColor
+        byte bcolor = OutletOffBGColor;
+        byte fcolor = OutletOffFGColor;
         char temp[]="  ";
         if ((RelayData&(1<<a))==1<<a)
         {
-            bcolor = OutletOnBGColor;  // TODO OutletOnBGColor 13
-            fcolor = OutletOnFGColor;  // TODO OutletOnFGColor
+            bcolor = OutletOnBGColor;
+            fcolor = OutletOnFGColor;
         }
         Clear(bcolor,x+1+(a*13),y+1,x+14+(a*13),y+11);
         itoa(a+1,temp,10);

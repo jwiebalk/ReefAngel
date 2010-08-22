@@ -27,7 +27,6 @@ public:
 	void RequestConvertion();
 	int ReadTemperature(byte addr[8], byte unit);
 
-	// TODO TempSensorClass make these private and have functions to access them
 	byte addrT1[8];
 	byte addrT2[8];
 	byte addrT3[8];

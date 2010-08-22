@@ -893,7 +893,7 @@ void ReefAngelClass::DisplayMenuEntry(char *text)
 
 void ReefAngelClass::FeedingMode()
 {
-	LCD.DrawText(ModeScreenColor, DefaultBGColor, 30, 10, "Feeding Mode");  // TODO have feeding mode color ?
+	LCD.DrawText(ModeScreenColor, DefaultBGColor, 30, 10, "Feeding Mode");
 	Timer[0].Start();  //Start Feeding Mode timer
 #ifdef DisplayImages
     LCD.DrawEEPromImage(40,50, 40, 30, I2CEEPROM2, I2CEEPROM2_Feeding);

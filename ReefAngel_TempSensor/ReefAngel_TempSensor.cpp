@@ -26,7 +26,6 @@ ReefAngel_TempSensorClass::ReefAngel_TempSensorClass()
 
 void ReefAngel_TempSensorClass::Init()
 {
-    // TODO TempSensorClass consider moving inti() to constructor
 	byte addr[8];
 	byte count=0;
 	while (ds.search(addr))
