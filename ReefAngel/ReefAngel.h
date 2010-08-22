@@ -124,9 +124,6 @@ static bool conn=false;
 #endif
 
 
-//template <class T> int EEPROM_writeAnything(int ee, const T& value);
-//template <class T> int EEPROM_readAnything(int ee, T& value);
-
 // TODO ReefAngel - check where variables are used
 static unsigned long ButtonDebounce;
 static unsigned long RAStart;

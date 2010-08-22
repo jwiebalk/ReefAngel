@@ -215,12 +215,44 @@
 #define COLOR_WHITE                 0xFF
 
 
-#define WaterTempColor      COLOR_RED
-#define LightsTempColor     COLOR_CHOCOLATE
-#define AmbientTempColor    COLOR_MEDIUMORCHID
-#define PHColor             COLOR_SEAGREEN  //0x31, originally 0x34
-#define DPColor             COLOR_SADDLEBROWN
-#define APColor             COLOR_DARKSLATEBLUE  //0x4A, originally 0x49
+/*
+Ability to completely customize all colors of the screen
+To change an aspect of the screen, you simply need to change the color defined for the variable.
+The variables are labeled intuitively.  Please note that when changing the entire screen color
+to another color, you must make sure that all the corresponding BG colors (background colors) match
+otherwise you will have a non-consistent background screen.  This is primarily the case when displaying
+the main screen / homepage.
+
+Also note that if you intend to change the colors, you will want to experiment to find a good color
+combination.  If the background color is changed, you will most likely need to alter all of the other
+colors in order for the screen to be easily readable.
+
+You can use any of the colors specified above OR you can specify your own colors in hex code.
+The values can range from 0x00 to 0xFF.  Most of the common colors are specified above, so the use
+of your own hex code (number) is most likely not needed.  If you want to see what the colors will look like,
+on the ReefAngel Google Groups page is a Color Chart image that will show you the colors.
+*/
+#define WaterTempColor      COLOR_RED  // Text color for the water temp probe (homescreen)
+#define LightsTempColor     COLOR_CHOCOLATE  // Text color for the light temp probe (homescreen)
+#define AmbientTempColor    COLOR_MEDIUMORCHID  // Text color for the ambient temp probe (homescreen)
+#define PHColor             COLOR_SEAGREEN  //originally 0x34, Text color for the PH probe (homescreen)
+#define DPColor             COLOR_SADDLEBROWN // Text color for Daylight PWM value (homescreen)
+#define APColor             COLOR_DARKSLATEBLUE  //originally 0x49, Text color for the Actinic PWM value (homescreen)
+#define CalibrateColor      COLOR_RED  // color of the PH calibration text values
+#define ModeScreenColor     COLOR_BLUE  // color of the text on Feeding Mode, Water Change Mode and Version screens
+#define DateTextColor       COLOR_RED  // color of the date on home screen
+#define OutletBorderColor   0x54  // Border around the outlet box on home screen
+#define OutletOnBGColor     0x0D  // Outlet box background color when outlet is on (homescreen)
+#define OutletOnFGColor     COLOR_WHITE  // Outlet box text (number) color when outlet is on (homescreen)
+#define OutletOffBGColor    COLOR_WHITE  // Outlet box background color when outlet is off (homescreen)
+#define OutletOffFGColor    COLOR_BLACK  // Outlet box text (number) color when outlet is off (homescreen)
+#define BtnBorderColor      COLOR_BLACK  // OK & Cancel button border color (setup screens)
+#define BtnActiveColor      COLOR_GRAY  // OK & Cancel button ACTIVE (selected) background color (seup screens)
+#define BtnInactiveColor    COLOR_LIGHTGRAY  // OK & Cancel button INACTIVE (not selected) background color (setup screens)
+#define SelectionBGColor    COLOR_BLUE  // Background color for selected items (Menu & Setup screens)
+#define SelectionFGColor    COLOR_WHITE  // Foreground (text) color for selected items (Menu & Setup screens)
+#define DefaultBGColor      COLOR_WHITE  // Default background color
+#define DefaultFGColor      COLOR_BLACK  // Default text color
 
 
 // Global macros

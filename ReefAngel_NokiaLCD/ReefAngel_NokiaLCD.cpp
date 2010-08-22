@@ -486,22 +486,22 @@ void ReefAngel_NokiaLCD::DrawDate(byte x, byte y)
     {
         strcat(text," PM");
     }
-    DrawText(COLOR_RED, COLOR_WHITE, x, y, text);
+    DrawText(DateTextColor, DefaultBGColor, x, y, text);
 }
 
 void ReefAngel_NokiaLCD::DrawOutletBox(byte x, byte y,byte RelayData)
 {
-    Clear(94,x,y,x+104,y);
-    Clear(94,x,y+12,x+104,y+12);
-    for (int a=0;a<8;a++)
+    Clear(OutletBorderColor,x,y,x+104,y);  //94
+    Clear(OutletBorderColor,x,y+12,x+104,y+12);
+    for (byte a=0;a<8;a++)
     {
-        byte bcolor = COLOR_WHITE;
-        byte fcolor = COLOR_BLACK;
+        byte bcolor = OutletOffBGColor;  // TODO OutletOffBGColor
+        byte fcolor = OutletOffFGColor;  // TODO OutletOffFGColor
         char temp[]="  ";
         if ((RelayData&(1<<a))==1<<a)
         {
-            bcolor = 13;
-            fcolor = COLOR_WHITE;
+            bcolor = OutletOnBGColor;  // TODO OutletOnBGColor 13
+            fcolor = OutletOnFGColor;  // TODO OutletOnFGColor
         }
         Clear(bcolor,x+1+(a*13),y+1,x+14+(a*13),y+11);
         itoa(a+1,temp,10);
@@ -522,23 +522,23 @@ void ReefAngel_NokiaLCD::DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y
         if (Temp%decimal<10 && decimal==100) strcat(text , "0");
         strcat(text , temptxt);
     }
-    Clear(COLOR_WHITE,x,y,x+30,y+8);
-    DrawText(fcolor,COLOR_WHITE,x,y,text);
+    Clear(DefaultBGColor,x,y,x+30,y+8);
+    DrawText(fcolor,DefaultBGColor,x,y,text);
 }
 
 void ReefAngel_NokiaLCD::DrawMonitor(byte x, byte y, ParamsStruct Params, byte DaylightPWMValue, byte ActnicPWMValue)
 {
-    DrawText(WaterTempColor,COLOR_WHITE,x,y,"T1:");
+    DrawText(WaterTempColor,DefaultBGColor,x,y,"T1:");
     DrawSingleMonitor(Params.Temp1, WaterTempColor, x+18, y,10);
-    DrawText(LightsTempColor,COLOR_WHITE,x,y+10,"T2:");
+    DrawText(LightsTempColor,DefaultBGColor,x,y+10,"T2:");
     DrawSingleMonitor(Params.Temp2, LightsTempColor, x+18, y+10,10);
-    DrawText(AmbientTempColor,COLOR_WHITE,x,y+20,"T3:");
+    DrawText(AmbientTempColor,DefaultBGColor,x,y+20,"T3:");
     DrawSingleMonitor(Params.Temp3, AmbientTempColor, x+18, y+20,10);
-    DrawText(PHColor,COLOR_WHITE,x+60,y,"PH:");
+    DrawText(PHColor,DefaultBGColor,x+60,y,"PH:");
     DrawSingleMonitor(Params.PH, PHColor, x+78, y,100);
-    DrawText(DPColor,COLOR_WHITE,x+60,y+10,"DP:");
+    DrawText(DPColor,DefaultBGColor,x+60,y+10,"DP:");
     DrawSingleMonitor(DaylightPWMValue, DPColor, x+78, y+10,1);
-    DrawText(APColor,COLOR_WHITE,x+60,y+20,"AP:");
+    DrawText(APColor,DefaultBGColor,x+60,y+20,"AP:");
     DrawSingleMonitor(ActnicPWMValue, APColor, x+78, y+20,1);
 }
 
@@ -583,8 +583,8 @@ void ReefAngel_NokiaLCD::DrawEEPromImage(int swidth, int sheight, byte x, byte y
 
 void ReefAngel_NokiaLCD::DrawGraph(byte x, byte y, int I2CAddr, int pointer)
 {
-    Clear(COLOR_WHITE,0,y,131,y+50);
-    Clear(COLOR_BLACK,x,y,x,y+50);
+    Clear(DefaultBGColor,0,y,131,y+50);
+    Clear(DefaultFGColor,x,y,x,y+50);  // TODO vertical bar border for graph
     for (int i=6; i<=131; i+=3)
     {
         PutPixel(0x49, i, y+25);
@@ -650,15 +650,15 @@ void ReefAngel_NokiaLCD::DrawOption(int Option, byte Selected, byte x, byte y, c
         x2 += 5;
         width += 5;
     }
-    bcolor = COLOR_WHITE;
-    fcolor = COLOR_BLACK;
-    Clear(COLOR_WHITE, x-1, y-8, x+width, y+15);
+    bcolor = DefaultBGColor;
+    fcolor = DefaultFGColor;
+    Clear(DefaultBGColor, x-1, y-8, x+width, y+15);
     if (Selected)
     {
-        bcolor = COLOR_BLUE;
-        fcolor = COLOR_WHITE;
-        DrawText(COLOR_BLACK,COLOR_WHITE, x+((x2-x-12)/2), y-8, " ^ ");
-        DrawText(COLOR_BLACK,COLOR_WHITE, x+((x2-x-12)/2), y+8, " ` ");
+        bcolor = SelectionBGColor;
+        fcolor = SelectionFGColor;
+        DrawText(DefaultFGColor,DefaultBGColor, x+((x2-x-12)/2), y-8, " ^ ");
+        DrawText(DefaultFGColor,DefaultBGColor, x+((x2-x-12)/2), y+8, " ` ");
     }
 
     // should always print text at X and clear to X1
@@ -668,48 +668,48 @@ void ReefAngel_NokiaLCD::DrawOption(int Option, byte Selected, byte x, byte y, c
     DrawText(fcolor,bcolor,x2,y,unit);
     if ( strcmp(subunit,"") != 0 )
     {
-        Clear(COLOR_WHITE, x1-2, y-5, x2+6, y-3);
+        Clear(DefaultBGColor, x1-2, y-5, x2+6, y-3);
     }
 }
 
-void ReefAngel_NokiaLCD::DrawCancel(byte Selected)
+void ReefAngel_NokiaLCD::DrawCancel(bool Selected)
 {
     byte bcolor;
-    Clear(COLOR_BLACK,14,109,59,126);
-    if (Selected==0)
+    Clear(BtnBorderColor,14,109,59,126);
+    if ( Selected )
     {
-        //bcolor = COLOR_LIGHTSTEELBLUE;
-        bcolor = COLOR_LIGHTGRAY;
+        bcolor = BtnActiveColor;
     }
     else
     {
-        bcolor = COLOR_GRAY;
+        //bcolor = COLOR_LIGHTSTEELBLUE;
+        bcolor = BtnInactiveColor;
     }
     Clear(bcolor,15,110,58,125);
-    DrawText(COLOR_BLACK,bcolor,20,115,"Cancel");
+    DrawText(DefaultFGColor,bcolor,20,115,"Cancel");
 }
 
-void ReefAngel_NokiaLCD::DrawOK(byte Selected)
+void ReefAngel_NokiaLCD::DrawOK(bool Selected)
 {
     byte bcolor;
-    Clear(COLOR_BLACK,74,109,119,126);
-    if (Selected==0)
+    Clear(BtnBorderColor,74,109,119,126);
+    if ( Selected )
     {
-        //bcolor = COLOR_LIGHTSTEELBLUE;
-        bcolor = COLOR_LIGHTGRAY;
+        bcolor = BtnActiveColor;
     }
     else
     {
-        bcolor = COLOR_GRAY;
+        //bcolor = COLOR_LIGHTSTEELBLUE;
+        bcolor = BtnInactiveColor;
     }
     Clear(bcolor,75,110,118,125);
-    DrawText(COLOR_BLACK,bcolor,92,115,"Ok");
+    DrawText(DefaultFGColor,bcolor,92,115,"Ok");
 }
 
 void ReefAngel_NokiaLCD::DrawCalibrate(int i, byte x, byte y)
 {
   char text[5] = {0};
-  Clear(COLOR_WHITE, x, y, x+20, y+10);
+  Clear(DefaultBGColor, x, y, x+20, y+10);
   itoa(i,text,10);
-  DrawText(COLOR_RED, COLOR_WHITE, x, y, text);
+  DrawText(CalibrateColor, DefaultBGColor, x, y, text);  // TODO calibration colors
 }

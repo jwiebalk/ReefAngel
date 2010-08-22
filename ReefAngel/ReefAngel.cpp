@@ -46,25 +46,8 @@ SIGNAL(PCINT0_vect) {
 
 }
 
-//template <class T> int EEPROM_writeAnything(int ee, const T& value)
-//{
-//    const byte* p = (const byte*)(const void*)&value;
-//    int i;
-//    for (i = 0; i < sizeof(value); i++)
-//	  EEPROM.write(ee++, *p++);
-//    return i;
-//}
-//
-//template <class T> int EEPROM_readAnything(int ee, T& value)
-//{
-//    byte* p = (byte*)(void*)&value;
-//    int i;
-//    for (i = 0; i < sizeof(value); i++)
-//	  *p++ = EEPROM.read(ee++);
-//    return i;
-//}
-
 // NOTE for nested menus
+// NOTE Menu labels can be a max of 20 characters
 // Associate a menu name to a numeric value
 // the total number must match the max number of menus
 enum Menus {
@@ -267,6 +250,7 @@ void ReefAngelClass::Init()
 	conn = false;
 #endif  // wifi
 
+    ClearScreen(DefaultBGColor);
     // Initialize the Nested Menus
     InitMenus();
 }
@@ -369,18 +353,18 @@ void ReefAngelClass::Refresh()
 #endif  // wifi
 
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
-	LCD.Clear(COLOR_WHITE,0,0,1,1);
+	LCD.Clear(DefaultBGColor,0,0,1,1);
 	Params.Temp1=TempSensor.ReadTemperature(TempSensor.addrT1,TempUnit);
-	LCD.Clear(COLOR_WHITE,0,0,1,1);
+	LCD.Clear(DefaultBGColor,0,0,1,1);
 	Params.Temp2=TempSensor.ReadTemperature(TempSensor.addrT2,TempUnit);
-	LCD.Clear(COLOR_WHITE,0,0,1,1);
+	LCD.Clear(DefaultBGColor,0,0,1,1);
 	Params.Temp3=TempSensor.ReadTemperature(TempSensor.addrT3,TempUnit);
-	LCD.Clear(COLOR_WHITE,0,0,1,1);
+	LCD.Clear(DefaultBGColor,0,0,1,1);
 	Params.PH=analogRead(PHPin);
 	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
-	LCD.Clear(COLOR_WHITE,0,0,1,1);
+	LCD.Clear(DefaultBGColor,0,0,1,1);
 	TempSensor.RequestConvertion();
-	LCD.Clear(COLOR_WHITE,0,0,1,1);
+	LCD.Clear(DefaultBGColor,0,0,1,1);
 }
 
 void ReefAngelClass::SetTemperatureUnit(byte unit)
@@ -558,17 +542,17 @@ void ReefAngelClass::DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte On
 void ReefAngelClass::DisplayVersion()
 {
     // Display the Software Version
-    LCD.DrawText(COLOR_BLUE,COLOR_WHITE,10,10,"Reef Angel");
-    LCD.DrawText(COLOR_BLUE,COLOR_WHITE,10,20,"v"ReefAngel_Version);
+    LCD.DrawText(ModeScreenColor,DefaultBGColor,10,10,"Reef Angel");
+    LCD.DrawText(ModeScreenColor,DefaultBGColor,10,20,"v"ReefAngel_Version);
 
 #ifdef wifi
     // Display wifi related information
     // Place holder information currently, need wifi module
     // to be able to write functions to retrieve actual information
-    LCD.DrawText(COLOR_BLUE,COLOR_WHITE,10,40,"Wifi Enabled");
-    LCD.DrawText(COLOR_BLUE,COLOR_WHITE,10,50,"SSID: AP_SSID");
-    LCD.DrawText(COLOR_BLUE,COLOR_WHITE,10,60,"IP: 255.255.255.255");
-    LCD.DrawText(COLOR_BLUE,COLOR_WHITE,10,70,"Port: 80");
+    LCD.DrawText(ModeScreenColor,DefaultBGColor,10,40,"Wifi Enabled");
+    LCD.DrawText(ModeScreenColor,DefaultBGColor,10,50,"SSID: AP_SSID");
+    LCD.DrawText(ModeScreenColor,DefaultBGColor,10,60,"IP: 255.255.255.255");
+    LCD.DrawText(ModeScreenColor,DefaultBGColor,10,70,"Port: 80");
 #endif  // wifi
 }
 
@@ -644,7 +628,7 @@ void ReefAngelClass::ShowInterface()
 
                     // Clears the screen to draw the menu
                     // Displays main menu, select first item, save existing menu
-                    ClearScreen(COLOR_WHITE);
+                    ClearScreen(DefaultBGColor);
                     SelectedMenuItem = DEFAULT_MENU_ITEM;
                     PreviousMenu = DEFAULT_MENU;
                     DisplayedMenu = MAIN_MENU;
@@ -685,24 +669,24 @@ void ReefAngelClass::ShowInterface()
                     Timer[5].Start();
                     CurTemp = map(Params.Temp1, 700, 900, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a, CurTemp);
-                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    LCD.Clear(DefaultBGColor,0,0,1,1);
                     CurTemp = map(Params.Temp2, 650, 1500, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a+120, CurTemp);
-                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    LCD.Clear(DefaultBGColor,0,0,1,1);
                     CurTemp = map(Params.Temp3, 650, 920, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a+240, CurTemp);
-                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    LCD.Clear(DefaultBGColor,0,0,1,1);
                     CurTemp = map(Params.PH, 730, 890, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a+360, CurTemp);
-                    LCD.Clear(COLOR_WHITE,0,0,1,1);
+                    LCD.Clear(DefaultBGColor,0,0,1,1);
                     EEPROM.write(T1Pointer,a);
                     LCD.DrawGraph(5, 5, I2CEEPROM1, T1Pointer);
                 }
@@ -817,8 +801,8 @@ void ReefAngelClass::DisplayMenu()
     char buffer[22];
     for ( i = 0; i <= qty; i++ )
     {
-        bcolor = COLOR_WHITE;
-        fcolor = COLOR_BLACK;
+        bcolor = DefaultBGColor;
+        fcolor = DefaultFGColor;
         if ( i < qty )
         {
             strcpy_P(buffer, (char *)ptr++);
@@ -840,8 +824,8 @@ void ReefAngelClass::DisplayMenu()
         // change the background color on the selected menu entry
         if ( i == SelectedMenuItem )
         {
-            bcolor = COLOR_BLUE;
-            //fcolor = COLOR_WHITE;
+            bcolor = SelectionBGColor;
+            fcolor = SelectionFGColor;
         }
         LCD.Clear(bcolor, MENU_START_COL-3,
                          (i*MENU_START_ROW)+MENU_HEADING_SIZE-1,
@@ -897,21 +881,21 @@ void ReefAngelClass::DisplayMenuHeading()
     }  // switch MenuNum
 
     // clear the line that has the menu heading on it
-    LCD.Clear(COLOR_WHITE, MENU_START_COL, MENU_START_ROW, MAX_X, MAX_Y);
+    LCD.Clear(DefaultBGColor, MENU_START_COL, MENU_START_ROW, MAX_X, MAX_Y);
     // Display the menu heading
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, buffer);
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, buffer);
 }
 
 void ReefAngelClass::DisplayMenuEntry(char *text)
 {
-    ClearScreen(COLOR_WHITE);
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, text);
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*4, "Press to exit...");
+    ClearScreen(DefaultBGColor);
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, text);
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, "Press to exit...");
 }
 
 void ReefAngelClass::FeedingMode()
 {
-	LCD.DrawText(COLOR_BLUE, COLOR_WHITE, 30, 10, "Feeding Mode");
+	LCD.DrawText(ModeScreenColor, DefaultBGColor, 30, 10, "Feeding Mode");  // TODO have feeding mode color ?
 	Timer[0].Start();  //Start Feeding Mode timer
 #ifdef DisplayImages
     LCD.DrawEEPromImage(40,50, 40, 30, I2CEEPROM2, I2CEEPROM2_Feeding);
@@ -924,8 +908,8 @@ void ReefAngelClass::FeedingMode()
         t = Timer[0].Trigger - now();
         if ( (t >= 0) && ! Timer[0].IsTriggered() )
         {
-            LCD.Clear(COLOR_WHITE,60+(intlength(t)*5),100,100,108);
-            LCD.DrawText(COLOR_BLACK,COLOR_WHITE,60,100,t);
+            LCD.Clear(DefaultBGColor,60+(intlength(t)*5),100,100,108);
+            LCD.DrawText(DefaultFGColor,DefaultBGColor,60,100,t);
         }
         else
         {
@@ -941,13 +925,13 @@ void ReefAngelClass::FeedingMode()
     } while ( ! bDone );
 
     // we're finished, so let's clear the screen and return
-    ClearScreen(COLOR_WHITE);
+    ClearScreen(DefaultBGColor);
     Timer[3].Start();  // start LCD shutoff timer
 }
 
 void ReefAngelClass::WaterChangeMode()
 {
-	LCD.DrawText(COLOR_BLUE, COLOR_WHITE, 20, 10, "Water Change Mode");
+	LCD.DrawText(ModeScreenColor, DefaultBGColor, 20, 10, "Water Change Mode");
 #ifdef DisplayImages
 	LCD.DrawEEPromImage(51,55, 40, 30, I2CEEPROM2, I2CEEPROM2_Water_Change);
 #endif  // DisplayImages
@@ -956,7 +940,7 @@ void ReefAngelClass::WaterChangeMode()
 	    // just wait for the button to be pressed
 	    delay(200);
 	} while ( ! Joystick.IsButtonPressed() );
-	ClearScreen(COLOR_WHITE);
+	ClearScreen(DefaultBGColor);
 	Timer[3].Start();  // start LCD shutoff timer
 }
 
@@ -1003,7 +987,7 @@ void ReefAngelClass::ProcessButtonPress()
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             DisplayedMenu = DEFAULT_MENU;
             showmenu = false;
-            ClearScreen(COLOR_WHITE);
+            ClearScreen(DefaultBGColor);
             bResetMenuTimeout = false;
             // we are exiting the menu, so draw the graph
             LCD.DrawGraph(5, 5, I2CEEPROM1, T1Pointer);  // Redraw graphic of params
@@ -1020,7 +1004,7 @@ void ReefAngelClass::ProcessButtonPress()
 void ReefAngelClass::ProcessButtonPressMain()
 {
     showmenu = true;
-    ClearScreen(COLOR_WHITE);
+    ClearScreen(DefaultBGColor);
     switch ( SelectedMenuItem )
     {
         case MainMenu_FeedingMode:
@@ -1113,7 +1097,7 @@ void ReefAngelClass::ProcessButtonPressMain()
 void ReefAngelClass::ProcessButtonPressSetup()
 {
     showmenu = true;
-    ClearScreen(COLOR_WHITE);
+    ClearScreen(DefaultBGColor);
     switch ( SelectedMenuItem )
     {
 #ifdef WavemakerSetup
@@ -1164,7 +1148,7 @@ void ReefAngelClass::ProcessButtonPressSetup()
 void ReefAngelClass::ProcessButtonPressLights()
 {
     showmenu = true;  // set to true when displaying setup screens
-    ClearScreen(COLOR_WHITE);
+    ClearScreen(DefaultBGColor);
     switch ( SelectedMenuItem )
     {
         case LightsMenu_On:
@@ -1236,7 +1220,7 @@ void ReefAngelClass::ProcessButtonPressLights()
 void ReefAngelClass::ProcessButtonPressTemps()
 {
     showmenu = true;
-    ClearScreen(COLOR_WHITE);
+    ClearScreen(DefaultBGColor);
     switch ( SelectedMenuItem )
     {
         case TempsMenu_Heater:
@@ -1294,7 +1278,7 @@ void ReefAngelClass::ProcessButtonPressTemps()
 void ReefAngelClass::ProcessButtonPressTimeouts()
 {
     showmenu = true;
-    ClearScreen(COLOR_WHITE);
+    ClearScreen(DefaultBGColor);
     switch ( SelectedMenuItem )
     {
         case TimeoutsMenu_ATOSet:
@@ -1367,8 +1351,8 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax, byte 
     bool bDone = false;
     bool bRedraw = true;
     bool bDrawButtons = true;
-    ClearScreen(COLOR_WHITE);
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, title);
+    ClearScreen(DefaultBGColor);
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, title);
     do
     {
         if ( bRedraw )
@@ -1380,8 +1364,8 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax, byte 
                     LCD.DrawOption(v, 1, MENU_START_COL+35, MENU_START_ROW*5, unit, subunit, maxdigits);
                     if ( bDrawButtons )
                     {
-                        LCD.DrawOK(0);
-                        LCD.DrawCancel(0);
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
                     }
                     break;
                 }
@@ -1390,8 +1374,8 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax, byte 
                     if ( bDrawButtons )
                     {
                         LCD.DrawOption(v, 0, MENU_START_COL+35, MENU_START_ROW*5, unit, subunit, maxdigits);
-                        LCD.DrawOK(1);
-                        LCD.DrawCancel(0);
+                        LCD.DrawOK(true);
+                        LCD.DrawCancel(false);
                     }
                     break;
                 }
@@ -1400,8 +1384,8 @@ bool ReefAngelClass::SetupSingleOption(int &v, int rangemin, int rangemax, byte 
                     if ( bDrawButtons )
                     {
                         LCD.DrawOption(v, 0, MENU_START_COL+35, MENU_START_ROW*5, unit, subunit, maxdigits);
-                        LCD.DrawOK(0);
-                        LCD.DrawCancel(1);
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(true);
                     }
                     break;
                 }
@@ -1488,11 +1472,11 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
     bool bRedraw = true;
     bool bDrawButtons = true;
     byte offset = 50;
-    ClearScreen(COLOR_WHITE);
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, title);
+    ClearScreen(DefaultBGColor);
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, title);
     // prefix for each option
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*4, prefix1);
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*6, prefix2);
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, prefix1);
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*6, prefix2);
     do
     {
         if ( bRedraw )
@@ -1505,8 +1489,8 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
                         LCD.DrawOption(v, 1, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit, maxdigits);
                         if ( bDrawButtons )
                         {
-                            LCD.DrawOK(0);
-                            LCD.DrawCancel(0);
+                            LCD.DrawOK(false);
+                            LCD.DrawCancel(false);
                         }
                         break;
                     }
@@ -1516,8 +1500,8 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
                         LCD.DrawOption(y, 1, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit, maxdigits);
                         if ( bDrawButtons )
                         {
-                            LCD.DrawOK(0);
-                            LCD.DrawCancel(0);
+                            LCD.DrawOK(false);
+                            LCD.DrawCancel(false);
                         }
                         break;
                     }
@@ -1527,8 +1511,8 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
                         {
                             LCD.DrawOption(v, 0, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit, maxdigits);
                             LCD.DrawOption(y, 0, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit, maxdigits);
-                            LCD.DrawOK(1);
-                            LCD.DrawCancel(0);
+                            LCD.DrawOK(true);
+                            LCD.DrawCancel(false);
                         }
                         break;
                     }
@@ -1538,8 +1522,8 @@ bool ReefAngelClass::SetupDoubleOption(int &v, int &y, int rangemin, int rangema
                         {
                             LCD.DrawOption(v, 0, MENU_START_COL+offset, MENU_START_ROW*4, unit, subunit, maxdigits);
                             LCD.DrawOption(y, 0, MENU_START_COL+offset, MENU_START_ROW*6, unit, subunit, maxdigits);
-                            LCD.DrawOK(0);
-                            LCD.DrawCancel(1);
+                            LCD.DrawOK(false);
+                            LCD.DrawCancel(true);
                         }
                         break;
                     }
@@ -1663,14 +1647,14 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
         h2 = InternalMemory.StdLightsOffHour_read();
         m2 = InternalMemory.StdLightsOffMinute_read();
     }
-    ClearScreen(COLOR_WHITE);
+    ClearScreen(DefaultBGColor);
     // header / title
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, msg);
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, msg);
     // prefixes, draw in ':' between options
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*5, "On:");
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL+offset_hr+13, MENU_START_ROW*5, ":");
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*7, "Off:");
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL+offset_hr+13, MENU_START_ROW*7, ":");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, "On:");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL+offset_hr+13, MENU_START_ROW*5, ":");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*7, "Off:");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL+offset_hr+13, MENU_START_ROW*7, ":");
     do
     {
         if ( bRedraw )
@@ -1687,8 +1671,8 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                     LCD.DrawOption(h1, 1, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
                     if ( bDrawButtons )
                     {
-                        LCD.DrawOK(0);
-                        LCD.DrawCancel(0);
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
                     }
                     break;
                 }
@@ -1702,8 +1686,8 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                     LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
                     if ( bDrawButtons )
                     {
-                        LCD.DrawOK(0);
-                        LCD.DrawCancel(0);
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
                     }
                     break;
                 }
@@ -1717,8 +1701,8 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                     LCD.DrawOption(h2, 1, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
                     if ( bDrawButtons )
                     {
-                        LCD.DrawOK(0);
-                        LCD.DrawCancel(0);
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
                     }
                     break;
                 }
@@ -1732,8 +1716,8 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                     LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
                     if ( bDrawButtons )
                     {
-                        LCD.DrawOK(0);
-                        LCD.DrawCancel(0);
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
                     }
                     break;
                 }
@@ -1745,8 +1729,8 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                         LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
                         LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
                         LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
-                        LCD.DrawOK(1);
-                        LCD.DrawCancel(0);
+                        LCD.DrawOK(true);
+                        LCD.DrawCancel(false);
                     }
                     break;
                 }
@@ -1758,8 +1742,8 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
                         LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*5, "", "");
                         LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
                         LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
-                        LCD.DrawOK(0);
-                        LCD.DrawCancel(1);
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(true);
                     }
                     break;
                 }
@@ -1904,10 +1888,10 @@ void ReefAngelClass::SetupCalibratePH()
     int iP = 0;
     byte offset = 65;
     // draw labels
-    ClearScreen(COLOR_WHITE);
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, "Calibrate PH");
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*3, "PH 7.0");
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW*7, "PH 10.0");
+    ClearScreen(DefaultBGColor);
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate PH");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*3, "PH 7.0");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*7, "PH 10.0");
     do
     {
         iP = analogRead(PHPin);
@@ -1926,13 +1910,13 @@ void ReefAngelClass::SetupCalibratePH()
         {
             if ( bOKSel )
             {
-                LCD.DrawOK(1);
-                LCD.DrawCancel(0);
+                LCD.DrawOK(true);
+                LCD.DrawCancel(false);
             }
             else
             {
-                LCD.DrawOK(0);
-                LCD.DrawCancel(1);
+                LCD.DrawOK(false);
+                LCD.DrawCancel(true);
             }
             bDrawButtons = false;
         }
@@ -1986,13 +1970,13 @@ void ReefAngelClass::SetupDateTime()
     Hour = hour();
     Minute = minute();
 
-    ClearScreen(COLOR_WHITE);
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, MENU_START_COL, MENU_START_ROW, "Set Date & Time");
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, 10, DateRow,"Date:");
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, 10, TimeRow,"Time:");
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, 62, DateRow, "/");
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, 82, DateRow, "/");
-    LCD.DrawText(COLOR_BLACK, COLOR_WHITE, 62, TimeRow, ":");
+    ClearScreen(DefaultBGColor);
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Set Date & Time");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, 10, DateRow,"Date:");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, 10, TimeRow,"Time:");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, 62, DateRow, "/");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, 82, DateRow, "/");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, 62, TimeRow, ":");
 
     do
     {
@@ -2009,8 +1993,8 @@ void ReefAngelClass::SetupDateTime()
                     LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
                     if ( bDrawButtons )
                     {
-                        LCD.DrawOK(0);
-                        LCD.DrawCancel(0);
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
                     }
                     break;
                 }
@@ -2023,8 +2007,8 @@ void ReefAngelClass::SetupDateTime()
                     LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
                     if ( bDrawButtons )
                     {
-                        LCD.DrawOK(0);
-                        LCD.DrawCancel(0);
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
                     }
                     break;
                 }
@@ -2037,8 +2021,8 @@ void ReefAngelClass::SetupDateTime()
                     LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
                     if ( bDrawButtons )
                     {
-                        LCD.DrawOK(0);
-                        LCD.DrawCancel(0);
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
                     }
                     break;
                 }
@@ -2051,8 +2035,8 @@ void ReefAngelClass::SetupDateTime()
                     LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
                     if ( bDrawButtons )
                     {
-                        LCD.DrawOK(0);
-                        LCD.DrawCancel(0);
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
                     }
                     break;
                 }
@@ -2065,8 +2049,8 @@ void ReefAngelClass::SetupDateTime()
                     LCD.DrawOption(Minute, 1, 69, TimeRow, "", "", 2);
                     if ( bDrawButtons )
                     {
-                        LCD.DrawOK(0);
-                        LCD.DrawCancel(0);
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
                     }
                     break;
                 }
@@ -2079,8 +2063,8 @@ void ReefAngelClass::SetupDateTime()
                         LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
                         LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
                         LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
-                        LCD.DrawOK(1);
-                        LCD.DrawCancel(0);
+                        LCD.DrawOK(true);
+                        LCD.DrawCancel(false);
                     }
                     break;
                 }
@@ -2093,8 +2077,8 @@ void ReefAngelClass::SetupDateTime()
                         LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
                         LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
                         LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
-                        LCD.DrawOK(0);
-                        LCD.DrawCancel(1);
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(true);
                     }
                     break;
                 }

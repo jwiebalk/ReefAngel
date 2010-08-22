@@ -53,8 +53,8 @@ public:
 
     // For Setup
     void DrawOption(int Option, byte Selected, byte x, byte y, char *unit, char *subunit, byte maxdigits = 2);
-    void DrawCancel(byte Selected);
-    void DrawOK(byte Selected);
+    void DrawCancel(bool Selected);
+    void DrawOK(bool Selected);
     void DrawCalibrate(int i, byte x, byte y);
 
 private:
