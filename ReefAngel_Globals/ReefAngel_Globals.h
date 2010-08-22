@@ -232,9 +232,9 @@ The values can range from 0x00 to 0xFF.  Most of the common colors are specified
 of your own hex code (number) is most likely not needed.  If you want to see what the colors will look like,
 on the ReefAngel Google Groups page is a Color Chart image that will show you the colors.
 */
-#define WaterTempColor      COLOR_RED  // Text color for the water temp probe (homescreen)
-#define LightsTempColor     COLOR_CHOCOLATE  // Text color for the light temp probe (homescreen)
-#define AmbientTempColor    COLOR_MEDIUMORCHID  // Text color for the ambient temp probe (homescreen)
+#define T1TempColor         COLOR_RED  // Text color for the T1 temp probe (homescreen)
+#define T2TempColor         COLOR_CHOCOLATE  // Text color for the T2 temp probe (homescreen)
+#define T3TempColor         COLOR_MEDIUMORCHID  // Text color for the T3 temp probe (homescreen)
 #define PHColor             COLOR_SEAGREEN  //originally 0x34, Text color for the PH probe (homescreen)
 #define DPColor             COLOR_SADDLEBROWN // Text color for Daylight PWM value (homescreen)
 #define APColor             COLOR_DARKSLATEBLUE  //originally 0x49, Text color for the Actinic PWM value (homescreen)

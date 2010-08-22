@@ -368,7 +368,8 @@ void ReefAngel_NokiaLCD::BacklightOff()
 
 void ReefAngel_NokiaLCD::DrawTextLine(byte fcolor, byte bcolor,byte x, byte y,char c)
 {
-    unsigned int i;
+    //unsigned int i;
+    byte i;
     unsigned int ifcolor, ibcolor;
     ifcolor = ~fcolor;
     ibcolor = ~bcolor;
@@ -528,12 +529,12 @@ void ReefAngel_NokiaLCD::DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y
 
 void ReefAngel_NokiaLCD::DrawMonitor(byte x, byte y, ParamsStruct Params, byte DaylightPWMValue, byte ActnicPWMValue)
 {
-    DrawText(WaterTempColor,DefaultBGColor,x,y,"T1:");
-    DrawSingleMonitor(Params.Temp1, WaterTempColor, x+18, y,10);
-    DrawText(LightsTempColor,DefaultBGColor,x,y+10,"T2:");
-    DrawSingleMonitor(Params.Temp2, LightsTempColor, x+18, y+10,10);
-    DrawText(AmbientTempColor,DefaultBGColor,x,y+20,"T3:");
-    DrawSingleMonitor(Params.Temp3, AmbientTempColor, x+18, y+20,10);
+    DrawText(T1TempColor,DefaultBGColor,x,y,"T1:");
+    DrawSingleMonitor(Params.Temp1, T1TempColor, x+18, y,10);
+    DrawText(T2TempColor,DefaultBGColor,x,y+10,"T2:");
+    DrawSingleMonitor(Params.Temp2, T2TempColor, x+18, y+10,10);
+    DrawText(T3TempColor,DefaultBGColor,x,y+20,"T3:");
+    DrawSingleMonitor(Params.Temp3, T3TempColor, x+18, y+20,10);
     DrawText(PHColor,DefaultBGColor,x+60,y,"PH:");
     DrawSingleMonitor(Params.PH, PHColor, x+78, y,100);
     DrawText(DPColor,DefaultBGColor,x+60,y+10,"DP:");
@@ -545,7 +546,7 @@ void ReefAngel_NokiaLCD::DrawMonitor(byte x, byte y, ParamsStruct Params, byte D
 void ReefAngel_NokiaLCD::DrawSingleGraph(byte color, byte x, byte y, int I2CAddr, int EEaddr)
 {
 	int start;
-	for (int a=0;a<120;a++)
+	for (byte a=0;a<120;a++)
 	{
 		start=EEaddr+a;
 		if (start > (int(EEaddr/120)+1)*120) start=start-120;
@@ -572,7 +573,7 @@ void ReefAngel_NokiaLCD::DrawEEPromImage(int swidth, int sheight, byte x, byte y
         Wire.send((int)(EEaddr+count & 0xFF)); // LSB
         Wire.endTransmission();
         Wire.requestFrom(I2CAddr,30);
-        for (int j = 0; j < 30; j++)
+        for (byte j = 0; j < 30; j++)
         {
             count+=1;
             if ((count<=swidth*sheight) && Wire.available()) SendData(~Wire.receive());
@@ -585,13 +586,13 @@ void ReefAngel_NokiaLCD::DrawGraph(byte x, byte y, int I2CAddr, int pointer)
 {
     Clear(DefaultBGColor,0,y,131,y+50);
     Clear(DefaultFGColor,x,y,x,y+50);  // TODO vertical bar border for graph
-    for (int i=6; i<=131; i+=3)
+    for (byte i=6; i<=131; i+=3)
     {
         PutPixel(0x49, i, y+25);
     }
-    DrawSingleGraph(WaterTempColor,x,y,I2CAddr,EEPROM.read(pointer));
-    DrawSingleGraph(LightsTempColor,x,y,I2CAddr,EEPROM.read(pointer)+120);
-    DrawSingleGraph(AmbientTempColor,x,y,I2CAddr,EEPROM.read(pointer)+240);
+    DrawSingleGraph(T1TempColor,x,y,I2CAddr,EEPROM.read(pointer));
+    DrawSingleGraph(T2TempColor,x,y,I2CAddr,EEPROM.read(pointer)+120);
+    DrawSingleGraph(T3TempColor,x,y,I2CAddr,EEPROM.read(pointer)+240);
     DrawSingleGraph(PHColor,x,y,I2CAddr,EEPROM.read(pointer)+360);
 }
 
