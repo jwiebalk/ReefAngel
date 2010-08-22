@@ -23,7 +23,6 @@ TODO List (in no particular order)
 * Ability to have dosing pumps repeat every X seconds/hours instead of having a set time.  Pump could run ever 30minutes, 1hour, etc.
 * Add ATO Timeout Clear for Low & High switches instead of 1
 * Test wavemaker interval to have 0 equal always on
-* Remove EEPROM class altogether, incorporate that class into my ReefAngel_EEPROM class
 
 Completed Items
 ---------------
@@ -36,3 +35,4 @@ Completed Items
 * Improve DrawOption to limit the width of the clear box
 * Finish SetupLightsOptionsDisplay - get : between hours & minutes, align time properly on screen
 * Check on setup displays using bytes (uint8_t) and range checks with negative numbers.
+* Remove EEPROM class altogether, incorporate that class into my ReefAngel_EEPROM class
