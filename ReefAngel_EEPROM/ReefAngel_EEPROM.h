@@ -20,6 +20,9 @@
 #include <inttypes.h>
 #include <EEPROM.h>
 
+/*
+This class reads/writes to the internal EEPROM memory
+*/
 
 class ReefAngel_EEPROMClass : public EEPROMClass {
     public:

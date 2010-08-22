@@ -228,11 +228,9 @@ void ReefAngelClass::Init()
 	//EEPROM_writeAnything(PH_Min,540); // 480=PH7.0
     PHMin = InternalMemory.PHMin_read();
     PHMax = InternalMemory.PHMax_read();
-	//EEPROM_readAnything(T1Pointer,taddr);
 	taddr = InternalMemory.T1Pointer_read();
 	// since byte can never be negative, taddr<0 is a pointless check
 	//if (taddr>120 || taddr<0) EEPROM_writeAnything(T1Pointer,t);
-	//if (taddr>120) EEPROM_writeAnything(T1Pointer,t);
 	if (taddr>120) InternalMemory.T1Pointer_write(t);
 
 #ifdef SetupExtras
@@ -661,9 +659,10 @@ void ReefAngelClass::ShowInterface()
                 // process timers
                 if ( Timer[5].IsTriggered() )
                 {
-                    int a = EEPROM.read(T1Pointer);
+                    byte a = InternalMemory.T1Pointer_read();
                     int CurTemp;
 
+                    // Values are stored in the I2CEEPROM1
                     a++;
                     if (a>=120) a=0;
                     Timer[5].Start();
@@ -687,7 +686,7 @@ void ReefAngelClass::ShowInterface()
                     LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a+360, CurTemp);
                     LCD.Clear(DefaultBGColor,0,0,1,1);
-                    EEPROM.write(T1Pointer,a);
+                    InternalMemory.T1Pointer_write(a);
                     LCD.DrawGraph(5, 5, I2CEEPROM1, T1Pointer);
                 }
 

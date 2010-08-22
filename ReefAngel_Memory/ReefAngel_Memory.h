@@ -19,6 +19,10 @@
 
 #include <ReefAngel_Globals.h>
 
+/*
+This class allows for reading/writing to the external I2CEEPROM1.
+You must specify the address/location in the I2CEEPROM you want to access.
+*/
 class ReefAngel_MemoryClass
 {
 public:
