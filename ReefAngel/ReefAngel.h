@@ -17,7 +17,7 @@
 #ifndef	ReefAngel_h
 #define ReefAngel_h
 
-#define ReefAngel_Version "0.8.5 beta 5"
+#define ReefAngel_Version "0.8.5 beta 5 dev"
 
 /*
 If your sketch/compile size is getting too big or if you are running out of RAM and having bizarre events
@@ -140,7 +140,7 @@ public:
 	ReefAngel_ATOHighClass HighATO;
 	ReefAngel_ATOLowClass LowATO;
 	ReefAngel_TempSensorClass TempSensor;
-	ReefAngel_MemoryClass Memory;
+	//ReefAngel_MemoryClass Memory;
 	ReefAngel_RelayClass Relay;
 	ReefAngel_PWMClass PWM;
 	/*

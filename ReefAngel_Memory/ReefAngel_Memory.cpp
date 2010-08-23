@@ -44,3 +44,6 @@ void ReefAngel_MemoryClass::Write(unsigned int address, byte data)
 	Wire.endTransmission();
 	delay(10);
 }
+
+ReefAngel_MemoryClass Memory;
+

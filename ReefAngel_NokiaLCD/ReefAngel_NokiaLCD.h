@@ -64,7 +64,7 @@ private:
 	void ShiftBits(byte b);
 	void DrawTextLine(byte fcolor, byte bcolor,byte x, byte y,char c);
 	void DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte decimal);
-	void DrawSingleGraph(byte color, byte x, byte y, int I2CAddr, int EEaddr);
+	void DrawSingleGraph(byte color, byte x, byte y, int EEaddr);
 
 };
 

@@ -19,6 +19,7 @@
 #include "ReefAngel_NokiaLCD.h"
 #include <Wire.h>
 #include <ReefAngel_EEPROM.h>
+#include <ReefAngel_Memory.h>
 
 // Define Software SPI Pin Signal
 
@@ -543,19 +544,20 @@ void ReefAngel_NokiaLCD::DrawMonitor(byte x, byte y, ParamsStruct Params, byte D
     DrawSingleMonitor(ActnicPWMValue, APColor, x+78, y+20,1);
 }
 
-void ReefAngel_NokiaLCD::DrawSingleGraph(byte color, byte x, byte y, int I2CAddr, int EEaddr)
+void ReefAngel_NokiaLCD::DrawSingleGraph(byte color, byte x, byte y, int EEaddr)
 {
 	int start;
 	for (byte a=0;a<120;a++)
 	{
 		start=EEaddr+a;
 		if (start > (int(EEaddr/120)+1)*120) start=start-120;
-		Wire.beginTransmission(I2CAddr);
-		Wire.send((int)(start >> 8));   // MSB
-		Wire.send((int)(start & 0xFF)); // LSB
-		Wire.endTransmission();
-		Wire.requestFrom(I2CAddr,1);
-		if (Wire.available()) PutPixel(color,x+a,y+50-Wire.receive());
+//		Wire.beginTransmission(I2CAddr);
+//		Wire.send((int)(start >> 8));   // MSB
+//		Wire.send((int)(start & 0xFF)); // LSB
+//		Wire.endTransmission();
+//		Wire.requestFrom(I2CAddr,1);
+//		if (Wire.available()) PutPixel(color,x+a,y+50-Wire.receive());
+        PutPixel(color, x+a, y+50-Memory.Read(start));
 	}
 
 }
@@ -589,12 +591,12 @@ void ReefAngel_NokiaLCD::DrawGraph(byte x, byte y)
     Clear(DefaultFGColor,x,y,x,y+50);
     for (byte i=6; i<=131; i+=3)
     {
-        PutPixel(0x49, i, y+25);
+        PutPixel(GraphDotLineColor, i, y+25);
     }
-    DrawSingleGraph(T1TempColor,x,y,I2CEEPROM1,InternalMemory.T1Pointer_read());
-    DrawSingleGraph(T2TempColor,x,y,I2CEEPROM1,InternalMemory.T1Pointer_read()+120);
-    DrawSingleGraph(T3TempColor,x,y,I2CEEPROM1,InternalMemory.T1Pointer_read()+240);
-    DrawSingleGraph(PHColor,x,y,I2CEEPROM1,InternalMemory.T1Pointer_read()+360);
+    DrawSingleGraph(T1TempColor,x,y,InternalMemory.T1Pointer_read());
+    DrawSingleGraph(T2TempColor,x,y,InternalMemory.T1Pointer_read()+120);
+    DrawSingleGraph(T3TempColor,x,y,InternalMemory.T1Pointer_read()+240);
+    DrawSingleGraph(PHColor,x,y,InternalMemory.T1Pointer_read()+360);
 }
 
 void ReefAngel_NokiaLCD::DrawOption(int Option, byte Selected, byte x, byte y, char *unit, char *subunit, byte maxdigits)

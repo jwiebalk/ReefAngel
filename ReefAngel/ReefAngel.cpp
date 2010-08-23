@@ -224,8 +224,8 @@ void ReefAngelClass::Init()
 	RAStart=now();
 	LCD.BacklightOn();
 	Relay.AllOff();
-	//EEPROM_writeAnything(PH_Max,900); // 750=PH10.0
-	//EEPROM_writeAnything(PH_Min,540); // 480=PH7.0
+	//EEPROM_writeAnything(PH_Max,840); // 840=PH10.0
+	//EEPROM_writeAnything(PH_Min,550); // 550=PH7.0
     PHMin = InternalMemory.PHMin_read();
     PHMax = InternalMemory.PHMax_read();
 	taddr = InternalMemory.T1Pointer_read();
@@ -680,7 +680,7 @@ void ReefAngelClass::ShowInterface()
                     LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a+240, CurTemp);
                     LCD.Clear(DefaultBGColor,0,0,1,1);
-                    CurTemp = map(Params.PH, 730, 890, 0, 50); // apply the calibration to the sensor reading
+                    CurTemp = map(Params.PH, 550, 840, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
                     LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a+360, CurTemp);

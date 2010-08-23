@@ -263,6 +263,7 @@ on the ReefAngel Google Groups page is a Color Chart image that will show you th
 #define SelectionFGColor    COLOR_WHITE  // Foreground (text) color for selected items (Menu & Setup screens)
 #define DefaultBGColor      COLOR_WHITE  // Default background color
 #define DefaultFGColor      COLOR_BLACK  // Default text color
+#define GraphDotLineColor    0x49    // color of the dotted line in the middle of the graph
 
 
 // Global macros

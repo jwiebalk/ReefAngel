@@ -34,5 +34,6 @@ private:
 
 };
 
+extern ReefAngel_MemoryClass Memory;
 
 #endif  // __REEFANGEL_MEMORY_H__
