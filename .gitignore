@@ -21,3 +21,5 @@ Wire/
 ziplib.bat
 # ignore .patch files
 *.patch
+# ignore .zip files
+*.zip
