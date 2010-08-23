@@ -263,8 +263,36 @@ on the ReefAngel Google Groups page is a Color Chart image that will show you th
 #define SelectionFGColor    COLOR_WHITE  // Foreground (text) color for selected items (Menu & Setup screens)
 #define DefaultBGColor      COLOR_WHITE  // Default background color
 #define DefaultFGColor      COLOR_BLACK  // Default text color
-#define GraphDotLineColor    0x49    // color of the dotted line in the middle of the graph
+#define GraphDotLineColor   0x49    // color of the dotted line in the middle of the graph
 
+/*
+Graph Range values
+
+Below are listed the ranges for each one of the graph lines.  The range is the specified value for being
+"low" and "high".  So the "low" value is the bottom of the graph and the "high" value is the top of the graph.
+If the actual value observed is above or below the "high" and "low" value respectively, it will be capped
+at the appropriate value.  Meaning, if the T1 high value is set to 90.0 F and the controller actually reads
+95.0 F, the highest value reported in the graph will be 90.0 F.
+
+The defaults should work just fine more everybody, but some people may want to alter the values.  This would be
+necessary if you didn't want T2 to be used for the lights temperature.
+
+The defaults are as follows:
+formate is:  Probe: LOW - HIGH
+
+T1: 70.0F - 90.0F
+T2: 65.0F - 150.0F
+T3: 65.0F - 92.0F
+PH: 7 - 10
+*/
+#define T1LOW   700
+#define T1HIGH  900
+#define T2LOW   650
+#define T2HIGH  1500
+#define T3LOW   650
+#define T3HIGH  920
+#define PHLOW   550
+#define PHHIGH  840
 
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))

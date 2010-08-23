@@ -665,22 +665,22 @@ void ReefAngelClass::ShowInterface()
                     a++;
                     if (a>=120) a=0;
                     Timer[5].Start();
-                    CurTemp = map(Params.Temp1, 700, 900, 0, 50); // apply the calibration to the sensor reading
+                    CurTemp = map(Params.Temp1, T1LOW, T1HIGH, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
                     LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a, CurTemp);
                     LCD.Clear(DefaultBGColor,0,0,1,1);
-                    CurTemp = map(Params.Temp2, 650, 1500, 0, 50); // apply the calibration to the sensor reading
+                    CurTemp = map(Params.Temp2, T2LOW, T2HIGH, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
                     LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a+120, CurTemp);
                     LCD.Clear(DefaultBGColor,0,0,1,1);
-                    CurTemp = map(Params.Temp3, 650, 920, 0, 50); // apply the calibration to the sensor reading
+                    CurTemp = map(Params.Temp3, T3LOW, T3HIGH, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
                     LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a+240, CurTemp);
                     LCD.Clear(DefaultBGColor,0,0,1,1);
-                    CurTemp = map(Params.PH, 550, 840, 0, 50); // apply the calibration to the sensor reading
+                    CurTemp = map(Params.PH, PHLOW, PHHIGH, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
                     LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a+360, CurTemp);
