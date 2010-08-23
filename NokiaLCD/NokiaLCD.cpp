@@ -1,23 +1,8 @@
-/*
- * Copyright 2010 Reef Angel / Roberto Imai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 #include "WProgram.h"
-
-#include "Phillips6610LCDInv.h"
-
+#include "Time.h"
+#include "NokiaLCD.h"
+#include <Wire.h>
+#include <EEPROM.h>
 
 // Define Software SPI Pin Signal
 
@@ -26,6 +11,9 @@
 #define CLK 4         // Digital 4 --> SCLK
 #define SDA 5         // Digital 5 --> SDATA
 #define RESET 6       // Digital 6 --> #RESET
+
+#define actinicPWMPin       9
+#define daylightPWMPin      10
 
 
 // Phillips PCF8833 Command Set 
@@ -88,6 +76,12 @@
 #define CYAN			0x1F
 #define BLACK			0x00
 #define WHITE			0xFF
+#define WaterTempColor      0xE0
+#define LightsTempColor     0xCC
+#define AmbientTempColor    0xAA
+#define PHColor             0x34
+#define DPColor             0x88
+#define APColor             0x49
 
 #define cbi(reg, bit) (reg&=~(1<<bit))
 #define sbi(reg, bit) (reg|= (1<<bit))
@@ -205,7 +199,7 @@ byte const font[475] = {
 };
 
 
-Phillips6610LCDInv::Phillips6610LCDInv()
+NokiaLCD::NokiaLCD()
 {
 
   DDRD |= B01111100;   // Set SPI pins as output 
@@ -214,7 +208,7 @@ Phillips6610LCDInv::Phillips6610LCDInv()
 
 
 
-void Phillips6610LCDInv::shiftBits(byte b) 
+void NokiaLCD::ShiftBits(byte b) 
 {
   byte Bit;
   
@@ -234,33 +228,33 @@ void Phillips6610LCDInv::shiftBits(byte b)
   }  
 }
 
-void Phillips6610LCDInv::sendData(byte data) {
+void NokiaLCD::SendData(byte data) {
   CLK0
   SDA1
   CLK1
-  shiftBits(data);
+  ShiftBits(data);
 }
 
-void Phillips6610LCDInv::sendCMD(byte data) {
+void NokiaLCD::SendCMD(byte data) {
   CLK0
   SDA0
   CLK1
-  shiftBits(data);
+  ShiftBits(data);
 
 }
 
-void Phillips6610LCDInv::lcd_set_box(byte x1, byte y1, byte x2, byte y2)
+void NokiaLCD::SetBox(byte x1, byte y1, byte x2, byte y2)
 {
-  sendCMD(CASET);   // page start/end ram
-  sendData(x1);     // for some reason starts at 2
-  sendData(x2);
+  SendCMD(CASET);   // page start/end ram
+  SendData(x1);     // for some reason starts at 2
+  SendData(x2);
 
-  sendCMD(PASET);   // column start/end ram
-  sendData(y1);
-  sendData(y2);
+  SendCMD(PASET);   // column start/end ram
+  SendData(y1);
+  SendData(y2);
 }
 
-void Phillips6610LCDInv::lcd_clear(byte color, byte x1, byte y1, byte x2, byte y2)
+void NokiaLCD::Clear(byte color, byte x1, byte y1, byte x2, byte y2)
 {
   uint16_t xmin, xmax, ymin, ymax;
   uint16_t i;
@@ -277,31 +271,31 @@ void Phillips6610LCDInv::lcd_clear(byte color, byte x1, byte y1, byte x2, byte y
 
   // specify the controller drawing box according to those limits
   // Row address set (command 0x2B)
-  sendCMD(CASET);
-  sendData(xmin);
-  sendData(xmax);
+  SendCMD(CASET);
+  SendData(xmin);
+  SendData(xmax);
 
   // Column address set (command 0x2A)
-  sendCMD(PASET);
-  sendData(ymin);
-  sendData(ymax);
+  SendCMD(PASET);
+  SendData(ymin);
+  SendData(ymax);
 
   // WRITE MEMORY
-  sendCMD(RAMWR);
+  SendCMD(RAMWR);
 
   // loop on total number of pixels / 2
   for (i = 0; i < ((xmax - xmin + 1) * (ymax - ymin + 1)) ; i++) 
   {
     // use the color value to output three data bytes covering two pixels
     // For some reason, it has to send blue first then green and red
-    //sendData((color << 4) | ((color & 0xF0) >> 4));
-    //sendData(((color >> 4) & 0xF0) | (color & 0x0F));
-    //sendData((color & 0xF0) | (color >> 8));
-    sendData(icolor);
+    //SendData((color << 4) | ((color & 0xF0) >> 4));
+    //SendData(((color >> 4) & 0xF0) | (color & 0x0F));
+    //SendData((color & 0xF0) | (color >> 8));
+    SendData(icolor);
   }
 }
 
-void Phillips6610LCDInv::lcd_init()
+void NokiaLCD::Init()
 {
   // Initial state
   CS1
@@ -314,87 +308,87 @@ void Phillips6610LCDInv::lcd_init()
   delay(100);
   
   //Software Reset
-  sendCMD(SWRESET);
+  SendCMD(SWRESET);
 
   //Sleep Out
-  sendCMD(SLEEPOUT);
+  SendCMD(SLEEPOUT);
 
   //Booster ON
-  sendCMD(BSTRON);
+  SendCMD(BSTRON);
 
 
   //Display On
-  sendCMD(DISPON);
+  SendCMD(DISPON);
 
   //Normal display mode
-  sendCMD(NORON);
+  SendCMD(NORON);
 
   //Display inversion on
-  sendCMD(INVON);
+  SendCMD(INVON);
 
   //Data order
-  //sendCMD(0xBA);
+  //SendCMD(0xBA);
 
-  sendCMD(SETCON);
-  sendData(0x40);
+  SendCMD(SETCON);
+  SendData(0x38);
 
   //Memory data access control
-  sendCMD(MADCTL);
+  SendCMD(MADCTL);
 
- //sendData(8|64);   //rgb + MirrorX
- //sendData(8|128);   //rgb + MirrorY
-  sendData(0xc0);
+ //SendData(8|64);   //rgb + MirrorX
+ //SendData(8|128);   //rgb + MirrorY
+  SendData(0xc0);
 
-  sendCMD(COLMOD);
-  sendData(2);   //16-Bit per Pixel
+  SendCMD(COLMOD);
+  SendData(2);   //16-Bit per Pixel
 
-  lcd_clear(0xff,0,0,131,131);
+  Clear(0xff,0,0,131,131);
 
 }
 
-void Phillips6610LCDInv::lcd_Sleep()
+void NokiaLCD::Sleep()
 {
-  sendCMD(DISPOFF);
-  sendCMD(SLEEPIN);
-  lcd_BacklightOff();
+  SendCMD(DISPOFF);
+  SendCMD(SLEEPIN);
+  BacklightOff();
 }
 
-void Phillips6610LCDInv::lcd_Wake()
+void NokiaLCD::Wake()
 {
-  lcd_BacklightOn();
-  sendCMD(SLEEPOUT);
-  sendCMD(DISPON);
+  BacklightOn();
+  SendCMD(SLEEPOUT);
+  SendCMD(DISPON);
 }
 
-void Phillips6610LCDInv::lcd_BacklightOn()
+void NokiaLCD::BacklightOn()
 {
   BL1
 }
 
-void Phillips6610LCDInv::lcd_BacklightOff()
+void NokiaLCD::BacklightOff()
 {
   BL0
 }
 
 
-void Phillips6610LCDInv::draw_text_line(byte fcolor, byte bcolor,byte x, byte y,char c)
+void NokiaLCD::DrawTextLine(byte fcolor, byte bcolor,byte x, byte y,char c)
 {
   unsigned int i;
   unsigned int ifcolor, ibcolor;
   ifcolor = ~fcolor;
   ibcolor = ~bcolor;
-  lcd_set_box(x,y,x,y+7);
-  sendCMD(RAMWR);
+  SetBox(x,y,x,y+7);
+  SendCMD(RAMWR);
   for(i=0;i<8;i++)
   {
     if (1<<i & c)
-      sendData(ifcolor);
+      SendData(ifcolor);
     else
-      sendData(ibcolor);
+      SendData(ibcolor);
   }
 }
 
-void Phillips6610LCDInv::lcd_draw_text(byte fcolor, byte bcolor, byte x, byte y,char *text)
+void NokiaLCD::DrawText(byte fcolor, byte bcolor, byte x, byte y,char *text)
 {
   byte c;
   byte t;
@@ -408,25 +402,207 @@ void Phillips6610LCDInv::lcd_draw_text(byte fcolor, byte bcolor, byte x, byte y,
      for(j = i; j < i+5; j++)
      {
        c = font[j];
-       draw_text_line(fcolor, bcolor, x++, y, c);
+       DrawTextLine(fcolor, bcolor, x++, y, c);
      }
-     draw_text_line(fcolor, bcolor, x++, y, 0);
+     DrawTextLine(fcolor, bcolor, x++, y, 0);
      text++;
    }
 }
 
-void Phillips6610LCDInv::lcd_put_pixel(byte color, byte x, byte y)
+void NokiaLCD::DrawText(byte fcolor, byte bcolor, byte x, byte y,int text)
+{
+	char temp[6];
+	itoa(text,temp,10);
+	DrawText(fcolor, bcolor, x, y,temp);
+}
+
+void NokiaLCD::DrawText(byte fcolor, byte bcolor, byte x, byte y,byte text)
+{
+	char temp[6];
+	itoa(text,temp,10);
+	DrawText(fcolor, bcolor, x, y,temp);
+}
+
+void NokiaLCD::DrawText(byte fcolor, byte bcolor, byte x, byte y,long text)
+{
+	char temp[20];
+	ltoa(text,temp,10);
+	DrawText(fcolor, bcolor, x, y,temp);
+}
+
+void NokiaLCD::PutPixel(byte color, byte x, byte y)
 {
   unsigned int icolor;
   icolor = ~color;
 
-  sendCMD(CASET);   // page start/end ram
-  sendData(x);      // for some reason starts at 2
-  sendData(x+1);
+  SendCMD(CASET);   // page start/end ram
+  SendData(x);      // for some reason starts at 2
+  SendData(x+1);
 
-  sendCMD(PASET);   // column start/end ram
-  sendData(y);
-  sendData(y+1);
-  sendCMD(RAMWR);
-  sendData(icolor);
+  SendCMD(PASET);   // column start/end ram
+  SendData(y);
+  SendData(y+1);
+  SendCMD(RAMWR);
+  SendData(icolor);
+}
+
+void NokiaLCD::SetContrast(byte Contrast)
+{
+  SendCMD(SETCON);
+  SendData(Contrast);
+}
+
+
+void NokiaLCD::DrawDate(byte x, byte y)
+{
+  //byte iTimeHourOffset=0;
+  char text[21];
+  char temp[]="  ";
+  strcpy(text,"");
+  itoa(month(),temp,10);
+  if (temp[1]==0) strcat(text,"0");
+  strcat(text,temp);
+  strcat(text,"/");
+  itoa(day(),temp,10);
+  if (temp[1]==0) strcat(text,"0");
+  strcat(text,temp);
+  strcat(text,"/");
+  itoa(year()-2000,temp,10);
+  if (temp[1]==0) strcat(text,"0");
+  strcat(text,temp);
+  strcat(text," ");
+  //if (iTimeHour>12) iTimeHourOffset=12;
+  itoa(hourFormat12(),temp,10);
+  if (temp[1]==0) strcat(text,"0");
+  strcat(text,temp);
+  strcat(text,":");
+  itoa(minute(),temp,10);
+  if (temp[1]==0) strcat(text,"0");
+  strcat(text,temp);
+  strcat(text,":");
+  itoa(second(),temp,10);
+  if (temp[1]==0) strcat(text,"0");
+  strcat(text,temp);
+  if (isAM())
+  {
+  strcat(text," AM");    
+  }
+  else
+  {
+  strcat(text," PM");    
+  }
+  DrawText(RED,WHITE,x,y,text);
+}
+
+void NokiaLCD::DrawOutletBox(byte x, byte y,byte RelayData)
+{
+	Clear(94,x,y,x+104,y);
+	Clear(94,x,y+12,x+104,y+12);
+	for (int a=0;a<8;a++)
+	{
+	  byte bcolor=WHITE;
+	  byte fcolor=BLACK;
+	  char temp[]="  ";
+	  if ((RelayData&(1<<a))==1<<a)
+	  {
+		bcolor=13;
+		fcolor=WHITE;
+	  }
+	  Clear(bcolor,x+1+(a*13),y+1,x+14+(a*13),y+11);
+	  itoa(a+1,temp,10);
+	  DrawText(fcolor,bcolor,x+5+(a*13),y+3,temp);
+	}
+}
+
+void NokiaLCD::DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte decimal)
+{
+  char text[7];
+  char temptxt[3];
+  if (Temp==0xFFFF) Temp=0;
+  itoa(Temp/decimal,text,10);
+  if (decimal>1)
+  {
+	  itoa(Temp%decimal,temptxt,10);
+	  strcat(text , ".");
+	  if (Temp%decimal<10 && decimal==100) strcat(text , "0");
+	  strcat(text , temptxt);
+  }
+  Clear(WHITE,x,y,x+30,y+8);
+  DrawText(fcolor,WHITE,x,y,text);
+}
+
+void NokiaLCD::DrawMonitor(byte x, byte y, ParamsStruct Params, byte DaylightPWMValue, byte ActnicPWMValue)
+{
+  DrawText(WaterTempColor,WHITE,x,y,"T1:");
+  DrawSingleMonitor(Params.Temp1, WaterTempColor, x+18, y,10); 
+  DrawText(LightsTempColor,WHITE,x,y+10,"T2:");
+  DrawSingleMonitor(Params.Temp2, LightsTempColor, x+18, y+10,10); 
+  DrawText(AmbientTempColor,WHITE,x,y+20,"T3:");
+  DrawSingleMonitor(Params.Temp3, AmbientTempColor, x+18, y+20,10); 
+  DrawText(PHColor,WHITE,x+60,y,"PH:");
+  DrawSingleMonitor(Params.PH, PHColor, x+78, y,100); 
+  DrawText(DPColor,WHITE,x+60,y+10,"DP:");
+  DrawSingleMonitor(DaylightPWMValue, DPColor, x+78, y+10,1); 
+  DrawText(APColor,WHITE,x+60,y+20,"AP:");
+  DrawSingleMonitor(ActnicPWMValue, APColor, x+78, y+20,1); 
+}
+
+void NokiaLCD::DrawSingleGraph(byte color, byte x, byte y, int I2CAddr, int EEaddr)
+{
+	int start;
+	for (int a=0;a<120;a++)
+	{
+		start=EEaddr+a;
+		if (start > (int(EEaddr/120)+1)*120) start=start-120;
+		Wire.beginTransmission(I2CAddr);
+		Wire.send((int)(start >> 8));   // MSB
+		Wire.send((int)(start & 0xFF)); // LSB
+		Wire.endTransmission();
+		Wire.requestFrom(I2CAddr,1);
+		if (Wire.available()) PutPixel(color,x+a,y+50-Wire.receive());
+	}
+	
+}
+
+void NokiaLCD::DrawEEPromImage(int swidth, int sheight, byte x, byte y, int I2CAddr, int EEaddr)
+{
+  int count = 0;
+  SetBox(x,y,swidth-1+x,sheight-1+y);
+  SendCMD(0x2c);
+  //for (int j = 0; j < sheight; j++)
+  //{
+  //  for (int i = 0; i < swidth; i++)
+  //  {
+      //e.lcd_put_pixel(readEEPROM(I2CEEPROM,count+start),i+x,j+y);
+  //    count++;
+  //  }
+  //  WatchDogReset();
+  //}
+  do
+  {
+    Wire.beginTransmission(I2CAddr);
+    Wire.send((int)(EEaddr+count >> 8));   // MSB
+    Wire.send((int)(EEaddr+count & 0xFF)); // LSB
+    Wire.endTransmission();
+    Wire.requestFrom(I2CAddr,30);
+    for (int j = 0; j < 30; j++)
+    {
+      count+=1;
+      if ((count<swidth*sheight) && Wire.available()) SendData(~Wire.receive());
+    }
+  }
+  while (count < swidth*sheight);
+}
+
+void NokiaLCD::DrawGraph(byte x, byte y, int I2CAddr, int pointer)
+{
+  Clear(WHITE,0,y,131,y+50);
+  Clear(BLACK,x,y,x,y+50);
+  for (int i=6; i<=131; i+=3){
+    PutPixel(0x49, i, y+25);
+  }
+  DrawSingleGraph(WaterTempColor,x,y,I2CAddr,EEPROM.read(pointer));
+  DrawSingleGraph(LightsTempColor,x,y,I2CAddr,EEPROM.read(pointer)+120);
+  DrawSingleGraph(AmbientTempColor,x,y,I2CAddr,EEPROM.read(pointer)+240);
+  DrawSingleGraph(PHColor,x,y,I2CAddr,EEPROM.read(pointer)+360);
 }

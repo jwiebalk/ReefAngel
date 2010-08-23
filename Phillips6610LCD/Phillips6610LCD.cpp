@@ -1,22 +1,6 @@
-/*
- * Copyright 2010 Reef Angel / Roberto Imai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 #include "WProgram.h"
 
-#include "Phillips6610LCDInv.h"
+#include "Phillips6610LCD.h"
 
 
 // Define Software SPI Pin Signal
@@ -205,16 +189,16 @@ byte const font[475] = {
 };
 
 
-Phillips6610LCDInv::Phillips6610LCDInv()
+Phillips6610LCD::Phillips6610LCD()
 {
 
   DDRD |= B01111100;   // Set SPI pins as output 
-  PORTD |= B01111000;  // Set SPI pins HIGH
+  PORTD |= B01111100;  // Set SPI pins HIGH
 }
 
 
 
-void Phillips6610LCDInv::shiftBits(byte b) 
+void Phillips6610LCD::shiftBits(byte b) 
 {
   byte Bit;
   
@@ -234,22 +218,34 @@ void Phillips6610LCDInv::shiftBits(byte b)
   }  
 }
 
-void Phillips6610LCDInv::sendData(byte data) {
+void Phillips6610LCD::sendData(byte data) {
+  CS1
   CLK0
+  CS0
   SDA1
   CLK1
+  CLK0
+
   shiftBits(data);
+  CLK0
+  CS1
 }
 
-void Phillips6610LCDInv::sendCMD(byte data) {
+void Phillips6610LCD::sendCMD(byte data) {
+  CS1
   CLK0
+  CS0
   SDA0
   CLK1
+  CLK0
+
   shiftBits(data);
+  CLK0
+  CS1
 
 }
 
-void Phillips6610LCDInv::lcd_set_box(byte x1, byte y1, byte x2, byte y2)
+void Phillips6610LCD::lcd_set_box(byte x1, byte y1, byte x2, byte y2)
 {
   sendCMD(CASET);   // page start/end ram
   sendData(x1);     // for some reason starts at 2
@@ -260,12 +256,10 @@ void Phillips6610LCDInv::lcd_set_box(byte x1, byte y1, byte x2, byte y2)
   sendData(y2);
 }
 
-void Phillips6610LCDInv::lcd_clear(byte color, byte x1, byte y1, byte x2, byte y2)
+void Phillips6610LCD::lcd_clear(byte color, byte x1, byte y1, byte x2, byte y2)
 {
   uint16_t xmin, xmax, ymin, ymax;
   uint16_t i;
-  unsigned int icolor;
-  icolor = ~color;
   
   // best way to create a filled rectangle is to define a drawing box
   // and loop two pixels at a time
@@ -297,15 +291,16 @@ void Phillips6610LCDInv::lcd_clear(byte color, byte x1, byte y1, byte x2, byte y
     //sendData((color << 4) | ((color & 0xF0) >> 4));
     //sendData(((color >> 4) & 0xF0) | (color & 0x0F));
     //sendData((color & 0xF0) | (color >> 8));
-    sendData(icolor);
+    sendData(color);
   }
 }
 
-void Phillips6610LCDInv::lcd_init()
+void Phillips6610LCD::lcd_init()
 {
   // Initial state
+  CLK0
   CS1
-  CS0
+  SDA1
   
   // Hardware Reset LCD
   RESET0
@@ -313,88 +308,73 @@ void Phillips6610LCDInv::lcd_init()
   RESET1
   delay(100);
   
-  //Software Reset
-  sendCMD(SWRESET);
-
-  //Sleep Out
+  // Sleep out (commmand 0x11)
   sendCMD(SLEEPOUT);
 
-  //Booster ON
-  sendCMD(BSTRON);
-
-
-  //Display On
-  sendCMD(DISPON);
-
-  //Normal display mode
-  sendCMD(NORON);
-
-  //Display inversion on
-  sendCMD(INVON);
-
-  //Data order
-  //sendCMD(0xBA);
-
-  sendCMD(SETCON);
-  sendData(0x40);
-
-  //Memory data access control
+  // Inversion on (command 0x20)
+  //sendCMD(INVON);    // seems to be required for this controller
+  sendCMD(INVOFF); 
+  
+  // Memory access controler (command 0x36)
   sendCMD(MADCTL);
+  sendData(0xc0); // 0xC0 = mirror x and y, reverse rgb
+  
+  // Write contrast (command 0x25)
+  sendCMD(SETCON);
+  sendData(0x20); // contrast 0x30
 
- //sendData(8|64);   //rgb + MirrorX
- //sendData(8|128);   //rgb + MirrorY
-  sendData(0xc0);
-
+  // Color Interface Pixel Format (command 0x3A)
   sendCMD(COLMOD);
-  sendData(2);   //16-Bit per Pixel
+  sendData(0x02);    // 0x03 = 12 bits-per-pixel
+  
+  sendCMD(BSTROFF);
 
   lcd_clear(0xff,0,0,131,131);
 
+  sendCMD(DISPON);
+
 }
 
-void Phillips6610LCDInv::lcd_Sleep()
+void Phillips6610LCD::lcd_Sleep()
 {
   sendCMD(DISPOFF);
   sendCMD(SLEEPIN);
   lcd_BacklightOff();
 }
 
-void Phillips6610LCDInv::lcd_Wake()
+void Phillips6610LCD::lcd_Wake()
 {
   lcd_BacklightOn();
   sendCMD(SLEEPOUT);
   sendCMD(DISPON);
 }
 
-void Phillips6610LCDInv::lcd_BacklightOn()
+void Phillips6610LCD::lcd_BacklightOn()
 {
   BL1
 }
 
-void Phillips6610LCDInv::lcd_BacklightOff()
+void Phillips6610LCD::lcd_BacklightOff()
 {
   BL0
 }
 
 
-void Phillips6610LCDInv::draw_text_line(byte fcolor, byte bcolor,byte x, byte y,char c)
+void Phillips6610LCD::draw_text_line(byte fcolor, byte bcolor,byte x, byte y,char c)
 {
   unsigned int i;
-  unsigned int ifcolor, ibcolor;
-  ifcolor = ~fcolor;
-  ibcolor = ~bcolor;
   lcd_set_box(x,y,x,y+7);
   sendCMD(RAMWR);
   for(i=0;i<8;i++)
   {
     if (1<<i & c)
-      sendData(ifcolor);
+      sendData(fcolor);
     else
-      sendData(ibcolor);
+      sendData(bcolor);
   }
 }
 
-void Phillips6610LCDInv::lcd_draw_text(byte fcolor, byte bcolor, byte x, byte y,char *text)
+void Phillips6610LCD::lcd_draw_text(byte fcolor, byte bcolor, byte x, byte y,char *text)
 {
   byte c;
   byte t;
@@ -415,11 +395,8 @@ void Phillips6610LCDInv::lcd_draw_text(byte fcolor, byte bcolor, byte x, byte y,
    }
 }
 
-void Phillips6610LCDInv::lcd_put_pixel(byte color, byte x, byte y)
+void Phillips6610LCD::lcd_put_pixel(byte color, byte x, byte y)
 {
-  unsigned int icolor;
-  icolor = ~color;
-
   sendCMD(CASET);   // page start/end ram
   sendData(x);      // for some reason starts at 2
   sendData(x+1);
@@ -428,5 +405,5 @@ void Phillips6610LCDInv::lcd_put_pixel(byte color, byte x, byte y)
   sendData(y);
   sendData(y+1);
   sendCMD(RAMWR);
-  sendData(icolor);
+  sendData(color);
 }

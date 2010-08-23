@@ -17,28 +17,54 @@
 #ifndef	ReefAngel_h
 #define ReefAngel_h
 
-#define ReefAngel_Version "0.8.5 beta 2"
+#define ReefAngel_Version "0.8.3.1"
 
-//#define wifi
+#define wifi
 #include <WProgram.h>
-#include <ReefAngel_Stack.h>  // NOTE for nested menus
+#include <inttypes.h>
+#include <Wire.h>
 #include <EEPROM.h>
-#include <ReefAngel_EEPROM.h>  // NOTE read/write internal memory
+#include <OneWire.h>
 #include <Time.h>
-#include <ReefAngel_NokiaLCD.h>
-#include <ReefAngel_ATO.h>
-#include <ReefAngel_Joystick.h>
-#include <ReefAngel_LED.h>
-#include <ReefAngel_TempSensor.h>
-#include <ReefAngel_Relay.h>
-#include <ReefAngel_PWM.h>
-#include <ReefAngel_Timer.h>
-#include <ReefAngel_Memory.h>
+#include <DS1307RTC.h>
+#include <NokiaLCD.h>
 #include <avr/pgmspace.h>
 
+// I2C Addresses
+#define I2CEEPROM1          0x50
+#define I2CEEPROM2          0x54
+#define I2CClock            0x68
+#define I2CExpander1        0x20
+#define I2CExpander2        0x21
+
+#define I2CEEPROM2_Main              0     //0-2999
+#define I2CEEPROM2_Feedging          9919  //3000-4999
+#define I2CEEPROM2_Water_Change      11919  //15300-18104
+
+//Digital I/O
+#define ledPin              7
+#define tempPin             8
+#define actinicPWMPin       9
+#define daylightPWMPin      10
+#define lowATOPin           11
+#define highATOPin          12
+#define okPin               13
+
+//Analog I/O
+#define VPin                0
+#define HPin                1
+#define PHPin               6
+#define Piezo               16
+
+//EEProm Pointers
+#define PH_Min		        949
+#define PH_Max		        951
+#define T1Pointer			953
+
+#define KeyPressRate		250
 
 #ifdef wifi
-#define SERVER_HEADER1 "HTTP/1.1 200 OK" CRLF "Server: ReefAngel" CRLF "Cache-Control: no-store, no-cache, must-revalidate" CRLF "Pragma: no-cache" CRLF "Connection: close" CRLF "Content-Type: text/"
+#define SERVER_HEADER1 "HTTP/1.1 200 OK" CRLF "Server: ReefAngel" CRLF "Cache-Control: no-store, no-cache, must-revalidate" CRLF "Pragma: no-cache" CRLF "Connection: close" CRLF "Content-Type: text/" 
 #define SERVER_HEADER2 CRLF "Content-Length: "
 #define SERVER_HEADER3 CRLF CRLF
 #define SERVER_HEADER_HTML SERVER_HEADER1 "html" SERVER_HEADER2
@@ -90,16 +116,128 @@ static byte reqtype=0;
 static unsigned long timeout;
 #endif
 
+#define SIZE(array) (sizeof(array) / sizeof(*array))
+
 
 template <class T> int EEPROM_writeAnything(int ee, const T& value);
 template <class T> int EEPROM_readAnything(int ee, T& value);
 
-// TODO ReefAngel - check where variables are used
+static byte ButtonPress=0;
 static unsigned long ButtonDebounce;
+static OneWire ds(tempPin);
 static byte oldtick;
-//static unsigned long RAStart;  // moved to .cpp file
+static unsigned long RAStart;
 static bool conn=false;
 
+class JoystickClass
+{
+
+public:
+	JoystickClass();
+	void Init();
+	bool IsButtonPressed();
+	bool IsUp();
+	bool IsDown();
+	bool IsRight();
+	bool IsLeft();
+
+private:
+	void JoystickCenter();
+	int CalV, CalH;
+	unsigned long KeyKeep;
+	byte KeyTurbo;
+	byte KeyCount;
+};
+
+class LEDClass
+{
+
+public:
+	LEDClass();
+	void On();
+	void Off();
+
+private:
+
+};
+
+class ATOClass
+{
+public:
+	ATOClass();
+	bool IsLowActive();
+	bool IsHighActive();
+	bool topping;
+	unsigned long ATOTimer;
+private:
+
+};
+
+class TempSensorClass
+{
+public:
+	TempSensorClass();
+	void Init();
+	void RequestConvertion();
+	int ReadTemperature(byte addr[8], byte unit);
+	byte addrT1[8];
+	byte addrT2[8];
+	byte addrT3[8];
+
+private:
+};
+
+class MemoryClass
+{
+public:
+	MemoryClass();
+	byte Read(unsigned int address);
+	void Write(unsigned int address, byte data);
+
+private:
+
+};
+
+class RelayClass
+{
+public:
+	RelayClass();
+	void On(byte ID);
+	void Off(byte ID);
+	void AllOn();
+	void AllOff();
+	void Toggle(byte ID);
+	byte RelayData;
+	byte RelayMaskOn;
+	byte RelayMaskOff;
+	void Write();
+
+private:
+
+};
+
+class PWMClass
+{
+public:
+	PWMClass();
+	void SetActinic(byte value);
+	void SetDaylight(byte value);
+	byte ActinicPWMValue;
+	byte DaylightPWMValue;
+private:
+
+};
+
+class TimerClass
+{
+public:
+	TimerClass();
+	time_t Trigger;
+	time_t Interval;
+	void Start();
+	bool IsTriggered();
+private:
+};
 
 class ReefAngelClass
 {
@@ -108,83 +246,41 @@ public:
 	int PHMin,PHMax;
 	ParamsStruct Params;
 	ReefAngelClass();
-	ReefAngel_NokiaLCD LCD;
-	ReefAngel_JoystickClass Joystick;
-	ReefAngel_LEDClass LED;
+	NokiaLCD LCD;
+	JoystickClass Joystick;
+	LEDClass LED;
 	DS1307RTC RTC;
-	ReefAngel_ATOClass ATO;
-	ReefAngel_TempSensorClass TempSensor;
-	ReefAngel_MemoryClass Memory;
-	ReefAngel_RelayClass Relay;
-	ReefAngel_PWMClass PWM;
-	/*
-	Timers:
-	0 - Feeding Mode timer
-	1 - Wavemaker 1 or Dosing Pump 1
-	2 - Wavemaker 2 or Dosing Pump 2
-	3 - Backlight timer / Sleep timer
-	4 - Not used
-	5 - Store params to eeprom
-	*/
-	ReefAngel_TimerClass Timer[6];
-	// NOTE for nested menus
-	byte SelectedMenuItem;
-
+	ATOClass ATO;
+	TempSensorClass TempSensor;
+	MemoryClass Memory;
+	RelayClass Relay;
+	PWMClass PWM;
+	TimerClass Timer[6];
+	PROGMEM const char *menu_items;
 	void Init();
 	void Refresh();
+	void LoadMenu(int pointer, byte qty);
 	void SetTemperatureUnit(byte unit);
+	void StandardGUI();
+	void FeedingModeGUI();
+	void WaterChangeModeGUI();
+	void ReturnMenuFunction();
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);
 	void StandardFan(byte FanRelay, int LowTemp, int HighTemp);
 	void StandardATO(byte ATORelay, int ATOTimeout);
-	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, time_t RunTime);
 	char *Version();
 	void DisplayVersion();
-	void SaveParamsToMemory();
-	void ClearScreen(byte Color);
-	bool IsTempOverheat(int temp);
-
-    // NOTE for nested menus
-    void DisplayHomeScreen();
-    void InitMenus();
-    void LoadAllMenus();
-    void ShowInterface();
-    void DisplayMenu(byte MenuNum);
-    void DisplayMenuHeading(byte MenuNum);
-    void DisplayMenuEntry(char *text);
-    void FeedingMode();
-    void WaterChangeMode();
-    void ProcessButtonPress(byte smenu);
-    void ProcessButtonPressMain(byte smenu);
-    void ProcessButtonPressOverride(byte smenu);
-    void ProcessButtonPressClear(byte smenu);
-    void ProcessButtonPressSetup(byte smenu);
-    void ProcessButtonPressLights(byte smenu);
-    void ProcessButtonPressTemps(byte smenu);
-    void ProcessButtonPressTimeouts(byte smenu);
-
-    // NOTE Setup Screens
-//    void SetupWavemakersDisplay();
-//    void DisplayWavemaker1(int t);
-//    void DisplayWavemaker2(int t);
-//    void SetupOverheatDisplay();
-//    void DisplayOverheat(int t);
+	byte SelectedMenu;
 
 private:
 	byte TempUnit;
+	int menupointer;
+	byte menuqty;
 	bool showmenu;
+	byte selmenu;
 	time_t menutimeout;
-
-	// NOTE for nested menus
-	int menusptr[Total_Menus];
-	byte menuqtysptr[Total_Menus];
-	byte DisplayedMenu;
-	ReefAngel_ByteStackClass SPreviousMenu;
-	bool redraw;  // is this needed?
-
-	ReefAngel_EEPROMClass InternalMemory;
-
 };
 
 #ifdef wifi
@@ -192,6 +288,9 @@ void WebResponse (const prog_uchar *response, long strsize);
 void printP(const prog_uchar *str);
 void PROGMEMprint(const prog_uchar str[]);
 #endif
+
+byte intlength(int intin);
+int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute);
 
 
 extern ReefAngelClass ReefAngel;  // make an instance for the user
