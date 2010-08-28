@@ -18,7 +18,7 @@
 #define ReefAngel_h
 
 #define ReefAngel_Version "0.8.5 beta 5"
-#define DEV_MODE  // Developer Mode
+//#define DEV_MODE  // Developer Mode
 
 /*
 If your sketch/compile size is getting too big or if you are running out of RAM and having bizarre events
