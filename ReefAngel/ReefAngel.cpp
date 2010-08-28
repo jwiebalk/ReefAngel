@@ -94,7 +94,7 @@ enum MainMenuItem {
 };
 
 
-// Setup Menu
+// Setup MenuWavemakerSetup
 #ifdef WavemakerSetup
 prog_char setupmenu_0_label[] PROGMEM = "Wavemaker";
 #endif  // WavemakerSetup
@@ -106,7 +106,7 @@ prog_char setupmenu_2_label[] PROGMEM = "Calibrate pH";
 prog_char setupmenu_3_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
 PROGMEM const char *setupmenu_items[] = {
-#ifdef WavemkerSetup
+#ifdef WavemakerSetup
                     setupmenu_0_label,
 #endif  // WavemakerSetup
 #ifdef DosingPumpSetup
@@ -554,6 +554,9 @@ void ReefAngelClass::DisplayVersion()
     // Display the Software Version
     LCD.DrawText(ModeScreenColor,DefaultBGColor,10,10,"Reef Angel");
     LCD.DrawText(ModeScreenColor,DefaultBGColor,10,20,"v"ReefAngel_Version);
+#ifdef DEV_MODE
+    LCD.DrawText(ModeScreenColor,DefaultBGColor,10,30,"Developer Mode");
+#endif  // DEV_MODE
 
 #ifdef wifi
     // Display wifi related information
@@ -2311,6 +2314,301 @@ void ReefAngelClass::SetupDateTime()
 #ifdef DosingPumpSetup
 void ReefAngelClass::SetupDosingPump()
 {
+    enum choices {
+        OPT1, // DP1 On Hour
+        OPT2, // DP1 On Minute
+        OPT3, // DP1 Run Time
+        OPT4, // DP2 On Hour
+        OPT5, // DP2 On Minute
+        OPT6, // DP2 Run Time
+        OK,
+        CANCEL
+    };
+    byte sel = OPT1;
+    bool bSave = false;
+    bool bDone = false;
+    bool bRedraw = true;
+    bool bDrawButtons = true;
+    uint8_t h1, h2, m1, m2, r1, r2;
+    byte offset_hr = 45;
+    byte offset_min = offset_hr+20;
+    h1 = InternalMemory.DP1OnHour_read();
+    m1 = InternalMemory.DP1OnMinute_read();
+    r1 = InternalMemory.DP1Timer_read();
+    h2 = InternalMemory.DP2OnHour_read();
+    m2 = InternalMemory.DP2OnMinute_read();
+    r2 = InternalMemory.DP2Timer_read();
+    ClearScreen(DefaultBGColor);
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "DP Setup");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*3, "DP1 On:");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL+offset_hr+13, MENU_START_ROW*3, ":");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, "Run Time:");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*7, "DP2 On:");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL+offset_hr+13, MENU_START_ROW*7, ":");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*9, "Run Time:");
+    do
+    {
+        if ( bRedraw )
+        {
+            switch ( sel )
+            {
+                case OPT1:
+                {
+                    LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(r2, 0, MENU_START_COL+offset_min, MENU_START_ROW*9, "", "", 3);
+                    LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*3, "", "");
+                    LCD.DrawOption(h1, 1, MENU_START_COL+offset_hr, MENU_START_ROW*3, "", "");
+                    LCD.DrawOption(r1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "", 3);
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
+                    }
+                    break;
+                }
+                case OPT2:
+                {
+                    LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(r2, 0, MENU_START_COL+offset_min, MENU_START_ROW*9, "", "", 3);
+                    LCD.DrawOption(r1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "", 3);
+                    LCD.DrawOption(m1, 1, MENU_START_COL+offset_min, MENU_START_ROW*3, "", "");
+                    LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*3, "", "");
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
+                    }
+                    break;
+                }
+                case OPT3:
+                {
+                    LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(r2, 0, MENU_START_COL+offset_min, MENU_START_ROW*9, "", "", 3);
+                    LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*3, "", "");
+                    LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*3, "", "");
+                    LCD.DrawOption(r1, 1, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "", 3);
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
+                    }
+                    break;
+                }
+                case OPT4:
+                {
+                    LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*3, "", "");
+                    LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*3, "", "");
+                    LCD.DrawOption(r1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "", 3);
+                    LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(h2, 1, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(r2, 0, MENU_START_COL+offset_min, MENU_START_ROW*9, "", "", 3);
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
+                    }
+                    break;
+                }
+                case OPT5:
+                {
+                    LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*3, "", "");
+                    LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*3, "", "");
+                    LCD.DrawOption(r1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "", 3);
+                    LCD.DrawOption(r2, 0, MENU_START_COL+offset_min, MENU_START_ROW*9, "", "", 3);
+                    LCD.DrawOption(m2, 1, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
+                    }
+                    break;
+                }
+                case OPT6:
+                {
+                    LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*3, "", "");
+                    LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*3, "", "");
+                    LCD.DrawOption(r1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "", 3);
+                    LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
+                    LCD.DrawOption(r2, 1, MENU_START_COL+offset_min, MENU_START_ROW*9, "", "", 3);
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
+                    }
+                    break;
+                }
+                case OK:
+                {
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*3, "", "");
+                        LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*3, "", "");
+                        LCD.DrawOption(r1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "", 3);
+                        LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
+                        LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
+                        LCD.DrawOption(r2, 0, MENU_START_COL+offset_min, MENU_START_ROW*9, "", "", 3);
+                        LCD.DrawOK(true);
+                        LCD.DrawCancel(false);
+                    }
+                    break;
+                }
+                case CANCEL:
+                {
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*3, "", "");
+                        LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*3, "", "");
+                        LCD.DrawOption(r1, 0, MENU_START_COL+offset_min, MENU_START_ROW*5, "", "", 3);
+                        LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
+                        LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
+                        LCD.DrawOption(r2, 0, MENU_START_COL+offset_min, MENU_START_ROW*9, "", "", 3);
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(true);
+                    }
+                    break;
+                }
+            }
+            bRedraw = false;
+            bDrawButtons = false;
+        }
+        if ( Joystick.IsUp() )
+        {
+            bRedraw = true;
+            if ( sel == OPT1 )
+            {
+                h1++;
+                if ( h1 > 23 )
+                {
+                    h1 = 0;
+                }
+            }
+            else if ( sel == OPT2 )
+            {
+                m1++;
+                if ( m1 > 59 )
+                {
+                    m1 = 0;
+                }
+            }
+            else if ( sel == OPT3 )
+            {
+                r1++;
+            }
+            else if ( sel == OPT4 )
+            {
+                h2++;
+                if ( h2 > 23 )
+                {
+                    h2 = 0;
+                }
+            }
+            else if ( sel == OPT5 )
+            {
+                m2++;
+                if ( m2 > 59 )
+                {
+                    m2 = 0;
+                }
+            }
+            else if ( sel == OPT6 )
+            {
+                r2++;
+            }
+        }
+        if ( Joystick.IsDown() )
+        {
+            bRedraw = true;
+            if ( sel == OPT1 )
+            {
+                h1--;
+                if ( h1 > 23 )
+                {
+                    h1 = 23;
+                }
+            }
+            else if ( sel == OPT2 )
+            {
+                m1--;
+                if ( m1 > 59 )
+                {
+                    m1 = 59;
+                }
+            }
+            else if ( sel == OPT3 )
+            {
+                r1--;
+            }
+            else if ( sel == OPT4 )
+            {
+                h2--;
+                if ( h2 > 23 )
+                {
+                    h2 = 23;
+                }
+            }
+            else if ( sel == OPT5 )
+            {
+                m2--;
+                if ( m2 > 59 )
+                {
+                    m2 = 59;
+                }
+            }
+            else if ( sel == OPT6 )
+            {
+                r2--;
+            }
+        }
+        if ( Joystick.IsRight() )
+        {
+            bRedraw = true;
+            bDrawButtons = true;  // only redraw the buttons if we are moving right or left
+            // move right, if we are on cancel, wrap around to opt1
+            sel++;
+            if ( sel > CANCEL )
+            {
+                sel = OPT1;
+            }
+        }
+        if ( Joystick.IsLeft() )
+        {
+            bRedraw = true;
+            bDrawButtons = true;
+            // move left, if we are on opt1, wrap around to cancel
+            sel--;
+            if ( sel > CANCEL )
+            {
+                sel = CANCEL;
+            }
+        }
+        if ( Joystick.IsButtonPressed() )
+        {
+            // only break when button pressed on ok or cancel
+            if ( sel == OK )
+            {
+                bDone = true;
+                bSave = true;
+            }
+            else if ( sel == CANCEL )
+            {
+                bDone = true;
+            }
+        }
+    } while ( ! bDone );
+    if ( bSave )
+    {
+        InternalMemory.DP1OnHour_write(h1);
+        InternalMemory.DP1OnMinute_write(m1);
+        InternalMemory.DP1Timer_write(r1);
+        InternalMemory.DP2OnHour_write(h2);
+        InternalMemory.DP2OnMinute_write(m2);
+        InternalMemory.DP2Timer_write(r2);
+    }
 }
 #endif  // DosingPumpSetup
 

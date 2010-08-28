@@ -17,7 +17,8 @@
 #ifndef	ReefAngel_h
 #define ReefAngel_h
 
-#define ReefAngel_Version "0.8.5 beta 5 dev"
+#define ReefAngel_Version "0.8.5 beta 5"
+#define DEV_MODE  // Developer Mode
 
 /*
 If your sketch/compile size is getting too big or if you are running out of RAM and having bizarre events
@@ -54,7 +55,7 @@ to hardcode the value in the ShowInterface Function
 //#define OverheatSetup
 
 // Comment out this next line to remove the Date/Time Setup screen
-//#define DateTimeSetup
+#define DateTimeSetup
 // Comment out this next line to remove the Version menu item
 #define VersionMenu
 

@@ -24,11 +24,6 @@ TODO List (in no particular order)
 * Add ATO Timeout Clear for Low & High switches instead of 1
 * Test wavemaker interval to have 0 equal always on
 * IFDEF out various sections of the code
-** Wavemaker Setup
-** DosingPump Setup
-** Date / Time Setup
-** Version Display
-** LED PWM (all references)
 ** Metal Halides Setup (Lights & Delay)
 ** ATO (Timeout Set & Clear & Menu)
 
@@ -44,3 +39,9 @@ Completed Items
 * Finish SetupLightsOptionsDisplay - get : between hours & minutes, align time properly on screen
 * Check on setup displays using bytes (uint8_t) and range checks with negative numbers.
 * Remove EEPROM class altogether, incorporate that class into my ReefAngel_EEPROM class
+* IFDEF out various sections of the code
+** Wavemaker Setup
+** DosingPump Setup
+** Date / Time Setup
+** Version Display
+** LED PWM (all references)
