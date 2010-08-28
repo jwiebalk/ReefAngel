@@ -528,7 +528,11 @@ void ReefAngel_NokiaLCD::DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y
     DrawText(fcolor,DefaultBGColor,x,y,text);
 }
 
+#ifdef DisplayLEDPWM
 void ReefAngel_NokiaLCD::DrawMonitor(byte x, byte y, ParamsStruct Params, byte DaylightPWMValue, byte ActnicPWMValue)
+#else
+void ReefAngel_NokiaLCD::DrawMonitor(byte x, byte y, ParamsStruct Params)
+#endif  // DisplayLEDPWM
 {
     DrawText(T1TempColor,DefaultBGColor,x,y,"T1:");
     DrawSingleMonitor(Params.Temp1, T1TempColor, x+18, y,10);
@@ -538,10 +542,12 @@ void ReefAngel_NokiaLCD::DrawMonitor(byte x, byte y, ParamsStruct Params, byte D
     DrawSingleMonitor(Params.Temp3, T3TempColor, x+18, y+20,10);
     DrawText(PHColor,DefaultBGColor,x+60,y,"PH:");
     DrawSingleMonitor(Params.PH, PHColor, x+78, y,100);
+#ifdef DisplayLEDPWM
     DrawText(DPColor,DefaultBGColor,x+60,y+10,"DP:");
     DrawSingleMonitor(DaylightPWMValue, DPColor, x+78, y+10,1);
     DrawText(APColor,DefaultBGColor,x+60,y+20,"AP:");
     DrawSingleMonitor(ActnicPWMValue, APColor, x+78, y+20,1);
+#endif  // DisplayLEDPWM
 }
 
 void ReefAngel_NokiaLCD::DrawSingleGraph(byte color, byte x, byte y, int EEaddr)

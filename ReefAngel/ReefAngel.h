@@ -42,7 +42,7 @@ you just will not have the setup screens available to configure the values.  You
 the intervals inside the Sketch (hardcode or have it read from memory if the memory contains the correct values).
 Comment out the appropriate line to remove the corresponding setup screens.
 */
-//#define DosingPumpSetup
+#define DosingPumpSetup
 #define WavemakerSetup
 
 /*
@@ -52,6 +52,12 @@ would like the ability to change this value from the menus, uncomment the next l
 to hardcode the value in the ShowInterface Function
 */
 //#define OverheatSetup
+
+// Comment out this next line to remove the Date/Time Setup screen
+//#define DateTimeSetup
+// Comment out this next line to remove the Version menu item
+#define VersionMenu
+
 
 //#define wifi
 #include <ReefAngel_EEPROM.h>  // NOTE read/write internal memory
@@ -140,9 +146,10 @@ public:
 	ReefAngel_ATOHighClass HighATO;
 	ReefAngel_ATOLowClass LowATO;
 	ReefAngel_TempSensorClass TempSensor;
-	//ReefAngel_MemoryClass Memory;
 	ReefAngel_RelayClass Relay;
+#ifdef DisplayLEDPWM
 	ReefAngel_PWMClass PWM;
+#endif  // DisplayLEDPWM
 	/*
 	Timers:
 	0 - Feeding Mode timer
@@ -166,7 +173,9 @@ public:
 	void StandardATO(byte ATORelay, int ATOTimeout);
 	void SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte byteHrInterval = 0);
 	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime);
+#ifdef VersionMenu
 	void DisplayVersion();
+#endif  // VersionMenu
 	void ClearScreen(byte Color);
 
     // NOTE for nested menus
@@ -192,7 +201,9 @@ public:
                            char* prefix1, char* prefix2);
     void SetupLightsOptionDisplay(bool bMetalHalide);
     void SetupCalibratePH();
+#ifdef DateTimeSetup
     void SetupDateTime();
+#endif  // DateTimeSetup
 #ifdef DosingPumpSetup
     void SetupDosingPump();
 #endif  // DosingPumpSetup

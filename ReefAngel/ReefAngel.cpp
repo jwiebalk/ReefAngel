@@ -65,68 +65,73 @@ prog_char mainmenu_2_label[] PROGMEM = "Lights ->";
 prog_char mainmenu_3_label[] PROGMEM = "Temps ->";
 prog_char mainmenu_4_label[] PROGMEM = "Timeouts ->";
 prog_char mainmenu_5_label[] PROGMEM = "Setup ->";
+#ifdef VersionMenu
 prog_char mainmenu_6_label[] PROGMEM = "Version";
-PROGMEM const char *mainmenu_items[] = {mainmenu_0_label, mainmenu_1_label, mainmenu_2_label,
-                    mainmenu_3_label, mainmenu_4_label, mainmenu_5_label, mainmenu_6_label};
+#endif  // VersionMenu
+PROGMEM const char *mainmenu_items[] = {
+                    mainmenu_0_label,
+                    mainmenu_1_label,
+                    mainmenu_2_label,
+                    mainmenu_3_label,
+                    mainmenu_4_label,
+                    mainmenu_5_label
+#ifdef VersionMenu
+                    ,
+                    mainmenu_6_label
+#endif  // VersionMenu
+                    };
 enum MainMenuItem {
     MainMenu_FeedingMode,
     MainMenu_WaterChangeMode,
     MainMenu_Lights,
     MainMenu_Temps,
     MainMenu_Timeouts,
-    MainMenu_Setup,
+    MainMenu_Setup
+#ifdef VersionMenu
+    ,
     MainMenu_Version
+#endif  // VersionMenu
 };
 
+
+// Setup Menu
+#ifdef WavemakerSetup
+prog_char setupmenu_0_label[] PROGMEM = "Wavemaker";
+#endif  // WavemakerSetup
 #ifdef DosingPumpSetup
-#ifdef WavemakerSetup
-// Setup Menu
-prog_char setupmenu_0_label[] PROGMEM = "Wavemaker";
 prog_char setupmenu_1_label[] PROGMEM = "Dosing Pump";
-prog_char setupmenu_2_label[] PROGMEM = "Calibrate pH";
-prog_char setupmenu_3_label[] PROGMEM = "Date / Time";
-PROGMEM const char *setupmenu_items[] = {setupmenu_0_label, setupmenu_1_label, setupmenu_2_label, setupmenu_3_label};
-enum SetupMenuItem {
-    SetupMenu_Wavemaker,
-    SetupMenu_DosingPump,
-    SetupMenu_CalibratePH,
-    SetupMenu_DateTime
-};
-#else // WavemakerSetup
-// Setup Menu
-prog_char setupmenu_0_label[] PROGMEM = "Dosing Pump";
-prog_char setupmenu_1_label[] PROGMEM = "Calibrate pH";
-prog_char setupmenu_2_label[] PROGMEM = "Date / Time";
-PROGMEM const char *setupmenu_items[] = {setupmenu_0_label, setupmenu_1_label, setupmenu_2_label};
-enum SetupMenuItem {
-    SetupMenu_DosingPump,
-    SetupMenu_CalibratePH,
-    SetupMenu_DateTime
-};
-#endif  // WavemakerSetup
-#else  // DosingPumpSetup
-#ifdef WavemakerSetup
-// Setup Menu
-prog_char setupmenu_0_label[] PROGMEM = "Wavemaker";
-prog_char setupmenu_1_label[] PROGMEM = "Calibrate pH";
-prog_char setupmenu_2_label[] PROGMEM = "Date / Time";
-PROGMEM const char *setupmenu_items[] = {setupmenu_0_label, setupmenu_1_label, setupmenu_2_label};
-enum SetupMenuItem {
-    SetupMenu_Wavemaker,
-    SetupMenu_CalibratePH,
-    SetupMenu_DateTime
-};
-#else  // WavemakerSetup
-// Setup Menu
-prog_char setupmenu_0_label[] PROGMEM = "Calibrate pH";
-prog_char setupmenu_1_label[] PROGMEM = "Date / Time";
-PROGMEM const char *setupmenu_items[] = {setupmenu_0_label, setupmenu_1_label};
-enum SetupMenuItem {
-    SetupMenu_CalibratePH,
-    SetupMenu_DateTime
-};
-#endif  // WavemakerSetup
 #endif  // DosingPumpSetup
+prog_char setupmenu_2_label[] PROGMEM = "Calibrate pH";
+#ifdef DateTimeSetup
+prog_char setupmenu_3_label[] PROGMEM = "Date / Time";
+#endif  // DateTimeSetup
+PROGMEM const char *setupmenu_items[] = {
+#ifdef WavemkerSetup
+                    setupmenu_0_label,
+#endif  // WavemakerSetup
+#ifdef DosingPumpSetup
+                    setupmenu_1_label,
+#endif  // DosingPumpSetup
+                    setupmenu_2_label
+#ifdef DateTimeSetup
+                    ,
+                    setupmenu_3_label
+#endif  // DateTimeSetup
+                    };
+enum SetupMenuItem {
+#ifdef WavemakerSetup
+    SetupMenu_Wavemaker,
+#endif  // WavemakerSetup
+#ifdef DosingPumpSetup
+    SetupMenu_DosingPump,
+#endif  // DosingPumpSetup
+    SetupMenu_CalibratePH
+#ifdef DateTimeSetup
+    ,
+    SetupMenu_DateTime
+#endif  // DateTimeSetup
+};
+
 
 // Lights Menu
 prog_char lightsmenu_0_label[] PROGMEM = "Lights On";
@@ -134,67 +139,74 @@ prog_char lightsmenu_1_label[] PROGMEM = "Lights Off";
 prog_char lightsmenu_2_label[] PROGMEM = "Metal Halides";
 prog_char lightsmenu_3_label[] PROGMEM = "MH On Delay";
 prog_char lightsmenu_4_label[] PROGMEM = "Standard Lights";
+#ifdef DisplayLEDPWM
 prog_char lightsmenu_5_label[] PROGMEM = "LED PWM";
-PROGMEM const char *lightsmenu_items[] = {lightsmenu_0_label, lightsmenu_1_label, lightsmenu_2_label,
-                            lightsmenu_3_label, lightsmenu_4_label, lightsmenu_5_label};
+#endif  // DisplayLEDPWM
+PROGMEM const char *lightsmenu_items[] = {
+                            lightsmenu_0_label, lightsmenu_1_label, lightsmenu_2_label,
+                            lightsmenu_3_label, lightsmenu_4_label
+#ifdef DisplayLEDPWM
+                            , lightsmenu_5_label
+#endif  // DisplayLEDPWM
+                            };
 enum LightsMenuItem {
     LightsMenu_On,
     LightsMenu_Off,
     LightsMenu_MetalHalides,
     LightsMenu_MetalHalideDelay,
-    LightsMenu_StandardLights,
+    LightsMenu_StandardLights
+#ifdef DisplayLEDPWM
+    ,
     LightsMenu_LEDPWM
+#endif  // DisplayLEDPWM
 };
 
+// Temps Menu
+prog_char tempsmenu_0_label[] PROGMEM = "Heater";
+prog_char tempsmenu_1_label[] PROGMEM = "Chiller";
 #ifdef OverheatSetup
-// Temps Menu
-prog_char tempsmenu_0_label[] PROGMEM = "Heater";
-prog_char tempsmenu_1_label[] PROGMEM = "Chiller";
 prog_char tempsmenu_2_label[] PROGMEM = "Overheat Set";
-prog_char tempsmenu_3_label[] PROGMEM = "Overheat Clear";
-PROGMEM const char *tempsmenu_items[] = {tempsmenu_0_label, tempsmenu_1_label, tempsmenu_2_label, tempsmenu_3_label};
-enum TempsMenuItem {
-    TempsMenu_Heater,
-    TempsMenu_Chiller,
-    TempsMenu_Overheat,
-    TempsMenu_OverheatClr
-};
-#else  // OverheatSetup
-// Temps Menu
-prog_char tempsmenu_0_label[] PROGMEM = "Heater";
-prog_char tempsmenu_1_label[] PROGMEM = "Chiller";
-prog_char tempsmenu_2_label[] PROGMEM = "Overheat Clear";
-PROGMEM const char *tempsmenu_items[] = {tempsmenu_0_label, tempsmenu_1_label, tempsmenu_2_label};
-enum TempsMenuItem {
-    TempsMenu_Heater,
-    TempsMenu_Chiller,
-    TempsMenu_OverheatClr
-};
 #endif  // OverheatSetup
+prog_char tempsmenu_3_label[] PROGMEM = "Overheat Clear";
+PROGMEM const char *tempsmenu_items[] = {
+                        tempsmenu_0_label,
+                        tempsmenu_1_label,
+#ifdef OverheatSetup
+                        tempsmenu_2_label,
+#endif  // OverheatSetup
+                        tempsmenu_3_label};
+enum TempsMenuItem {
+    TempsMenu_Heater,
+    TempsMenu_Chiller,
+#ifdef OverheatSetup
+    TempsMenu_Overheat,
+#endif  // OverheatSetup
+    TempsMenu_OverheatClr
+};
 
-#ifdef SetupExtras
 // Timeouts Menu
 prog_char timeoutsmenu_0_label[] PROGMEM = "ATO Set";
+#ifdef SetupExtras
 prog_char timeoutsmenu_1_label[] PROGMEM = "Feeding";
 prog_char timeoutsmenu_2_label[] PROGMEM = "LCD";
+#endif  // SetupExtras
 prog_char timeoutsmenu_3_label[] PROGMEM = "ATO Clear";
-PROGMEM const char *timeoutsmenu_items[] = {timeoutsmenu_0_label, timeoutsmenu_1_label, timeoutsmenu_2_label, timeoutsmenu_3_label};
+PROGMEM const char *timeoutsmenu_items[] = {
+                        timeoutsmenu_0_label,
+#ifdef SetupExtras
+                        timeoutsmenu_1_label,
+                        timeoutsmenu_2_label,
+#endif  // SetupExtras
+                        timeoutsmenu_3_label};
 enum TimeoutsMenuItem {
     TimeoutsMenu_ATOSet,
+#ifdef SetupExtras
     TimeoutsMenu_Feeding,
     TimeoutsMenu_LCD,
-    TimeoutsMenu_ATOClear
-};
-#else
-// Timeouts Menu
-prog_char timeoutsmenu_0_label[] PROGMEM = "ATO Set";
-prog_char timeoutsmenu_1_label[] PROGMEM = "ATO Clear";
-PROGMEM const char *timeoutsmenu_items[] = {timeoutsmenu_0_label, timeoutsmenu_1_label};
-enum TimeoutsMenuItem {
-    TimeoutsMenu_ATOSet,
-    TimeoutsMenu_ATOClear
-};
 #endif  // SetupExtras
+    TimeoutsMenu_ATOClear
+};
+
 
 ReefAngelClass::ReefAngelClass()
 {
@@ -536,6 +548,7 @@ void ReefAngelClass::DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte On
     }
 }
 
+#ifdef VersionMenu
 void ReefAngelClass::DisplayVersion()
 {
     // Display the Software Version
@@ -552,6 +565,7 @@ void ReefAngelClass::DisplayVersion()
     LCD.DrawText(ModeScreenColor,DefaultBGColor,10,70,"Port: 80");
 #endif  // wifi
 }
+#endif  // VersionMenu
 
 void ReefAngelClass::ClearScreen(byte Color)
 {
@@ -646,7 +660,11 @@ void ReefAngelClass::ShowInterface()
                 // display everything on the home screen except the graph
                 // the graph is drawn/updated when we exit the main menu & when the parameters are saved
                 LCD.DrawDate(6, 112);
+#ifdef DisplayLEDPWM
                 LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
+#else
+                LCD.DrawMonitor(15, 60, Params);
+#endif  // DisplayLEDPWM
                 byte TempRelay = Relay.RelayData;
                 TempRelay &= Relay.RelayMaskOff;
                 TempRelay |= Relay.RelayMaskOn;
@@ -1070,6 +1088,7 @@ void ReefAngelClass::ProcessButtonPressMain()
             DisplayedMenu = SetupMenu;
             break;
         }
+#ifdef VersionMenu
         case MainMenu_Version:
         {
             DisplayVersion();
@@ -1077,6 +1096,7 @@ void ReefAngelClass::ProcessButtonPressMain()
             showmenu = false;
             break;
         }
+#endif  // VersionMenu
         default:
         {
             // This will be the EXIT choice
@@ -1128,11 +1148,13 @@ void ReefAngelClass::ProcessButtonPressSetup()
             SetupCalibratePH();
             break;
         }
+#ifdef DateTimeSetup
         case SetupMenu_DateTime:
         {
             SetupDateTime();
             break;
         }
+#endif  // DateTimeSetup
         default:
         {
             SelectedMenuItem = DEFAULT_MENU_ITEM;
@@ -1154,9 +1176,11 @@ void ReefAngelClass::ProcessButtonPressLights()
             // turns on ports 2 & 3
             //         Port Mask 87654321
             Relay.RelayMaskOn = B00000110;
+#ifdef DisplayLEDPWM
             // sets PWM to 50%
             PWM.SetActinic(50);
             PWM.SetDaylight(50);
+#endif  // DisplayLEDPWM
             Relay.Write();
             DisplayMenuEntry("Lights On");
             showmenu = false;
@@ -1167,9 +1191,11 @@ void ReefAngelClass::ProcessButtonPressLights()
             // Reset ports 2 & 3
             //         Port Mask 87654321
             Relay.RelayMaskOn = B00000000;
+#ifdef DisplayLEDPWM
             // sets PWM to 0%
             PWM.SetActinic(0);
             PWM.SetDaylight(0);
+#endif  // DisplayLEDPWM
             Relay.Write();
             DisplayMenuEntry("Restore Lights");
             showmenu = false;
@@ -1194,6 +1220,7 @@ void ReefAngelClass::ProcessButtonPressLights()
             SetupLightsOptionDisplay(false);
             break;
         }
+#ifdef DisplayLEDPWM
         case LightsMenu_LEDPWM:
         {
             int v = InternalMemory.LEDPWMActinic_read();
@@ -1205,6 +1232,7 @@ void ReefAngelClass::ProcessButtonPressLights()
             }
             break;
         }
+#endif  // DisplayLEDPWM
         default:
         {
             SelectedMenuItem = DEFAULT_MENU_ITEM;
@@ -1942,6 +1970,7 @@ void ReefAngelClass::SetupCalibratePH()
     }
 }
 
+#ifdef DateTimeSetup
 void ReefAngelClass::SetupDateTime()
 {
     enum choices {
@@ -2277,6 +2306,7 @@ void ReefAngelClass::SetupDateTime()
         RTC.set(now());
     }
 }
+#endif  // DateTimeSetup
 
 #ifdef DosingPumpSetup
 void ReefAngelClass::SetupDosingPump()

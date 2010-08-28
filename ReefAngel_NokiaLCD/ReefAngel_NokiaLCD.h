@@ -47,7 +47,11 @@ public:
 	void SetContrast(byte Contrast);
 	void DrawDate(byte x, byte y);
 	void DrawOutletBox(byte x, byte y,byte RelayData);
+#ifdef DisplayLEDPWM
 	void DrawMonitor(byte x, byte y, ParamsStruct Params, byte DaylightPWMValue, byte ActinicPWMValue);
+#else
+    void DrawMonitor(byte x, byte y, ParamsStruct Params);
+#endif  // DisplayLEDPWM
 	void DrawGraph(byte x, byte y);
 	void DrawEEPromImage(int swidth, int sheight, byte x, byte y, int I2CAddr, int EEaddr);
 

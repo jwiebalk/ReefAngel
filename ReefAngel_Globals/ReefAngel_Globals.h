@@ -224,6 +224,16 @@ When adding more variables, use the previous value plus 1 or 2
 #define COLOR_LIGHTGOLDENRODYELLOW  0xFE
 #define COLOR_WHITE                 0xFF
 
+/*
+This next line will control the displaying of all LED PWM related items.  The items it controls are:
+
+DP & AP displaying on main screen
+LED PWM Setup screen
+
+So, if you do not use LED PWM's at all and do not wish to display anything related to it, comment out
+the next line and all that stuff will be removed.
+*/
+//#define DisplayLEDPWM
 
 /*
 Ability to completely customize all colors of the screen
