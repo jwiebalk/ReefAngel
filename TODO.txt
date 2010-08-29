@@ -1,20 +1,5 @@
 TODO List (in no particular order)
 ----------------------------------
-* Create Setup Functions
-   + MH Time
-   + MH Time Delay
-   + Std Lights Time
-   + Heater Temp Setup
-   + Chiller Temp Setup
-   + Overheat Temp Setup 
-   + LED PWM Setup
-   + Wavemaker Setup
-   - Dosing Pump Setup
-   + Feeding Mode Timer
-   + Screensaver Timeout
-   + ATO Timeout
-   + ph Calibration
-   + Date / Time
 * Ability to assign a function to a specific port
 * Associate Timers to specific port
 * Fix DrawOption to display a decimal point one digit in if subunit is given
@@ -23,9 +8,7 @@ TODO List (in no particular order)
 * Ability to have dosing pumps repeat every X seconds/hours instead of having a set time.  Pump could run ever 30minutes, 1hour, etc.
 * Add ATO Timeout Clear for Low & High switches instead of 1
 * Test wavemaker interval to have 0 equal always on
-* IFDEF out various sections of the code
-** Metal Halides Setup (Lights & Delay)
-** ATO (Timeout Set & Clear & Menu)
+* Trim down compiled size by 252 or more bytes to allow ALL functionality at same time (except wifi, feeding timer setup, screensaver timer setup, overheat setup)
 
 Completed Items
 ---------------
@@ -45,3 +28,21 @@ Completed Items
 ** Date / Time Setup
 ** Version Display
 ** LED PWM (all references)
+** Metal Halides Setup (Lights & Delay)
+** ATO (Timeout Set & Clear & Menu)
+* Create Setup Functions
+   + MH Time
+   + MH Time Delay
+   + Std Lights Time
+   + Heater Temp Setup
+   + Chiller Temp Setup
+   + Overheat Temp Setup 
+   + LED PWM Setup
+   + Wavemaker Setup
+   + Dosing Pump Setup
+   + Feeding Mode Timer
+   + Screensaver Timeout
+   + ATO Timeout
+   + ph Calibration
+   + Date / Time
+* Added in more comments about IFDEFs, give some approximate sizes in bytes about how much each section will add to the overall compile size

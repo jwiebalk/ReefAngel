@@ -232,6 +232,8 @@ LED PWM Setup screen
 
 So, if you do not use LED PWM's at all and do not wish to display anything related to it, comment out
 the next line and all that stuff will be removed.
+
+Approximately 720 bytes to have this feature
 */
 //#define DisplayLEDPWM
 

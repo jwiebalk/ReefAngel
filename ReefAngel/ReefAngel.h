@@ -25,6 +25,8 @@ If your sketch/compile size is getting too big or if you are running out of RAM 
 happen with the controller, you may want to not display the graphics on screen which can save some memory.
 Just comment out the next line to prevent any graphics from being display, you will have text only screens
 during water changes and feeding modes.
+
+Approximately 346 bytes to have this feature
 */
 #define DisplayImages  // do we display the graphics for feeding or water change mode
 
@@ -33,6 +35,8 @@ The next line is for displaying the setup screens to configure the values for th
 the LCD shutoff timer.  The defaults are fine, BUT if you would like to have the ability to change them
 from the setup screen, uncomment the next line.  This will increase the file size.  If you do not plan
 to change these values often (or at all), keep the next line commented out.
+
+Approximately 362 bytes to have this feature
 */
 //#define SetupExtras  // feeding mode & screensaver timeout setup. ACTIVATE WITH CAUTION
 
@@ -42,6 +46,9 @@ turn off the setup screens to keep the compile size down.  You can still use the
 you just will not have the setup screens available to configure the values.  You will have to manually set
 the intervals inside the Sketch (hardcode or have it read from memory if the memory contains the correct values).
 Comment out the appropriate line to remove the corresponding setup screens.
+
+Approximately 2000 bytes to have DosingPumpSetup
+Approximately 378 bytes to have WavemakerSetup
 */
 #define DosingPumpSetup
 #define WavemakerSetup
@@ -51,16 +58,54 @@ Overheat Temperature is fairly constant.  This value will most likely not get ch
 The default value is set to 150.0F.  Once this value is reached, all the lights will get shutoff.  If you
 would like the ability to change this value from the menus, uncomment the next line.  Otherwise you will have
 to hardcode the value in the ShowInterface Function
+
+Approximately 156 bytes to have this feature
 */
 //#define OverheatSetup
 
-// Comment out this next line to remove the Date/Time Setup screen
-#define DateTimeSetup
-// Comment out this next line to remove the Version menu item
+/*
+The ability to set the Date & Time on the controller is controlled by this next line.  This line will add
+in a Date / Time Setup menu entry which will allow you to set the date & time on the controller easily.
+Comment the next line to remove this ability.
+
+Approximately 1984 bytes to have this feature
+*/
+//#define DateTimeSetup
+
+/*
+If you do not want to have a Version menu entry to see what version of the software is on the controller,
+then you will want to comment out the next line
+
+Approximately 144 bytes to have this feature
+*/
 #define VersionMenu
 
+/*
+If you do not use any of the ATO features in your setup, you can comment out this next line to remove
+the ATO set and clear menu items.
 
+Approximately 900 bytes to have this feature (and without SetupExtras)
+
+When this or SetupExtras are defined, the Timeouts menu is included.
+Timeouts menu requires approximately 710 bytes
+This feature requires approximately 190 bytes if SetupExtras is defined
+*/
+#define ATOSetup
+
+/*
+If you do not use metal halides and do not wish to have any of the setup screens on your controller,
+you can comment out the next line to remove the Metal Halide Setup and Metal Halide Delay
+
+Approximately 258 bytes to have this feature
+*/
+#define MetalHalideSetup
+
+/*
+If you have the wifi module for your controller and wish to use it, you must uncomment this next line
+to utilize the built-in webserver for the controller.
+*/
 //#define wifi
+
 #include <ReefAngel_EEPROM.h>  // NOTE read/write internal memory
 #include <Time.h>
 #include <ReefAngel_NokiaLCD.h>
@@ -192,7 +237,9 @@ public:
     void ProcessButtonPressSetup();
     void ProcessButtonPressLights();
     void ProcessButtonPressTemps();
+#if defined SetupExtras || defined ATOSetup
     void ProcessButtonPressTimeouts();
+#endif  // if defined SetupExtras || defined ATOSetup
 
     // NOTE Setup Screens
     bool SetupSingleOption(int &v, int rangemin, int rangemax, byte maxdigits,
