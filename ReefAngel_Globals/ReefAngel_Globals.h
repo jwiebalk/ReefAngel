@@ -236,7 +236,7 @@ the next line and all that stuff will be removed.
 
 Approximately 720 bytes to have this feature
 */
-//#define DisplayLEDPWM
+#define DisplayLEDPWM
 
 /*
 Ability to completely customize all colors of the screen

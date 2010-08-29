@@ -18,7 +18,7 @@
 #define ReefAngel_h
 
 #define ReefAngel_Version "0.8.5 beta 5"
-#define DEV_MODE  // Developer Mode
+//#define DEV_MODE  // Developer Mode
 
 /*
 If your sketch/compile size is getting too big or if you are running out of RAM and having bizarre events
@@ -70,7 +70,7 @@ Comment the next line to remove this ability.
 
 Approximately 1984 bytes to have this feature
 */
-//#define DateTimeSetup
+#define DateTimeSetup
 
 /*
 If you do not want to have a Version menu entry to see what version of the software is on the controller,
@@ -254,11 +254,9 @@ public:
 #endif  // if defined SetupExtras || defined ATOSetup
 
     // NOTE Setup Screens
-    bool SetupSingleOption(int &v, int rangemin, int rangemax, byte maxdigits,
-                           char* unit, char* subunit, char* title);
-    bool SetupDoubleOption(int &v, int &y, int rangemin, int rangemax, byte maxdigits,
-                           char* unit, char* subunit, char* title,
-                           char* prefix1, char* prefix2);
+    bool SetupOption(int &v, int &y, int rangemin, int rangemax, byte maxdigits,
+                     char* unit, char* subunit, char* title,
+                     char* prefix1, char* prefix2);
     void SetupLightsOptionDisplay(bool bMetalHalide);
     void SetupCalibratePH();
 #ifdef DateTimeSetup
