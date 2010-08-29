@@ -78,7 +78,7 @@ int ReefAngel_TempSensorClass::ReadTemperature(byte addr[8], byte unit)
 			ds.reset();
 			ds.select(addr);
 			ds.write(0xBE);
-			for (int i = 0; i < 2; i++)
+			for (byte i = 0; i < 2; i++)
 			{	     // we need 9 bytes
 				data[i] = ds.read();
 			}
@@ -88,7 +88,7 @@ int ReefAngel_TempSensorClass::ReadTemperature(byte addr[8], byte unit)
 				Temp=(data[1]<<8)+data[0];//take the two bytes from the response relating to temperature
 				Temp=Temp/1.6;
 				if (Temp == 0) return 0;
-				//if (unit==0) Temp=Temp*1.8+320; // comment this line out to get celcius
+
 				if ( unit == DEGREE_F )
                     Temp = Temp * 1.8 + 320;
 	//		}

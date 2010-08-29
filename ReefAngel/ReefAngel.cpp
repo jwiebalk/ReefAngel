@@ -395,6 +395,7 @@ void ReefAngelClass::Refresh()
 #endif  // wifi
 
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
+#ifdef DirectTempSensor
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 	Params.Temp1=TempSensor.ReadTemperature(TempSensor.addrT1,TempUnit);
 	LCD.Clear(DefaultBGColor,0,0,1,1);
@@ -407,6 +408,43 @@ void ReefAngelClass::Refresh()
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 	TempSensor.RequestConvertion();
 	LCD.Clear(DefaultBGColor,0,0,1,1);
+#else  // DirectTempSensor
+    int x = TempSensor.ReadTemperature(TempSensor.addrT1, TempUnit);
+    int y;
+    y = x - Params.Temp1;
+    // check to make sure the temp readings aren't beyond max allowed
+#ifdef DEV_MODE
+    Serial.print("T1: ");
+    Serial.print(x);
+    Serial.print("(");
+    Serial.print(y);
+    Serial.print(")");
+#endif  // DEV_MODE
+    if ( abs(y) < MAX_TEMP_SWING || Params.Temp1 == 0) Params.Temp1 = x;
+    x = TempSensor.ReadTemperature(TempSensor.addrT2, TempUnit);
+    y = x - Params.Temp2;
+#ifdef DEV_MODE
+    Serial.print(", T2: ");
+    Serial.print(x);
+    Serial.print("(");
+    Serial.print(y);
+    Serial.print(")");
+#endif  // DEV_MODE
+    if ( abs(y) < MAX_TEMP_SWING || Params.Temp2 == 0) Params.Temp2 = x;
+    x = TempSensor.ReadTemperature(TempSensor.addrT3, TempUnit);
+    y = x - Params.Temp3;
+#ifdef DEV_MODE
+    Serial.print(", T3: ");
+    Serial.print(x);
+    Serial.print("(");
+    Serial.print(y);
+    Serial.println(")");
+#endif  // DEV_MODE
+    if ( abs(y) < MAX_TEMP_SWING || Params.Temp3 == 0) Params.Temp3 = x;
+	Params.PH=analogRead(PHPin);
+	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
+	TempSensor.RequestConvertion();
+#endif  // DirectTempSensor
 }
 
 void ReefAngelClass::SetTemperatureUnit(byte unit)
@@ -576,7 +614,7 @@ void ReefAngelClass::DisplayVersion()
     LCD.DrawText(ModeScreenColor,DefaultBGColor,10,10,"Reef Angel");
     LCD.DrawText(ModeScreenColor,DefaultBGColor,10,20,"v"ReefAngel_Version);
 #ifdef DEV_MODE
-    LCD.DrawText(ModeScreenColor,DefaultBGColor,10,30,"Developer Mode");
+    LCD.DrawText(ModeScreenColor,DefaultBGColor,10,30,"Dev Mode");
 #endif  // DEV_MODE
 
 #ifdef wifi
@@ -708,24 +746,24 @@ void ReefAngelClass::ShowInterface()
                     Timer[5].Start();
                     CurTemp = map(Params.Temp1, T1LOW, T1HIGH, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-                    LCD.Clear(DefaultBGColor,0,0,1,1);
+                    //LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a, CurTemp);
-                    LCD.Clear(DefaultBGColor,0,0,1,1);
+                    //LCD.Clear(DefaultBGColor,0,0,1,1);
                     CurTemp = map(Params.Temp2, T2LOW, T2HIGH, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-                    LCD.Clear(DefaultBGColor,0,0,1,1);
+                    //LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a+120, CurTemp);
-                    LCD.Clear(DefaultBGColor,0,0,1,1);
+                    //LCD.Clear(DefaultBGColor,0,0,1,1);
                     CurTemp = map(Params.Temp3, T3LOW, T3HIGH, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-                    LCD.Clear(DefaultBGColor,0,0,1,1);
+                    //LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a+240, CurTemp);
-                    LCD.Clear(DefaultBGColor,0,0,1,1);
+                    //LCD.Clear(DefaultBGColor,0,0,1,1);
                     CurTemp = map(Params.PH, PHLOW, PHHIGH, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-                    LCD.Clear(DefaultBGColor,0,0,1,1);
+                    //LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a+360, CurTemp);
-                    LCD.Clear(DefaultBGColor,0,0,1,1);
+                    //LCD.Clear(DefaultBGColor,0,0,1,1);
                     InternalMemory.T1Pointer_write(a);
                     LCD.DrawGraph(5, 5);
                 }

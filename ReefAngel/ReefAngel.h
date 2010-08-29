@@ -18,7 +18,7 @@
 #define ReefAngel_h
 
 #define ReefAngel_Version "0.8.5 beta 5"
-//#define DEV_MODE  // Developer Mode
+#define DEV_MODE  // Developer Mode
 
 /*
 If your sketch/compile size is getting too big or if you are running out of RAM and having bizarre events
@@ -99,6 +99,18 @@ you can comment out the next line to remove the Metal Halide Setup and Metal Hal
 Approximately 258 bytes to have this feature
 */
 #define MetalHalideSetup
+
+/*
+If you want to use the old way of reading the temp sensor which is always reading the value in
+and not performing any sanity check, then you will want to uncomment this next line.
+
+Otherwise, you will use the new way to handle the temperaturs.  The value is read in and then
+compared to the existing value.  If the difference between the 2 values is less than MAX_TEMP_SWING
+or the temperature is 0 then the temperature is allowed to be updated, otherwise it is not updated.
+MAX_TEMP_SWING is currently set to 50, which is 5.0 F.  This prevents any temporary large fluctations
+in temperatures.  Also, there should not be more than a 5.0 F degree fluctation in 1 second.
+*/
+//#define DirectTempSensor
 
 /*
 If you have the wifi module for your controller and wish to use it, you must uncomment this next line
