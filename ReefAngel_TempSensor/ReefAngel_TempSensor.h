@@ -25,11 +25,12 @@ public:
 	ReefAngel_TempSensorClass();
 	void Init();
 	void RequestConvertion();
-	int ReadTemperature(byte addr[8], byte unit);
+	int ReadTemperature(byte addr[8]);
 
 	byte addrT1[8];
 	byte addrT2[8];
 	byte addrT3[8];
+	byte unit;
 
 private:
 };

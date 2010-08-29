@@ -269,7 +269,6 @@ public:
 #endif  // DosingPumpSetup
 
 private:
-	byte TempUnit;
 	bool showmenu;
 	time_t menutimeout;
 

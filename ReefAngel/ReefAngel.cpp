@@ -245,15 +245,11 @@ ReefAngelClass::ReefAngelClass()
 {
 	PCMSK0 |= 32;
 	PCICR |= 1;
-
-	// Initialize some variables
-	TempUnit = DEGREE_F;
 }
 
 void ReefAngelClass::Init()
 {
 	byte taddr = 0;
-	byte t = 0;
 
 	Wire.begin();
 	Serial.begin(57600);
@@ -276,7 +272,7 @@ void ReefAngelClass::Init()
 	taddr = InternalMemory.T1Pointer_read();
 	// since byte can never be negative, taddr<0 is a pointless check
 	//if (taddr>120 || taddr<0) EEPROM_writeAnything(T1Pointer,t);
-	if (taddr>120) InternalMemory.T1Pointer_write(t);
+	if (taddr>120) InternalMemory.T1Pointer_write(0);
 
 #ifdef SetupExtras
 	Timer[0].SetInterval(InternalMemory.FeedingTimer_read());  // Default Feeding timer
@@ -397,11 +393,11 @@ void ReefAngelClass::Refresh()
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 #ifdef DirectTempSensor
 	LCD.Clear(DefaultBGColor,0,0,1,1);
-	Params.Temp1=TempSensor.ReadTemperature(TempSensor.addrT1,TempUnit);
+	Params.Temp1=TempSensor.ReadTemperature(TempSensor.addrT1);
 	LCD.Clear(DefaultBGColor,0,0,1,1);
-	Params.Temp2=TempSensor.ReadTemperature(TempSensor.addrT2,TempUnit);
+	Params.Temp2=TempSensor.ReadTemperature(TempSensor.addrT2);
 	LCD.Clear(DefaultBGColor,0,0,1,1);
-	Params.Temp3=TempSensor.ReadTemperature(TempSensor.addrT3,TempUnit);
+	Params.Temp3=TempSensor.ReadTemperature(TempSensor.addrT3);
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 	Params.PH=analogRead(PHPin);
 	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
@@ -409,7 +405,7 @@ void ReefAngelClass::Refresh()
 	TempSensor.RequestConvertion();
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 #else  // DirectTempSensor
-    int x = TempSensor.ReadTemperature(TempSensor.addrT1, TempUnit);
+    int x = TempSensor.ReadTemperature(TempSensor.addrT1);
     int y;
     y = x - Params.Temp1;
     // check to make sure the temp readings aren't beyond max allowed
@@ -421,7 +417,7 @@ void ReefAngelClass::Refresh()
     Serial.print(")");
 #endif  // DEV_MODE
     if ( abs(y) < MAX_TEMP_SWING || Params.Temp1 == 0) Params.Temp1 = x;
-    x = TempSensor.ReadTemperature(TempSensor.addrT2, TempUnit);
+    x = TempSensor.ReadTemperature(TempSensor.addrT2);
     y = x - Params.Temp2;
 #ifdef DEV_MODE
     Serial.print(", T2: ");
@@ -431,7 +427,7 @@ void ReefAngelClass::Refresh()
     Serial.print(")");
 #endif  // DEV_MODE
     if ( abs(y) < MAX_TEMP_SWING || Params.Temp2 == 0) Params.Temp2 = x;
-    x = TempSensor.ReadTemperature(TempSensor.addrT3, TempUnit);
+    x = TempSensor.ReadTemperature(TempSensor.addrT3);
     y = x - Params.Temp3;
 #ifdef DEV_MODE
     Serial.print(", T3: ");
@@ -451,7 +447,7 @@ void ReefAngelClass::SetTemperatureUnit(byte unit)
 {
     // 0 (or DEGREE_F) for farenheit
     // 1 (or DEGREE_C) for celcius
-	TempUnit = unit;
+    TempSensor.unit = unit;
 }
 
 void ReefAngelClass::StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute)

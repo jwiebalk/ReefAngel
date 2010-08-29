@@ -22,6 +22,7 @@ OneWire ds(tempPin);
 
 ReefAngel_TempSensorClass::ReefAngel_TempSensorClass()
 {
+    unit = DEGREE_F;
 }
 
 void ReefAngel_TempSensorClass::Init()
@@ -63,7 +64,7 @@ void ReefAngel_TempSensorClass::RequestConvertion()
 	}
 }
 
-int ReefAngel_TempSensorClass::ReadTemperature(byte addr[8], byte unit)
+int ReefAngel_TempSensorClass::ReadTemperature(byte addr[8])
 {
 	//byte count=0;
 	int Temp=0;
