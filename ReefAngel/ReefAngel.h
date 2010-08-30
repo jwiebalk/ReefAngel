@@ -17,7 +17,7 @@
 #ifndef	ReefAngel_h
 #define ReefAngel_h
 
-#define ReefAngel_Version "0.8.5 beta 5"
+#define ReefAngel_Version "0.8.5 beta 6"
 //#define DEV_MODE  // Developer Mode
 
 /*
