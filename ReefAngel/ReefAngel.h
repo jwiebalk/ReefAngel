@@ -113,6 +113,15 @@ in temperatures.  Also, there should not be more than a 5.0 F degree fluctation 
 //#define DirectTempSensor
 
 /*
+Do we save the relay state before we enter Feeding Mode or Water Change Mode?
+
+Comment out the next line to not save the state and always force specific ports to be turned off and then
+back on again after we exit the mode.  This can turn on some ports that were not already on.  This
+is also how the controller originally works.
+*/
+#define SaveRelayState
+
+/*
 If you have the wifi module for your controller and wish to use it, you must uncomment this next line
 to utilize the built-in webserver for the controller.
 */
