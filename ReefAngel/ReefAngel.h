@@ -23,7 +23,7 @@
 /*
 If your sketch/compile size is getting too big or if you are running out of RAM and having bizarre events
 happen with the controller, you may want to not display the graphics on screen which can save some memory.
-Just comment out the next line to prevent any graphics from being display, you will have text only screens
+Just comment out the next line to prevent any graphics from being displayed, you will have text only screens
 during water changes and feeding modes.
 
 Approximately 346 bytes to have this feature
@@ -104,7 +104,7 @@ Approximately 258 bytes to have this feature
 If you want to use the old way of reading the temp sensor which is always reading the value in
 and not performing any sanity check, then you will want to uncomment this next line.
 
-Otherwise, you will use the new way to handle the temperaturs.  The value is read in and then
+Otherwise, you will use the new way to handle the temperatures.  The value is read in and then
 compared to the existing value.  If the difference between the 2 values is less than MAX_TEMP_SWING
 or the temperature is 0 then the temperature is allowed to be updated, otherwise it is not updated.
 MAX_TEMP_SWING is currently set to 50, which is 5.0 F.  This prevents any temporary large fluctations
