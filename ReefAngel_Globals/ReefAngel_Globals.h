@@ -118,7 +118,11 @@ When adding more variables, use the previous value plus 1 or 2
 #define MAX_TEMP_SWING      50  // Maximum value of temp change that can occur in 1 second, 100 = 10.0 F Degrees, 50 = 5.0 F Degrees
 
 // Menu Defines
+#if defined SetupExtras || defined ATOSetup
 #define Total_Menus         5    // total number of menus
+#else  // if defined SetupExtras || defined ATOSetup
+#define Total_Menus         4    // total number of menus
+#endif  // if defined SetupExtras || defined ATOSetup
 #define MENU_TIMEOUT        10   // timeout for menu to return to main screen
 #define MENU_HEADING_SIZE   25   // pixels used for Menu Heading
 #define MENU_ITEM_HEIGHT    9    // pixel height of a line of text
