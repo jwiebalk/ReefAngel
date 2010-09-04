@@ -18,6 +18,7 @@
 #ifndef __REEFANGEL_GLOBALS_H__
 #define __REEFANGEL_GLOBALS_H__
 
+#include <ReefAngel_Features.h>
 #include <WProgram.h>
 #include <Time.h>
 #include <OneWire.h>
@@ -225,18 +226,6 @@ When adding more variables, use the previous value plus 1 or 2
 #define COLOR_LIGHTGOLDENRODYELLOW  0xFE
 #define COLOR_WHITE                 0xFF
 
-/*
-This next line will control the displaying of all LED PWM related items.  The items it controls are:
-
-DP & AP displaying on main screen
-LED PWM Setup screen
-
-So, if you do not use LED PWM's at all and do not wish to display anything related to it, comment out
-the next line and all that stuff will be removed.
-
-Approximately 720 bytes to have this feature
-*/
-#define DisplayLEDPWM
 
 /*
 Ability to completely customize all colors of the screen
