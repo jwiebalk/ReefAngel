@@ -406,6 +406,7 @@ void ReefAngelClass::Refresh()
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 #else  // DirectTempSensor
     int x = TempSensor.ReadTemperature(TempSensor.addrT1);
+    LCD.Clear(DefaultBGColor,0,0,1,1);
     int y;
     y = x - Params.Temp1;
     // check to make sure the temp readings aren't beyond max allowed
@@ -418,6 +419,7 @@ void ReefAngelClass::Refresh()
 #endif  // DEV_MODE
     if ( abs(y) < MAX_TEMP_SWING || Params.Temp1 == 0) Params.Temp1 = x;
     x = TempSensor.ReadTemperature(TempSensor.addrT2);
+    LCD.Clear(DefaultBGColor,0,0,1,1);
     y = x - Params.Temp2;
 #ifdef DEV_MODE
     Serial.print(", T2: ");
@@ -428,6 +430,7 @@ void ReefAngelClass::Refresh()
 #endif  // DEV_MODE
     if ( abs(y) < MAX_TEMP_SWING || Params.Temp2 == 0) Params.Temp2 = x;
     x = TempSensor.ReadTemperature(TempSensor.addrT3);
+    LCD.Clear(DefaultBGColor,0,0,1,1);
     y = x - Params.Temp3;
 #ifdef DEV_MODE
     Serial.print(", T3: ");
@@ -438,6 +441,7 @@ void ReefAngelClass::Refresh()
 #endif  // DEV_MODE
     if ( abs(y) < MAX_TEMP_SWING || Params.Temp3 == 0) Params.Temp3 = x;
 	Params.PH=analogRead(PHPin);
+    LCD.Clear(DefaultBGColor,0,0,1,1);
 	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
 	TempSensor.RequestConvertion();
 #endif  // DirectTempSensor
@@ -744,22 +748,22 @@ void ReefAngelClass::ShowInterface()
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
                     //LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a, CurTemp);
-                    //LCD.Clear(DefaultBGColor,0,0,1,1);
+                    LCD.Clear(DefaultBGColor,0,0,1,1);
                     CurTemp = map(Params.Temp2, T2LOW, T2HIGH, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-                    //LCD.Clear(DefaultBGColor,0,0,1,1);
+                    LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a+120, CurTemp);
-                    //LCD.Clear(DefaultBGColor,0,0,1,1);
+                    LCD.Clear(DefaultBGColor,0,0,1,1);
                     CurTemp = map(Params.Temp3, T3LOW, T3HIGH, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
                     //LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a+240, CurTemp);
-                    //LCD.Clear(DefaultBGColor,0,0,1,1);
+                    LCD.Clear(DefaultBGColor,0,0,1,1);
                     CurTemp = map(Params.PH, PHLOW, PHHIGH, 0, 50); // apply the calibration to the sensor reading
                     CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
                     //LCD.Clear(DefaultBGColor,0,0,1,1);
                     Memory.Write(a+360, CurTemp);
-                    //LCD.Clear(DefaultBGColor,0,0,1,1);
+                    LCD.Clear(DefaultBGColor,0,0,1,1);
                     InternalMemory.T1Pointer_write(a);
                     LCD.DrawGraph(5, 5);
                 }
