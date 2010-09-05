@@ -133,6 +133,36 @@ void ReefAngel_EEPROMClass::ATOTimeout_write(const uint8_t value)
     write(Mem_B_ATOTimeout, value);
 }
 
+uint8_t ReefAngel_EEPROMClass::ATOHighTimeout_read()
+{
+    return read(Mem_B_ATOHighTimeout);
+}
+
+void ReefAngel_EEPROMClass::ATOHighTimeout_write(const uint8_t value)
+{
+    write(Mem_B_ATOHighTimeout, value);
+}
+
+uint8_t ReefAngel_EEPROMClass::ATOHourInterval_read()
+{
+    return read(Mem_B_ATOHourInterval);
+}
+
+void ReefAngel_EEPROMClass::ATOHourInterval_write(const uint8_t value)
+{
+    write(Mem_B_ATOHourInterval, value);
+}
+
+uint8_t ReefAngel_EEPROMClass::ATOHighHourInterval_read()
+{
+    return read(Mem_B_ATOHighHourInterval);
+}
+
+void ReefAngel_EEPROMClass::ATOHighHourInterval_write(const uint8_t value)
+{
+    write(Mem_B_ATOHighHourInterval, value);
+}
+
 uint8_t ReefAngel_EEPROMClass::MHDelay_read()
 {
     return read(Mem_B_MHDelay);

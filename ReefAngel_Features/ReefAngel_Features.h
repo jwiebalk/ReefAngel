@@ -100,7 +100,7 @@ This item will remove all lighting functionality from the controller.  It is the
 commenting out MetalHalideSetup, StandardLightSetup, DisplayLEDPWM
 This will OVERRIDE any of the other defines.  So use caution when enabling this feature.
 
-Currently not implemented.
+Approximately 2796 bytes to have this feature
 */
 //#define RemoveAllLights
 
@@ -116,7 +116,7 @@ Approximately 258 bytes to have this feature
 If you do not use standard lights and do not wish to have the setup screens on your controller,
 you can comment out the next line to remove the Standard Lights Setup
 
-Currently not implemented.
+Approximately 90 bytes to have this feature
 */
 #define StandardLightSetup
 
@@ -139,9 +139,9 @@ Comment out the next line to not save the state and always force specific ports 
 back on again after we exit the mode.  This can turn on some ports that were not already on.  This
 is also how the controller originally works.
 
-Currently not implemented.
+Currently untested.
 */
-#define SaveRelayState
+//#define SaveRelayState
 
 /*
 If you have the wifi module for your controller and wish to use it, you must uncomment this next line
@@ -168,8 +168,8 @@ separate ports to control, separate timeouts and separate hourly intervals.
 If you have this defined, you cannot use both switches together like originally intended.
 The setup screens will show configurations for both switches.
 
-Currently not implemented.
+Approximately 454 bytes to have this feature
 */
-#define SingleATO
+//#define SingleATOSetup
 
 #endif  // __REEFANGEL_FEATURES_H__

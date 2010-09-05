@@ -122,9 +122,17 @@ When adding more variables, use the previous value plus 1 or 2
 
 // Menu Defines
 #if defined SetupExtras || defined ATOSetup
+#ifndef RemoveAllLights
 #define Total_Menus         5    // total number of menus
+#else  // RemoveAllLights
+#define Total_Menus         4
+#endif  // RemoveAllLights
 #else  // if defined SetupExtras || defined ATOSetup
+#ifndef RemoveAllLights
 #define Total_Menus         4    // total number of menus
+#else // RemoveAllLights
+#define Total_Menus         3
+#endif  // RemoveAllLights
 #endif  // if defined SetupExtras || defined ATOSetup
 #define MENU_TIMEOUT        10   // timeout for menu to return to main screen
 #define MENU_HEADING_SIZE   25   // pixels used for Menu Heading

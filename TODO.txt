@@ -1,15 +1,5 @@
 TODO List (in no particular order)
 ----------------------------------
-* ifdef for Standard Lights (StandardLightSetup)
-* ifdef for removal of ALL lighting controls (RemoveAllLights)
-* Add in EEPROM functions
-	- ATOHourInterval (byte, low switch)
-	- ATOHighHourInterval (byte, high switch)
-	- ATOHighTimeout (byte, high switch timeout)
-* Add in Hour Interval setup screen
-* ifdef for Single ATO usage (SingleATO)
-	- switches ATO Timeout page to dual configuration
-	- adds in ATO Hour Interval page
 * Document ALL functions using Doxygen...auto-generation of documentation will be easy then.
 * Investigate occassional graph line drawing quirks
 	- lines don't always get drawn completely
@@ -17,9 +7,6 @@ TODO List (in no particular order)
 	- outline for the relay box sometimes has extra line above it
 	- corrects itself by viewing the menu and exiting the menu
 	- odd
-* Improve SetInternalMemory
-	- Incorporate all memory locations
-	- Split displaying values on to 2 screens with a 2+ second interval between screens
 
 Completed Items
 ---------------
@@ -59,7 +46,19 @@ Completed Items
 * Added in more comments about IFDEFs, give some approximate sizes in bytes about how much each section will add to the overall compile size
 * Trim down compiled size by 252 or more bytes to allow ALL functionality at same time (except wifi, feeding timer setup, screensaver timer setup, overheat setup)
 * Have default values programmed in for variables (Use SetInternalMemory Sketch)
-
+* Add in EEPROM functions
+	+ ATOHourInterval (byte, low switch)
+	+ ATOHighHourInterval (byte, high switch)
+	+ ATOHighTimeout (byte, high switch timeout)
+* Add in Hour Interval setup screen
+* ifdef for Single ATO usage (SingleATO)
+	+ switches ATO Timeout page to dual configuration
+	+ adds in ATO Hour Interval page
+* ifdef for Standard Lights (StandardLightSetup)
+* ifdef for removal of ALL lighting controls (RemoveAllLights)
+* Improve SetInternalMemory
+	- Incorporate all memory locations
+	- Split displaying values on to 2 screens with a 2+ second interval between screens
 
 Wish List 
 (Features that would be nice, but aren't necessary and will cause the compile size to increase)

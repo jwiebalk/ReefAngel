@@ -108,9 +108,9 @@ public:
 	ReefAngel_ATOLowClass LowATO;
 	ReefAngel_TempSensorClass TempSensor;
 	ReefAngel_RelayClass Relay;
-#ifdef DisplayLEDPWM
+#if defined DisplayLEDPWM && ! defined RemoveAllLights
 	ReefAngel_PWMClass PWM;
-#endif  // DisplayLEDPWM
+#endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
 	/*
 	Timers:
 	0 - Feeding Mode timer
@@ -150,7 +150,9 @@ public:
     void ProcessButtonPress();
     void ProcessButtonPressMain();
     void ProcessButtonPressSetup();
+#ifndef RemoveAllLights
     void ProcessButtonPressLights();
+#endif  // RemoveAllLights
     void ProcessButtonPressTemps();
 #if defined SetupExtras || defined ATOSetup
     void ProcessButtonPressTimeouts();

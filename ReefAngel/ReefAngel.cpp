@@ -53,10 +53,11 @@ SIGNAL(PCINT0_vect) {
 enum Menus {
     MainMenu,
     SetupMenu,
+#ifndef RemoveAllLights
     LightsMenu,
-    TempsMenu
+#endif  // RemoveAllLights
+    TempsMenu,
 #if defined SetupExtras || defined ATOSetup
-    ,
     TimeoutsMenu
 #endif  // if defined SetupExtras || defined ATOSetup
 };
@@ -64,7 +65,9 @@ enum Menus {
 // Main Menu
 prog_char mainmenu_0_label[] PROGMEM = "Feeding";
 prog_char mainmenu_1_label[] PROGMEM = "Water Change";
+#ifndef RemoveAllLights
 prog_char mainmenu_2_label[] PROGMEM = "Lights ->";
+#endif  // RemoveAllLights
 prog_char mainmenu_3_label[] PROGMEM = "Temps ->";
 #if defined SetupExtras || defined ATOSetup
 prog_char mainmenu_4_label[] PROGMEM = "Timeouts ->";
@@ -76,28 +79,30 @@ prog_char mainmenu_6_label[] PROGMEM = "Version";
 PROGMEM const char *mainmenu_items[] = {
                     mainmenu_0_label,
                     mainmenu_1_label,
+#ifndef RemoveAllLights
                     mainmenu_2_label,
+#endif  // RemoveAllLights
                     mainmenu_3_label,
 #if defined SetupExtras || defined ATOSetup
                     mainmenu_4_label,
 #endif  // if defined SetupExtras || defined ATOSetup
-                    mainmenu_5_label
+                    mainmenu_5_label,
 #ifdef VersionMenu
-                    ,
                     mainmenu_6_label
 #endif  // VersionMenu
                     };
 enum MainMenuItem {
     MainMenu_FeedingMode,
     MainMenu_WaterChangeMode,
+#ifndef RemoveAllLights
     MainMenu_Lights,
+#endif  // RemoveAllLights
     MainMenu_Temps,
 #if defined SetupExtras || defined ATOSetup
     MainMenu_Timeouts,
 #endif  // if defined SetupExtras || defined ATOSetup
-    MainMenu_Setup
+    MainMenu_Setup,
 #ifdef VersionMenu
-    ,
     MainMenu_Version
 #endif  // VersionMenu
 };
@@ -121,9 +126,8 @@ PROGMEM const char *setupmenu_items[] = {
 #ifdef DosingPumpSetup
                     setupmenu_1_label,
 #endif  // DosingPumpSetup
-                    setupmenu_2_label
+                    setupmenu_2_label,
 #ifdef DateTimeSetup
-                    ,
                     setupmenu_3_label
 #endif  // DateTimeSetup
                     };
@@ -134,14 +138,14 @@ enum SetupMenuItem {
 #ifdef DosingPumpSetup
     SetupMenu_DosingPump,
 #endif  // DosingPumpSetup
-    SetupMenu_CalibratePH
+    SetupMenu_CalibratePH,
 #ifdef DateTimeSetup
-    ,
     SetupMenu_DateTime
 #endif  // DateTimeSetup
 };
 
 
+#ifndef RemoveAllLights
 // Lights Menu
 prog_char lightsmenu_0_label[] PROGMEM = "Lights On";
 prog_char lightsmenu_1_label[] PROGMEM = "Lights Off";
@@ -149,7 +153,9 @@ prog_char lightsmenu_1_label[] PROGMEM = "Lights Off";
 prog_char lightsmenu_2_label[] PROGMEM = "Metal Halides";
 prog_char lightsmenu_3_label[] PROGMEM = "MH On Delay";
 #endif  // MetalHalideSetup
+#ifdef StandardLightSetup
 prog_char lightsmenu_4_label[] PROGMEM = "Standard Lights";
+#endif  // StandardLightSetup
 #ifdef DisplayLEDPWM
 prog_char lightsmenu_5_label[] PROGMEM = "LED PWM";
 #endif  // DisplayLEDPWM
@@ -159,9 +165,10 @@ PROGMEM const char *lightsmenu_items[] = {
                             lightsmenu_2_label,
                             lightsmenu_3_label,
 #endif  // MetalHalideSetup
-                            lightsmenu_4_label
+#ifdef StandardLightSetup
+                            lightsmenu_4_label,
+#endif  // StandardLightSetup
 #ifdef DisplayLEDPWM
-                            ,
                             lightsmenu_5_label
 #endif  // DisplayLEDPWM
                             };
@@ -172,12 +179,14 @@ enum LightsMenuItem {
     LightsMenu_MetalHalides,
     LightsMenu_MetalHalideDelay,
 #endif  // MetalHalideSetup
-    LightsMenu_StandardLights
+#ifdef StandardLightSetup
+    LightsMenu_StandardLights,
+#endif  // StandardLightSetup
 #ifdef DisplayLEDPWM
-    ,
     LightsMenu_LEDPWM
 #endif  // DisplayLEDPWM
 };
+#endif  // RemoveAllLights
 
 // Temps Menu
 prog_char tempsmenu_0_label[] PROGMEM = "Heater";
@@ -206,32 +215,35 @@ enum TempsMenuItem {
 #if defined SetupExtras || defined ATOSetup
 #ifdef ATOSetup
 prog_char timeoutsmenu_0_label[] PROGMEM = "ATO Set";
-prog_char timeoutsmenu_1_label[] PROGMEM = "ATO Clear";
+#ifdef SingleATOSetup
+prog_char timeoutsmenu_1_label[] PROGMEM = "ATO Interval";
+#endif  // SingleATOSetup
+prog_char timeoutsmenu_2_label[] PROGMEM = "ATO Clear";
 #endif  // ATOSetup
 #ifdef SetupExtras
-prog_char timeoutsmenu_2_label[] PROGMEM = "Feeding";
-prog_char timeoutsmenu_3_label[] PROGMEM = "LCD";
+prog_char timeoutsmenu_3_label[] PROGMEM = "Feeding";
+prog_char timeoutsmenu_4_label[] PROGMEM = "LCD";
 #endif  // SetupExtras
 PROGMEM const char *timeoutsmenu_items[] = {
 #ifdef ATOSetup
                         timeoutsmenu_0_label,
-                        timeoutsmenu_1_label
-#ifdef SetupExtras
-                        ,
-#endif  // SetupExtras
+#ifdef SingleATOSetup
+                        timeoutsmenu_1_label,
+#endif  // SingleATOSetup
+                        timeoutsmenu_2_label,
 #endif  // ATOSetup
 #ifdef SetupExtras
-                        timeoutsmenu_2_label,
-                        timeoutsmenu_3_label
+                        timeoutsmenu_3_label,
+                        timeoutsmenu_4_label
 #endif  // SetupExtras
                         };
 enum TimeoutsMenuItem {
 #ifdef ATOSetup
     TimeoutsMenu_ATOSet,
-    TimeoutsMenu_ATOClear
-#ifdef SetupExtras
-    ,
-#endif  // SetupExtras
+#ifdef SingleATOSetup
+    TimeoutsMenu_ATOHrInterval,
+#endif  // SingleATOSetup
+    TimeoutsMenu_ATOClear,
 #endif  // ATOSetup
 #ifdef SetupExtras
     TimeoutsMenu_Feeding,
@@ -639,8 +651,10 @@ void ReefAngelClass::InitMenus()
     menuqtysptr[MainMenu] = SIZE(mainmenu_items);
     menusptr[SetupMenu] = pgm_read_word(&(setupmenu_items[0]));
     menuqtysptr[SetupMenu] = SIZE(setupmenu_items);
+#ifndef RemoveAllLights
     menusptr[LightsMenu] = pgm_read_word(&(lightsmenu_items[0]));
     menuqtysptr[LightsMenu] = SIZE(lightsmenu_items);
+#endif  // RemoveAllLights
     menusptr[TempsMenu] = pgm_read_word(&(tempsmenu_items[0]));
     menuqtysptr[TempsMenu] = SIZE(tempsmenu_items);
 #if defined SetupExtras || defined ATOSetup
@@ -721,11 +735,11 @@ void ReefAngelClass::ShowInterface()
                 // display everything on the home screen except the graph
                 // the graph is drawn/updated when we exit the main menu & when the parameters are saved
                 LCD.DrawDate(6, 112);
-#ifdef DisplayLEDPWM
+#if defined DisplayLEDPWM && ! defined RemoveAllLights
                 LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
-#else
+#else  // defined DisplayLEDPWM && ! defined RemoveAllLights
                 LCD.DrawMonitor(15, 60, Params);
-#endif  // DisplayLEDPWM
+#endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
                 byte TempRelay = Relay.RelayData;
                 TempRelay &= Relay.RelayMaskOff;
                 TempRelay |= Relay.RelayMaskOn;
@@ -940,11 +954,13 @@ void ReefAngelClass::DisplayMenuHeading()
                 strcpy(buffer, "Setup:");
             }
             break;
+#ifndef RemoveAllLights
         case LightsMenu:
             {
                 strcpy(buffer, "Lights:");
             }
             break;
+#endif  // RemoveAllLights
         case TempsMenu:
             {
                 strcpy(buffer, "Temp:");
@@ -1043,11 +1059,13 @@ void ReefAngelClass::ProcessButtonPress()
             ProcessButtonPressSetup();
             break;
         }
+#ifndef RemoveAllLights
         case LightsMenu:
         {
             ProcessButtonPressLights();
             break;
         }
+#endif  // RemoveAllLights
         case TempsMenu:
         {
             ProcessButtonPressTemps();
@@ -1091,7 +1109,10 @@ void ReefAngelClass::ProcessButtonPressMain()
         case MainMenu_FeedingMode:
         {
             // turn off ports
-            //byte CurrentRelayState = Relay.RelayData;
+#ifdef SaveRelayState
+            // TODO Test SaveRelayState
+            byte CurrentRelayState = Relay.RelayData;
+#endif  // SaveRelayState
             Relay.Off(Port8);
             Relay.Off(Port4);
             Relay.Off(Port5);
@@ -1103,14 +1124,19 @@ void ReefAngelClass::ProcessButtonPressMain()
             Relay.On(Port4);
             Relay.On(Port5);
             // restore ports
-            //Relay.RelayData = CurrentRelayState;
+#ifdef SaveRelayState
+            Relay.RelayData = CurrentRelayState;
+#endif  // SaveRelayState
             Relay.Write();
             break;
         }
         case MainMenu_WaterChangeMode:
         {
             // turn off pumps for water change mode
-            //byte CurrentRelayState = Relay.RelayData;
+#ifdef SaveRelayState
+            // TODO Test SaveRelayState
+            byte CurrentRelayState = Relay.RelayData;
+#endif  // SaveRelayState
             Relay.Off(Port8);
             Relay.Off(Port4);
             Relay.Off(Port5);
@@ -1121,10 +1147,13 @@ void ReefAngelClass::ProcessButtonPressMain()
             Relay.On(Port8);
             Relay.On(Port4);
             Relay.On(Port5);
-            //Relay.RelayData = CurrentRelayState;
+#ifdef SaveRelayState
+            Relay.RelayData = CurrentRelayState;
+#endif  // SaveRelayState
             Relay.Write();
             break;
         }
+#ifndef RemoveAllLights
         case MainMenu_Lights:
         {
             SelectedMenuItem = DEFAULT_MENU_ITEM;
@@ -1132,6 +1161,7 @@ void ReefAngelClass::ProcessButtonPressMain()
             DisplayedMenu = LightsMenu;
             break;
         }
+#endif  // RemoveAllLights
         case MainMenu_Temps:
         {
             SelectedMenuItem = DEFAULT_MENU_ITEM;
@@ -1232,6 +1262,7 @@ void ReefAngelClass::ProcessButtonPressSetup()
     }
 }
 
+#ifndef RemoveAllLights
 void ReefAngelClass::ProcessButtonPressLights()
 {
     showmenu = true;  // set to true when displaying setup screens
@@ -1285,11 +1316,13 @@ void ReefAngelClass::ProcessButtonPressLights()
             break;
         }
 #endif  // MetalHalideSetup
+#ifdef StandardLightSetup
         case LightsMenu_StandardLights:
         {
             SetupLightsOptionDisplay(false);
             break;
         }
+#endif  // StandardLightSetup
 #ifdef DisplayLEDPWM
         case LightsMenu_LEDPWM:
         {
@@ -1312,6 +1345,7 @@ void ReefAngelClass::ProcessButtonPressLights()
         }
     }
 }
+#endif  // RemoveAllLights
 
 void ReefAngelClass::ProcessButtonPressTemps()
 {
@@ -1382,14 +1416,37 @@ void ReefAngelClass::ProcessButtonPressTimeouts()
 #ifdef ATOSetup
         case TimeoutsMenu_ATOSet:
         {
+#ifdef SingleATOSetup
+            int v = InternalMemory.ATOTimeout_read();
+            int y = InternalMemory.ATOHighTimeout_read();
+            if ( SetupOption(v, y, 0, 255, 3, "s", "", "ATO Timeout", "Low:", "High:") )
+            {
+                InternalMemory.ATOTimeout_write((uint8_t)v);
+                InternalMemory.ATOHighTimeout_write((uint8_t)y);
+            }
+#else  // SingleATOSetup
             int v = InternalMemory.ATOTimeout_read();
             int y = -1;
             if ( SetupOption(v, y, 0, 255, 3, "s", "", "ATO Timeout", "", "") )
             {
                 InternalMemory.ATOTimeout_write((uint8_t)v);
             }
+#endif  // SingleATOSetup
             break;
         }
+#ifdef SingleATOSetup
+        case TimeoutsMenu_ATOHrInterval:
+        {
+            int v = InternalMemory.ATOHourInterval_read();
+            int y = InternalMemory.ATOHighHourInterval_read();
+            if ( SetupOption(v, y, 0, 24, 2, "h", "", "ATO Interval", "Low:", "High:") )
+            {
+                InternalMemory.ATOHourInterval_write((uint8_t)v);
+                InternalMemory.ATOHighHourInterval_write((uint8_t)y);
+            }
+            break;
+        }
+#endif  // SingleATOSetup
         case TimeoutsMenu_ATOClear:
         {
             // Need delay for clearing & returning screen

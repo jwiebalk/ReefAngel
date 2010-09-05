@@ -53,6 +53,12 @@ class ReefAngel_EEPROMClass {
         void LEDPWMActinic_write(const uint8_t value);
         uint8_t ATOTimeout_read();
         void ATOTimeout_write(const uint8_t value);
+        uint8_t ATOHighTimeout_read();
+        void ATOHighTimeout_write(const uint8_t value);
+        uint8_t ATOHourInterval_read();
+        void ATOHourInterval_write(const uint8_t value);
+        uint8_t ATOHighHourInterval_read();
+        void ATOHighHourInterval_write(const uint8_t value);
         uint8_t MHDelay_read();
         void MHDelay_write(const uint8_t value);
         uint8_t DP1OnHour_read();
