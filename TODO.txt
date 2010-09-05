@@ -1,5 +1,25 @@
 TODO List (in no particular order)
 ----------------------------------
+* ifdef for Standard Lights (StandardLightSetup)
+* ifdef for removal of ALL lighting controls (RemoveAllLights)
+* Add in EEPROM functions
+	- ATOHourInterval (byte, low switch)
+	- ATOHighHourInterval (byte, high switch)
+	- ATOHighTimeout (byte, high switch timeout)
+* Add in Hour Interval setup screen
+* ifdef for Single ATO usage (SingleATO)
+	- switches ATO Timeout page to dual configuration
+	- adds in ATO Hour Interval page
+* Document ALL functions using Doxygen...auto-generation of documentation will be easy then.
+* Investigate occassional graph line drawing quirks
+	- lines don't always get drawn completely
+	- sometimes the line gets drawn on 2 rows
+	- outline for the relay box sometimes has extra line above it
+	- corrects itself by viewing the menu and exiting the menu
+	- odd
+* Improve SetInternalMemory
+	- Incorporate all memory locations
+	- Split displaying values on to 2 screens with a 2+ second interval between screens
 
 Completed Items
 ---------------

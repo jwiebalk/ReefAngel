@@ -96,12 +96,29 @@ This feature requires approximately 190 bytes if SetupExtras is defined
 #define ATOSetup
 
 /*
+This item will remove all lighting functionality from the controller.  It is the equivalent to
+commenting out MetalHalideSetup, StandardLightSetup, DisplayLEDPWM
+This will OVERRIDE any of the other defines.  So use caution when enabling this feature.
+
+Currently not implemented.
+*/
+//#define RemoveAllLights
+
+/*
 If you do not use metal halides and do not wish to have any of the setup screens on your controller,
 you can comment out the next line to remove the Metal Halide Setup and Metal Halide Delay
 
 Approximately 258 bytes to have this feature
 */
 #define MetalHalideSetup
+
+/*
+If you do not use standard lights and do not wish to have the setup screens on your controller,
+you can comment out the next line to remove the Standard Lights Setup
+
+Currently not implemented.
+*/
+#define StandardLightSetup
 
 /*
 If you want to use the old way of reading the temp sensor which is always reading the value in
@@ -121,6 +138,8 @@ Do we save the relay state before we enter Feeding Mode or Water Change Mode?
 Comment out the next line to not save the state and always force specific ports to be turned off and then
 back on again after we exit the mode.  This can turn on some ports that were not already on.  This
 is also how the controller originally works.
+
+Currently not implemented.
 */
 #define SaveRelayState
 
@@ -142,5 +161,15 @@ the next line and all that stuff will be removed.
 Approximately 720 bytes to have this feature
 */
 #define DisplayLEDPWM
+
+/*
+This next line will allow you to use the ATO switches independently from each other.  You can specify
+separate ports to control, separate timeouts and separate hourly intervals.
+If you have this defined, you cannot use both switches together like originally intended.
+The setup screens will show configurations for both switches.
+
+Currently not implemented.
+*/
+#define SingleATO
 
 #endif  // __REEFANGEL_FEATURES_H__
