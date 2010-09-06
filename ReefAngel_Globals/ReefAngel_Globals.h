@@ -19,6 +19,7 @@
 #define __REEFANGEL_GLOBALS_H__
 
 #include <ReefAngel_Features.h>
+#include <ReefAngel_CustomColors.h>
 #include <WProgram.h>
 #include <Time.h>
 #include <OneWire.h>
@@ -146,141 +147,6 @@ When adding more variables, use the previous value plus 1 or 2
 #define EXCEED_TIMEOUT_MENU 254
 #define DEFAULT_MENU_ITEM   0     // default menu item, first item on menu
 #define MAIN_MENU           0
-
-//  Global Colors
-#define COLOR_BLACK                 0x00
-#define COLOR_NAVY                  0x02
-#define COLOR_BLUE                  0x03
-#define COLOR_DARKGREEN             0x0C
-#define COLOR_GREEN                 0x10
-#define COLOR_TEAL                  0x12
-#define COLOR_LIGHT_BLUE            0x13
-#define COLOR_DEEPSKYBLUE           0x17
-#define COLOR_DARKTURQUOISE         0x1A
-#define COLOR_LIME                  0x1C
-#define COLOR_SPRINGGREEN           0x1D
-#define COLOR_MEDIUMSPRINGGREEN     0x1E
-#define COLOR_CYAN                  0x1F
-#define COLOR_MIDNIGHTBLUE          0x25
-#define COLOR_DARKSLATEGREY         0x29
-#define COLOR_FORESTGREEN           0x30
-#define COLOR_SEAGREEN              0x31
-#define COLOR_DODGERBLUE            0x33
-#define COLOR_LIGHTSEAGREEN         0x36
-#define COLOR_LIMEGREEN             0x39
-#define COLOR_INDIGO                0x42
-#define COLOR_DARKSLATEBLUE         0x4A
-#define COLOR_DARKOLIVEGREEN        0x4D
-#define COLOR_ROYALBLUE             0x4F
-#define COLOR_STEELBLUE             0x52
-#define COLOR_MEDIUMSEAGREEN        0x55
-#define COLOR_TURQUOISE             0x5A
-#define COLOR_SLATEBLUE             0x6A
-#define COLOR_DIMGREY               0x6D
-#define COLOR_MEDIUMSLATEBLUE       0x6F
-#define COLOR_OLIVEDRAB             0x70
-#define COLOR_SLATEGREY             0x72
-#define COLOR_CORNFLOWERBLUE        0x73
-#define COLOR_MEDIUMAQUAMARINE      0x7A
-#define COLOR_LAWNGREEN             0x7C
-#define COLOR_AQUAMARINE            0x7E
-#define COLOR_MAROON                0x80
-#define COLOR_PURPLE                0x82
-#define COLOR_DARKORCHID            0x86
-#define COLOR_BLUEVIOLET            0x87
-#define COLOR_SADDLEBROWN           0x88
-#define COLOR_SIENNA                0x89
-#define COLOR_MEDIUMPURPLE          0x8F
-#define COLOR_OLIVE                 0x90
-#define COLOR_GRAY                  0x92
-#define COLOR_DARKSEAGREEN          0x96
-#define COLOR_YELLOWGREEN           0x99
-#define COLOR_SKYBLUE               0x9B
-#define COLOR_LIGHTGREEN            0x9E
-#define COLOR_BROWN                 0xA4
-#define COLOR_MEDIUMVIOLETRED       0xA6
-#define COLOR_MEDIUMORCHID          0xAA
-#define COLOR_DARKGOLDENROD         0xB0
-#define COLOR_ROSYBROWN             0xB2
-#define COLOR_DARKKHAKI             0xB5
-#define COLOR_SILVER                0xB6
-#define COLOR_LIGHTSTEELBLUE        0xB7
-#define COLOR_POWDERBLUE            0xBB
-#define COLOR_GREENYELLOW           0xBD
-#define COLOR_PALETURQUOISE         0xBF
-#define COLOR_CRIMSON               0xC5
-#define COLOR_CHOCOLATE             0xCC
-#define COLOR_INDIANRED             0xCD
-#define COLOR_PALEVIOLETRED         0xCE
-#define COLOR_ORCHID                0xCF
-#define COLOR_DARKSALMON            0xD1
-#define COLOR_PLUM                  0xD3
-#define COLOR_GOLDENROD             0xD4
-#define COLOR_TAN                   0xD6
-#define COLOR_THISTLE               0xD7
-#define COLOR_LIGHTGRAY             0xDA
-#define COLOR_LAVENDER              0xDB
-#define COLOR_LIGHTCYAN             0xDF
-#define COLOR_RED                   0xE0
-#define COLOR_MAGENTA               0xE3
-#define COLOR_DEEPPINK              0xE6
-#define COLOR_ORANGERED             0xE8
-#define COLOR_TOMATO                0xED
-#define COLOR_HOTPINK               0xEE
-#define COLOR_DARKORANGE            0xF0
-#define COLOR_SALMON                0xF1
-#define COLOR_LIGHTCORAL            0xF2
-#define COLOR_VIOLET                0xF3
-#define COLOR_ORANGE                0xF4
-#define COLOR_SANDYBROWN            0xF5
-#define COLOR_PINK                  0xF6
-#define COLOR_GOLD                  0xF8
-#define COLOR_KHAKI                 0xFA
-#define COLOR_ANTIQUEWHITE          0xFB
-#define COLOR_YELLOW                0xFC
-#define COLOR_LIGHTGOLDENRODYELLOW  0xFE
-#define COLOR_WHITE                 0xFF
-
-
-/*
-Ability to completely customize all colors of the screen
-To change an aspect of the screen, you simply need to change the color defined for the variable.
-The variables are labeled intuitively.  Please note that when changing the entire screen color
-to another color, you must make sure that all the corresponding BG colors (background colors) match
-otherwise you will have a non-consistent background screen.  This is primarily the case when displaying
-the main screen / homepage.
-
-Also note that if you intend to change the colors, you will want to experiment to find a good color
-combination.  If the background color is changed, you will most likely need to alter all of the other
-colors in order for the screen to be easily readable.
-
-You can use any of the colors specified above OR you can specify your own colors in hex code.
-The values can range from 0x00 to 0xFF.  Most of the common colors are specified above, so the use
-of your own hex code (number) is most likely not needed.  If you want to see what the colors will look like,
-on the ReefAngel Google Groups page is a Color Chart image that will show you the colors.
-*/
-#define T1TempColor         COLOR_RED  // Text color for the T1 temp probe (homescreen)
-#define T2TempColor         COLOR_CHOCOLATE  // Text color for the T2 temp probe (homescreen)
-#define T3TempColor         COLOR_MEDIUMORCHID  // Text color for the T3 temp probe (homescreen)
-#define PHColor             COLOR_SEAGREEN  //originally 0x34, Text color for the PH probe (homescreen)
-#define DPColor             COLOR_SADDLEBROWN // Text color for Daylight PWM value (homescreen)
-#define APColor             COLOR_DARKSLATEBLUE  //originally 0x49, Text color for the Actinic PWM value (homescreen)
-#define CalibrateColor      COLOR_RED  // color of the PH calibration text values
-#define ModeScreenColor     COLOR_BLUE  // color of the text on Feeding Mode, Water Change Mode and Version screens
-#define DateTextColor       COLOR_RED  // color of the date on home screen
-#define OutletBorderColor   0x54  // Border around the outlet box on home screen
-#define OutletOnBGColor     0x0D  // Outlet box background color when outlet is on (homescreen)
-#define OutletOnFGColor     COLOR_WHITE  // Outlet box text (number) color when outlet is on (homescreen)
-#define OutletOffBGColor    COLOR_WHITE  // Outlet box background color when outlet is off (homescreen)
-#define OutletOffFGColor    COLOR_BLACK  // Outlet box text (number) color when outlet is off (homescreen)
-#define BtnBorderColor      COLOR_BLACK  // OK & Cancel button border color (setup screens)
-#define BtnActiveColor      COLOR_GRAY  // OK & Cancel button ACTIVE (selected) background color (seup screens)
-#define BtnInactiveColor    COLOR_LIGHTGRAY  // OK & Cancel button INACTIVE (not selected) background color (setup screens)
-#define SelectionBGColor    COLOR_BLUE  // Background color for selected items (Menu & Setup screens)
-#define SelectionFGColor    COLOR_WHITE  // Foreground (text) color for selected items (Menu & Setup screens)
-#define DefaultBGColor      COLOR_WHITE  // Default background color
-#define DefaultFGColor      COLOR_BLACK  // Default text color
-#define GraphDotLineColor   0x49    // color of the dotted line in the middle of the graph
 
 /*
 Graph Range values
