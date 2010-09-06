@@ -1,5 +1,7 @@
 TODO List (in no particular order)
 ----------------------------------
+* Add in AlternateFont
+* Test / Incorporate new dsWire library
 * Document ALL functions using Doxygen...auto-generation of documentation will be easy then.
 * Investigate occassional graph line drawing quirks
 	- lines don't always get drawn completely
