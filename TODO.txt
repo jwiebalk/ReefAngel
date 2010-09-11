@@ -1,6 +1,5 @@
 TODO List (in no particular order)
 ----------------------------------
-* If Temp reads 0, do not turn on heater
 * Cleanup/Better handle timers (use of class timer)
 * Add in AlternateFont
 * Test / Incorporate new dsWire library
@@ -64,7 +63,8 @@ Completed Items
 	- Incorporate all memory locations
 	- Split displaying values on to 2 screens with a 2+ second interval between screens
 * Feeding/Water mode toggle, can specify what ports get turned on & off during water change mode and feeding mode by setting appropriate bits in byte variables
-	
+* If Temp reads 0, do not turn on heater
+
 Wish List 
 (Features that would be nice, but aren't necessary and will cause the compile size to increase)
 ----------
