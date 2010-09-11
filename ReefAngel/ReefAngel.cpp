@@ -499,8 +499,9 @@ void ReefAngelClass::MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte
 
 void ReefAngelClass::StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp)
 {
-  if (Params.Temp1 <= LowTemp) Relay.On(HeaterRelay);  // If sensor 1 temperature <= LowTemp - turn on heater
-  if (Params.Temp1 >= HighTemp) Relay.Off(HeaterRelay);  // If sensor 1 temperature >= HighTemp - turn off heater
+    if (Params.Temp1 == 0) return;  // Don't turn the heater on if the temp is reading 0
+    if (Params.Temp1 <= LowTemp) Relay.On(HeaterRelay);  // If sensor 1 temperature <= LowTemp - turn on heater
+    if (Params.Temp1 >= HighTemp) Relay.Off(HeaterRelay);  // If sensor 1 temperature >= HighTemp - turn off heater
 }
 
 void ReefAngelClass::StandardFan(byte FanRelay, int LowTemp, int HighTemp)
