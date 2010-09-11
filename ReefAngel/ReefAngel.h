@@ -123,6 +123,8 @@ public:
 	ReefAngel_TimerClass Timer[6];
 	// NOTE for nested menus
 	byte SelectedMenuItem;
+	byte FeedingModePorts;
+	byte WaterChangePorts;
 
 	void Init();
 	void Refresh();
@@ -138,6 +140,7 @@ public:
 	void DisplayVersion();
 #endif  // VersionMenu
 	void ClearScreen(byte Color);
+	void ModeTogglePorts(uint8_t PortRelay, bool bOn = true);
 
     // NOTE for nested menus
     void InitMenus();

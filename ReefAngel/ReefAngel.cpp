@@ -301,6 +301,14 @@ void ReefAngelClass::Init()
 	conn = false;
 #endif  // wifi
 
+    // Set the default ports to be turned on & off during the 2 modes
+    // To enable a port to be toggled, place a 1 in the appropriate position
+    // Default to have ports 4, 5, & 8 toggled
+    // Override in Setup function of PDE
+    //           Port   87654321
+    FeedingModePorts = B10011000;
+    WaterChangePorts = B10011000;
+
     // Initialize the Nested Menus
     InitMenus();
 }
@@ -642,6 +650,28 @@ void ReefAngelClass::ClearScreen(byte Color)
 {
     // clears the entire screen
     LCD.Clear(Color, 0, 0, 131, 131);
+}
+
+void ReefAngelClass::ModeTogglePorts(uint8_t PortRelay, bool bOn /*= true*/)
+{
+    // cycle through PortRelay variable
+    // if bOn is true, then we turn the ports on
+    // if bOn is false, then we turn the ports off
+    uint8_t i;
+    for ( i = 0; i < 8; i++ )
+    {
+        if ( PortRelay & (1 << i) )
+        {
+            if ( bOn )
+            {
+                Relay.On(i+1);
+            }
+            else
+            {
+                Relay.Off(i+1);
+            }
+        }
+    }
 }
 
 void ReefAngelClass::InitMenus()
@@ -1113,16 +1143,12 @@ void ReefAngelClass::ProcessButtonPressMain()
             // TODO Test SaveRelayState
             byte CurrentRelayState = Relay.RelayData;
 #endif  // SaveRelayState
-            Relay.Off(Port8);
-            Relay.Off(Port4);
-            Relay.Off(Port5);
+            ModeTogglePorts(FeedingModePorts, false);
             Relay.Write();
             // run feeding mode
             FeedingMode();
             // turn on ports
-            Relay.On(Port8);
-            Relay.On(Port4);
-            Relay.On(Port5);
+            ModeTogglePorts(FeedingModePorts);
             // restore ports
 #ifdef SaveRelayState
             Relay.RelayData = CurrentRelayState;
@@ -1137,16 +1163,12 @@ void ReefAngelClass::ProcessButtonPressMain()
             // TODO Test SaveRelayState
             byte CurrentRelayState = Relay.RelayData;
 #endif  // SaveRelayState
-            Relay.Off(Port8);
-            Relay.Off(Port4);
-            Relay.Off(Port5);
+            ModeTogglePorts(WaterChangePorts, false);
             Relay.Write();
             // Display the water change mode
             WaterChangeMode();
             // turn on the pumps after water change mode
-            Relay.On(Port8);
-            Relay.On(Port4);
-            Relay.On(Port5);
+            ModeTogglePorts(WaterChangePorts);
 #ifdef SaveRelayState
             Relay.RelayData = CurrentRelayState;
 #endif  // SaveRelayState
