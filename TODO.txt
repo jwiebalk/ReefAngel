@@ -9,9 +9,10 @@ TODO List (in no particular order)
 	- sometimes the line gets drawn on 2 rows
 	- outline for the relay box sometimes has extra line above it
 	- corrects itself by viewing the menu and exiting the menu
+	- look at SaveParameters section
 	- odd
 * Test changing Wavemaker interval to 0 from setup screen to turn wavemaker on and reset the timer checks (if it was off & interval set to 0, did not turn back on)
-
+* Find better way to remember WM ports to toggle on after adjusting WM timers
 
 Completed Items
 ---------------

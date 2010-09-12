@@ -121,8 +121,9 @@ public:
 	5 - Store params to eeprom
 	*/
 	ReefAngel_TimerClass Timer[6];
-	// NOTE for nested menus
 	byte SelectedMenuItem;
+
+	// Ports to toggle during different modes
 	byte FeedingModePorts;
 	byte WaterChangePorts;
 	byte OverheatShutoffPorts;
@@ -141,6 +142,7 @@ public:
 	void SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte byteHrInterval);
 	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime);
 	void Wavemaker(byte WMRelay, byte WMTimer);
+
 	// Simplified PDE versions of the calls
 	void StandardLights(byte Relay);
 	void MHLights(byte Relay);
@@ -160,7 +162,7 @@ public:
 #endif  // VersionMenu
 	void ClearScreen(byte Color);
 
-    // NOTE for nested menus
+    // Nested Menu Functions
     void InitMenus();
     void ShowInterface();
     void DisplayMenu();
@@ -179,7 +181,7 @@ public:
     void ProcessButtonPressTimeouts();
 #endif  // if defined SetupExtras || defined ATOSetup
 
-    // NOTE Setup Screens
+    // Setup Screens
     bool SetupOption(int &v, int &y, int rangemin, int rangemax, byte maxdigits,
                      char* unit, char* subunit, char* title,
                      char* prefix1, char* prefix2);
@@ -196,13 +198,18 @@ private:
 	bool showmenu;
 	time_t menutimeout;
 
-	// NOTE for nested menus
+	// Nested Menu variables
 	int menusptr[Total_Menus];
 	byte menuqtysptr[Total_Menus];
 	byte DisplayedMenu;
 	byte PreviousMenu;
 	bool redrawmenu;
 
+#ifdef WavemakerSetup
+    // TODO find a better way to save the wavemaker ports for restarting once timers are updated from setup screen
+    byte WM1Port;
+    byte WM2Port;
+#endif  // WavemakerSetup
 };
 
 #ifdef wifi

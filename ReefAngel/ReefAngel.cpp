@@ -727,6 +727,7 @@ void ReefAngelClass::Wavemaker1(byte WMRelay)
         Timer[1].SetInterval(InternalMemory.WM1Timer_read());
         Timer[1].Start();
         Relay.On(WMRelay);
+        WM1Port = WMRelay;
         // once setup, don't setup again
         bSetup = true;
     }
@@ -751,6 +752,7 @@ void ReefAngelClass::Wavemaker2(byte WMRelay)
         Timer[2].SetInterval(InternalMemory.WM2Timer_read());
         Timer[2].Start();
         Relay.On(WMRelay);
+        WM2Port = WMRelay;
         // once setup, don't setup again
         bSetup = true;
     }
@@ -1351,10 +1353,15 @@ void ReefAngelClass::ProcessButtonPressSetup()
                 InternalMemory.WM2Timer_write(y);
                 // after we set the values we need to update the timers
                 // TODO Update Timers appropriately
+                Timer[1].Trigger = 0;
                 Timer[1].SetInterval(v);
                 Timer[1].Start();
+                Relay.On(WM1Port);
+                Timer[2].Trigger = 0;
                 Timer[2].SetInterval(y);
                 Timer[2].Start();
+                Relay.On(WM2Port);
+                Relay.Write();
             }
             break;
         }
