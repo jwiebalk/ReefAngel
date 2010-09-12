@@ -125,6 +125,7 @@ public:
 	byte SelectedMenuItem;
 	byte FeedingModePorts;
 	byte WaterChangePorts;
+	byte OverheatShutoffPorts;
 
 	void Init();
 	void Refresh();

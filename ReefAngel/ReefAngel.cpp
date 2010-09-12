@@ -309,6 +309,11 @@ void ReefAngelClass::Init()
     FeedingModePorts = B10011000;
     WaterChangePorts = B10011000;
 
+    // Set the ports that get shutoff when the overheat value is reached
+    // Default to have port 3 shutoff
+    //                 Port 87654321
+    OverheatShutoffPorts = B00000100;
+
     // Initialize the Nested Menus
     InitMenus();
 }
@@ -958,9 +963,10 @@ void ReefAngelClass::ShowInterface()
                 if ( Params.Temp2 >= 1500 )  // 150.0 F is the default
 #endif // OverheatSetup
                 {
-                    // turn off MH lights (port 3)
                     LED.On();
-                    Relay.RelayMaskOff = B11111011;
+                    // invert the ports that are activated
+                    Relay.RelayMaskOff = ~OverheatShutoffPorts;
+                    //Relay.RelayMaskOff = B11111011;
                 }
                 // commit relay changes
                 Relay.Write();
@@ -1539,7 +1545,7 @@ void ReefAngelClass::ProcessButtonPressTemps()
         case TempsMenu_OverheatClr:
         {
             LED.Off();
-            Relay.RelayMaskOff = B11111111;  // Override MHlight auto
+            Relay.RelayMaskOff = B11111111;
             Relay.Write();
             DisplayMenuEntry("Clear Overheat");
             showmenu = false;
