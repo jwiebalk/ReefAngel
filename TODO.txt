@@ -10,6 +10,8 @@ TODO List (in no particular order)
 	- outline for the relay box sometimes has extra line above it
 	- corrects itself by viewing the menu and exiting the menu
 	- odd
+* Test changing Wavemaker interval to 0 from setup screen to turn wavemaker on and reset the timer checks (if it was off & interval set to 0, did not turn back on)
+
 
 Completed Items
 ---------------
