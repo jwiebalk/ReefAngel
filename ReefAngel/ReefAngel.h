@@ -156,7 +156,6 @@ public:
 	void DisplayVersion();
 #endif  // VersionMenu
 	void ClearScreen(byte Color);
-	void ModeTogglePorts(uint8_t PortRelay, bool bOn = true);
 
     // NOTE for nested menus
     void InitMenus();

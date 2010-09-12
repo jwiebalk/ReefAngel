@@ -783,28 +783,6 @@ void ReefAngelClass::ClearScreen(byte Color)
     LCD.Clear(Color, 0, 0, 131, 131);
 }
 
-void ReefAngelClass::ModeTogglePorts(uint8_t PortRelay, bool bOn /*= true*/)
-{
-    // cycle through PortRelay variable
-    // if bOn is true, then we turn the ports on
-    // if bOn is false, then we turn the ports off
-    uint8_t i;
-    for ( i = 0; i < 8; i++ )
-    {
-        if ( PortRelay & (1 << i) )
-        {
-            if ( bOn )
-            {
-                Relay.On(i+1);
-            }
-            else
-            {
-                Relay.Off(i+1);
-            }
-        }
-    }
-}
-
 void ReefAngelClass::InitMenus()
 {
     // loads all the menus
@@ -943,19 +921,6 @@ void ReefAngelClass::ShowInterface()
                     LCD.DrawGraph(5, 5);
                 }
 
-//                // wavemaker 1 timer
-//                if ( Timer[1].IsTriggered() )  // If timer 1 expires
-//                {
-//                    Timer[1].Start();  // start timer
-//                    Relay.Toggle(Port4);  // toggle relay
-//                }
-//                // wavemaker 2 timer
-//                if ( Timer[2].IsTriggered() )  // If timer 2 expires
-//                {
-//                    Timer[2].Start();  // start timer
-//                    Relay.Toggle(Port5);  // toggle relay
-//                }
-
                 // if temp2 exceeds overheat temp
 #ifdef OverheatSetup
                 if ( Params.Temp2 >= InternalMemory.OverheatTemp_read() )
@@ -966,7 +931,6 @@ void ReefAngelClass::ShowInterface()
                     LED.On();
                     // invert the ports that are activated
                     Relay.RelayMaskOff = ~OverheatShutoffPorts;
-                    //Relay.RelayMaskOff = B11111011;
                 }
                 // commit relay changes
                 Relay.Write();
@@ -1275,12 +1239,12 @@ void ReefAngelClass::ProcessButtonPressMain()
             // TODO Test SaveRelayState
             byte CurrentRelayState = Relay.RelayData;
 #endif  // SaveRelayState
-            ModeTogglePorts(FeedingModePorts, false);
+            Relay.RelayMaskOff = ~FeedingModePorts;
             Relay.Write();
             // run feeding mode
             FeedingMode();
             // turn on ports
-            ModeTogglePorts(FeedingModePorts);
+            Relay.RelayMaskOff = B11111111;
             // restore ports
 #ifdef SaveRelayState
             Relay.RelayData = CurrentRelayState;
@@ -1290,17 +1254,17 @@ void ReefAngelClass::ProcessButtonPressMain()
         }
         case MainMenu_WaterChangeMode:
         {
-            // turn off pumps for water change mode
+            // turn off ports
 #ifdef SaveRelayState
             // TODO Test SaveRelayState
             byte CurrentRelayState = Relay.RelayData;
 #endif  // SaveRelayState
-            ModeTogglePorts(WaterChangePorts, false);
+            Relay.RelayMaskOff = ~WaterChangePorts;
             Relay.Write();
             // Display the water change mode
             WaterChangeMode();
-            // turn on the pumps after water change mode
-            ModeTogglePorts(WaterChangePorts);
+            // turn on ports
+            Relay.RelayMaskOff = B11111111;
 #ifdef SaveRelayState
             Relay.RelayData = CurrentRelayState;
 #endif  // SaveRelayState
