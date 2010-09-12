@@ -314,6 +314,13 @@ void ReefAngelClass::Init()
     //                 Port 87654321
     OverheatShutoffPorts = B00000100;
 
+#ifndef RemoveAllLights
+    // Set the ports that get turned on when you select the Lights On
+    // Default to have ports 2 & 3 turn on
+    //          Port 87654321
+    LightsOnPorts = B00000110;
+#endif  // RemoveAllLights
+
     // Initialize the Nested Menus
     InitMenus();
 }
@@ -1390,9 +1397,8 @@ void ReefAngelClass::ProcessButtonPressLights()
     {
         case LightsMenu_On:
         {
-            // turns on ports 2 & 3
-            //         Port Mask 87654321
-            Relay.RelayMaskOn = B00000110;
+            // turn on ports
+            Relay.RelayMaskOn = LightsOnPorts;
 #ifdef DisplayLEDPWM
             // sets PWM to 50%
             PWM.SetActinic(50);
@@ -1405,8 +1411,7 @@ void ReefAngelClass::ProcessButtonPressLights()
         }
         case LightsMenu_Off:
         {
-            // Reset ports 2 & 3
-            //         Port Mask 87654321
+            // reset ports
             Relay.RelayMaskOn = B00000000;
 #ifdef DisplayLEDPWM
             // sets PWM to 0%

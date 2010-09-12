@@ -126,6 +126,9 @@ public:
 	byte FeedingModePorts;
 	byte WaterChangePorts;
 	byte OverheatShutoffPorts;
+#ifndef RemoveAllLights
+	byte LightsOnPorts;
+#endif  // RemoveAllLights
 
 	void Init();
 	void Refresh();
