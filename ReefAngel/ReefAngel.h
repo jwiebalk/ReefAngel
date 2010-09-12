@@ -134,8 +134,23 @@ public:
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);
 	void StandardFan(byte FanRelay, int LowTemp, int HighTemp);
 	void StandardATO(byte ATORelay, int ATOTimeout);
-	void SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte byteHrInterval = 0);
+	void SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte byteHrInterval);
 	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime);
+	void Wavemaker(byte WMRelay, byte WMTimer);
+	// Simplified PDE versions of the calls
+	void StandardLights(byte Relay);
+	void MHLights(byte Relay);
+	void StandardHeater(byte Relay);
+	void StandardFan(byte Relay);
+	void StandardATO(byte Relay);
+	void SingleATOLow(byte Relay);
+	void SingleATOHigh(byte Relay);
+	void DosingPump1(byte Relay);
+	void DosingPump2(byte Relay);
+	void Wavemaker1(byte WMRelay);
+	//void Wavemaker1Setup(byte Relay);
+	void Wavemaker2(byte WMRelay);
+	//void Wavemaker2Setup(byte Relay);
 #ifdef VersionMenu
 	void DisplayVersion();
 #endif  // VersionMenu

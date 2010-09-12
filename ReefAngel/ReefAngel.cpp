@@ -628,6 +628,131 @@ void ReefAngelClass::DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte On
     }
 }
 
+void ReefAngelClass::Wavemaker(byte WMRelay, byte WMTimer)
+{
+    // TODO Update Timers appropriately
+    if ( Timer[WMTimer].IsTriggered() )
+    {
+        Timer[WMTimer].Start();
+        Relay.Toggle(WMRelay);
+    }
+}
+
+// Simplified for PDE file
+void ReefAngelClass::StandardLights(byte Relay)
+{
+    StandardLights(Relay,
+                   InternalMemory.StdLightsOnHour_read(),
+                   InternalMemory.StdLightsOnMinute_read(),
+                   InternalMemory.StdLightsOffHour_read(),
+                   InternalMemory.StdLightsOffMinute_read());
+}
+
+void ReefAngelClass::MHLights(byte Relay)
+{
+    MHLights(Relay,
+             InternalMemory.MHOnHour_read(),
+             InternalMemory.MHOnMinute_read(),
+             InternalMemory.MHOffHour_read(),
+             InternalMemory.MHOffMinute_read(),
+             InternalMemory.MHDelay_read());
+}
+
+void ReefAngelClass::StandardHeater(byte Relay)
+{
+    StandardHeater(Relay,
+                   InternalMemory.HeaterTempOn_read(),
+                   InternalMemory.HeaterTempOff_read());
+}
+
+void ReefAngelClass::StandardFan(byte Relay)
+{
+    StandardFan(Relay,
+                InternalMemory.ChillerTempOff_read(),
+                InternalMemory.ChillerTempOn_read());
+}
+
+void ReefAngelClass::StandardATO(byte Relay)
+{
+    StandardATO(Relay, InternalMemory.ATOTimeout_read());
+}
+
+void ReefAngelClass::SingleATOLow(byte Relay)
+{
+    SingleATO(true, Relay, InternalMemory.ATOTimeout_read(), InternalMemory.ATOHourInterval_read());
+}
+
+void ReefAngelClass::SingleATOHigh(byte Relay)
+{
+    SingleATO(false, Relay, InternalMemory.ATOHighTimeout_read(), InternalMemory.ATOHighHourInterval_read());
+}
+
+void ReefAngelClass::DosingPump1(byte Relay)
+{
+    // TODO Update Timers appropriately
+    DosingPump(Relay, 1,
+               InternalMemory.DP1OnHour_read(),
+               InternalMemory.DP1OnMinute_read(),
+               InternalMemory.DP1Timer_read());
+}
+
+void ReefAngelClass::DosingPump2(byte Relay)
+{
+    // TODO Update Timers appropriately
+    DosingPump(Relay, 2,
+               InternalMemory.DP2OnHour_read(),
+               InternalMemory.DP2OnMinute_read(),
+               InternalMemory.DP2Timer_read());
+}
+
+void ReefAngelClass::Wavemaker1(byte WMRelay)
+{
+    // TODO Update Timers appropriately
+    static bool bSetup = false;
+    if ( ! bSetup )
+    {
+        //Wavemaker1Setup(Relay);
+        Timer[1].SetInterval(InternalMemory.WM1Timer_read());
+        Timer[1].Start();
+        Relay.On(WMRelay);
+        // once setup, don't setup again
+        bSetup = true;
+    }
+
+    Wavemaker(WMRelay, 1);
+}
+
+//void ReefAngelClass::Wavemaker1Setup(byte Relay)
+//{
+//    Timer[1].SetInterval(InternalMemory.WM1Timer_read());
+//    Timer[1].Start();
+//    Relay.On(Relay);
+//}
+
+void ReefAngelClass::Wavemaker2(byte WMRelay)
+{
+    // TODO Update Timers appropriately
+    static bool bSetup = false;
+    if ( ! bSetup )
+    {
+        //Wavemaker2Setup(Relay);
+        Timer[2].SetInterval(InternalMemory.WM2Timer_read());
+        Timer[2].Start();
+        Relay.On(WMRelay);
+        // once setup, don't setup again
+        bSetup = true;
+    }
+
+    Wavemaker(WMRelay, 2);
+}
+
+//void ReefAngelClass::Wavemaker2Setup(byte Relay)
+//{
+//    Timer[2].SetInterval(InternalMemory.WM2Timer_read());
+//    Timer[2].Start();
+//    Relay.On(Relay);
+//}
+
 #ifdef VersionMenu
 void ReefAngelClass::DisplayVersion()
 {
@@ -813,18 +938,18 @@ void ReefAngelClass::ShowInterface()
                     LCD.DrawGraph(5, 5);
                 }
 
-                // wavemaker 1 timer
-                if ( Timer[1].IsTriggered() )  // If timer 1 expires
-                {
-                    Timer[1].Start();  // start timer
-                    Relay.Toggle(Port4);  // toggle relay
-                }
-                // wavemaker 2 timer
-                if ( Timer[2].IsTriggered() )  // If timer 2 expires
-                {
-                    Timer[2].Start();  // start timer
-                    Relay.Toggle(Port5);  // toggle relay
-                }
+//                // wavemaker 1 timer
+//                if ( Timer[1].IsTriggered() )  // If timer 1 expires
+//                {
+//                    Timer[1].Start();  // start timer
+//                    Relay.Toggle(Port4);  // toggle relay
+//                }
+//                // wavemaker 2 timer
+//                if ( Timer[2].IsTriggered() )  // If timer 2 expires
+//                {
+//                    Timer[2].Start();  // start timer
+//                    Relay.Toggle(Port5);  // toggle relay
+//                }
 
                 // if temp2 exceeds overheat temp
 #ifdef OverheatSetup
@@ -1248,6 +1373,7 @@ void ReefAngelClass::ProcessButtonPressSetup()
                 InternalMemory.WM1Timer_write(v);
                 InternalMemory.WM2Timer_write(y);
                 // after we set the values we need to update the timers
+                // TODO Update Timers appropriately
                 Timer[1].SetInterval(v);
                 Timer[1].Start();
                 Timer[2].SetInterval(y);
