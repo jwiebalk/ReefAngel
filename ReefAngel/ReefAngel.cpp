@@ -502,9 +502,8 @@ void ReefAngelClass::StandardLights(byte LightsRelay, byte OnHour, byte OnMinute
 
 void ReefAngelClass::MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay)
 {
-    unsigned long MHTimer = MHDelay;
+    unsigned int MHTimer = MHDelay;
     MHTimer *= SECS_PER_MIN;
-    MHTimer *= 1000;
     if ( now()-RAStart > MHTimer )
         StandardLights(LightsRelay, OnHour, OnMinute, OffHour, OffMinute);
 }
