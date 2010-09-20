@@ -1,6 +1,9 @@
 TODO List (in no particular order)
 ----------------------------------
 * Cleanup/Better handle timers (use of class timer)
+* Incorporate PWM Slope function
+	- add in on / off times for slope values
+	- add in slope function
 * Add in AlternateFont
 * Test / Incorporate new dsWire library
 * Document ALL functions using Doxygen...auto-generation of documentation will be easy then.
@@ -11,7 +14,7 @@ TODO List (in no particular order)
 	- corrects itself by viewing the menu and exiting the menu
 	- look at SaveParameters section
 	- odd
-* Find better way to remember WM ports to toggle on after adjusting WM timers
+* Find better way to remember WM ports to toggle on after adjusting WM timers ????
 
 Completed Items
 ---------------
@@ -67,6 +70,7 @@ Completed Items
 * Feeding/Water mode toggle, can specify what ports get turned on & off during water change mode and feeding mode by setting appropriate bits in byte variables
 * If Temp reads 0, do not turn on heater
 * Test changing Wavemaker interval to 0 from setup screen to turn wavemaker on and reset the timer checks (if it was off & interval set to 0, did not turn back on)
+* Lights On call uses the max values for the actinic and daylight pwm read from memory
 
 Wish List 
 (Features that would be nice, but aren't necessary and will cause the compile size to increase)

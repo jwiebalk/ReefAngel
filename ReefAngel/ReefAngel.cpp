@@ -1406,9 +1406,8 @@ void ReefAngelClass::ProcessButtonPressLights()
             // turn on ports
             Relay.RelayMaskOn = LightsOnPorts;
 #ifdef DisplayLEDPWM
-            // sets PWM to 50%
-            PWM.SetActinic(50);
-            PWM.SetDaylight(50);
+            PWM.SetActinic(InternalMemory.LEDPWMActinic_read());
+            PWM.SetDaylight(InternalMemory.LEDPWMDaylight_read());
 #endif  // DisplayLEDPWM
             Relay.Write();
             DisplayMenuEntry("Lights On");
