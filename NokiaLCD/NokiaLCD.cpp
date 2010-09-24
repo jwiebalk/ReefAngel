@@ -16,7 +16,7 @@
 #define daylightPWMPin      10
 
 
-// Phillips PCF8833 Command Set 
+// Phillips PCF8833 Command Set
 #define NOP 0x00 	// nop
 #define SWRESET  0x01 	// software reset
 #define BSTROFF  0x02 	// booster voltage OFF
@@ -202,16 +202,16 @@ byte const font[475] = {
 NokiaLCD::NokiaLCD()
 {
 
-  DDRD |= B01111100;   // Set SPI pins as output 
+  DDRD |= B01111100;   // Set SPI pins as output
   PORTD |= B01111000;  // Set SPI pins HIGH
 }
 
 
 
-void NokiaLCD::ShiftBits(byte b) 
+void NokiaLCD::ShiftBits(byte b)
 {
   byte Bit;
-  
+
   for (Bit = 0; Bit < 8; Bit++)     // 8 Bit Write
   {
     CLK0          // Standby SCLK
@@ -223,9 +223,9 @@ void NokiaLCD::ShiftBits(byte b)
     {
       SDA0
     }
-    CLK1          // Strobe signal bit 
+    CLK1          // Strobe signal bit
     b <<= 1;   // Next bit data
-  }  
+  }
 }
 
 void NokiaLCD::SendData(byte data) {
@@ -260,7 +260,7 @@ void NokiaLCD::Clear(byte color, byte x1, byte y1, byte x2, byte y2)
   uint16_t i;
   unsigned int icolor;
   icolor = ~color;
-  
+
   // best way to create a filled rectangle is to define a drawing box
   // and loop two pixels at a time
   // calculate the min and max for x and y directions
@@ -284,7 +284,7 @@ void NokiaLCD::Clear(byte color, byte x1, byte y1, byte x2, byte y2)
   SendCMD(RAMWR);
 
   // loop on total number of pixels / 2
-  for (i = 0; i < ((xmax - xmin + 1) * (ymax - ymin + 1)) ; i++) 
+  for (i = 0; i < ((xmax - xmin + 1) * (ymax - ymin + 1)) ; i++)
   {
     // use the color value to output three data bytes covering two pixels
     // For some reason, it has to send blue first then green and red
@@ -300,13 +300,13 @@ void NokiaLCD::Init()
   // Initial state
   CS1
   CS0
-  
+
   // Hardware Reset LCD
   RESET0
   delay(100);
   RESET1
   delay(100);
-  
+
   //Software Reset
   SendCMD(SWRESET);
 
@@ -485,11 +485,11 @@ void NokiaLCD::DrawDate(byte x, byte y)
   strcat(text,temp);
   if (isAM())
   {
-  strcat(text," AM");    
+  strcat(text," AM");
   }
   else
   {
-  strcat(text," PM");    
+  strcat(text," PM");
   }
   DrawText(RED,WHITE,x,y,text);
 }
@@ -534,17 +534,17 @@ void NokiaLCD::DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte dec
 void NokiaLCD::DrawMonitor(byte x, byte y, ParamsStruct Params, byte DaylightPWMValue, byte ActnicPWMValue)
 {
   DrawText(WaterTempColor,WHITE,x,y,"T1:");
-  DrawSingleMonitor(Params.Temp1, WaterTempColor, x+18, y,10); 
+  DrawSingleMonitor(Params.Temp1, WaterTempColor, x+18, y,10);
   DrawText(LightsTempColor,WHITE,x,y+10,"T2:");
-  DrawSingleMonitor(Params.Temp2, LightsTempColor, x+18, y+10,10); 
+  DrawSingleMonitor(Params.Temp2, LightsTempColor, x+18, y+10,10);
   DrawText(AmbientTempColor,WHITE,x,y+20,"T3:");
-  DrawSingleMonitor(Params.Temp3, AmbientTempColor, x+18, y+20,10); 
+  DrawSingleMonitor(Params.Temp3, AmbientTempColor, x+18, y+20,10);
   DrawText(PHColor,WHITE,x+60,y,"PH:");
-  DrawSingleMonitor(Params.PH, PHColor, x+78, y,100); 
+  DrawSingleMonitor(Params.PH, PHColor, x+78, y,100);
   DrawText(DPColor,WHITE,x+60,y+10,"DP:");
-  DrawSingleMonitor(DaylightPWMValue, DPColor, x+78, y+10,1); 
+  DrawSingleMonitor(DaylightPWMValue, DPColor, x+78, y+10,1);
   DrawText(APColor,WHITE,x+60,y+20,"AP:");
-  DrawSingleMonitor(ActnicPWMValue, APColor, x+78, y+20,1); 
+  DrawSingleMonitor(ActnicPWMValue, APColor, x+78, y+20,1);
 }
 
 void NokiaLCD::DrawSingleGraph(byte color, byte x, byte y, int I2CAddr, int EEaddr)
@@ -561,7 +561,7 @@ void NokiaLCD::DrawSingleGraph(byte color, byte x, byte y, int I2CAddr, int EEad
 		Wire.requestFrom(I2CAddr,1);
 		if (Wire.available()) PutPixel(color,x+a,y+50-Wire.receive());
 	}
-	
+
 }
 
 void NokiaLCD::DrawEEPromImage(int swidth, int sheight, byte x, byte y, int I2CAddr, int EEaddr)
@@ -605,4 +605,44 @@ void NokiaLCD::DrawGraph(byte x, byte y, int I2CAddr, int pointer)
   DrawSingleGraph(LightsTempColor,x,y,I2CAddr,EEPROM.read(pointer)+120);
   DrawSingleGraph(AmbientTempColor,x,y,I2CAddr,EEPROM.read(pointer)+240);
   DrawSingleGraph(PHColor,x,y,I2CAddr,EEPROM.read(pointer)+360);
+}
+
+void NokiaLCD::DrawCancel(bool Selected)
+{
+    byte bcolor;
+    Clear(BLACK,14,109,59,126);
+    if ( Selected )
+    {
+        bcolor = 0x92;
+    }
+    else
+    {
+        bcolor = 0xB7;
+    }
+    Clear(bcolor,15,110,58,125);
+    DrawText(BLACK,bcolor,20,115,"Cancel");
+}
+
+void NokiaLCD::DrawOK(bool Selected)
+{
+    byte bcolor;
+    Clear(BLACK,74,109,119,126);
+    if ( Selected )
+    {
+        bcolor = 0x92;
+    }
+    else
+    {
+        bcolor = 0xB7;
+    }
+    Clear(bcolor,75,110,118,125);
+    DrawText(BLACK,bcolor,92,115,"Ok");
+}
+
+void NokiaLCD::DrawCalibrate(int i, byte x, byte y)
+{
+  char text[5] = {0};
+  Clear(WHITE, x, y, x+20, y+10);  // or just WHITE
+  itoa(i,text,10);
+  DrawText(RED, WHITE, x, y, text);  // or just WHITE or RED
 }

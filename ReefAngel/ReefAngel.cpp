@@ -29,12 +29,12 @@ ReefAngel::DisplayVersion();
 #include "ReefAngel.h"
 
 SIGNAL(PCINT0_vect) {
-	if (millis()-ButtonDebounce>600) 
+	if (millis()-ButtonDebounce>600)
 	{
 		ButtonDebounce=millis();
 		ButtonPress++;
 	}
-  
+
 }
 
 template <class T> int EEPROM_writeAnything(int ee, const T& value)
@@ -57,8 +57,8 @@ template <class T> int EEPROM_readAnything(int ee, T& value)
 
 ReefAngelClass::ReefAngelClass()
 {
-	PCMSK0 |= 32; 
-	PCICR |= 1; 
+	PCMSK0 |= 32;
+	PCICR |= 1;
 	oldtick=0;
 }
 
@@ -66,7 +66,7 @@ void ReefAngelClass::Init()
 {
 	byte taddr;
 	byte t=0;
-	
+
 	Wire.begin();
 	Serial.begin(57600);
 	pinMode(Piezo, OUTPUT);
@@ -125,7 +125,7 @@ void ReefAngelClass::Refresh()
   {
 	timeout=millis();
 	conn=true;
-	memcpy(&m_pushback[0], &m_pushback[1], 31); 
+	memcpy(&m_pushback[0], &m_pushback[1], 31);
 	m_pushback[30]=Serial.read();
 	m_pushback[31]=0;
 	if (strncmp("GET /", m_pushback, 5)==0) reqtype=1;
@@ -163,7 +163,7 @@ void ReefAngelClass::Refresh()
 		  bitSet(Relay.RelayMaskOn,o_relay-1);
 		  bitSet(Relay.RelayMaskOff,o_relay-1);
 		}
-		if (o_type==2) 
+		if (o_type==2)
 		{
 		  bitClear(Relay.RelayMaskOn,o_relay-1);
 		  bitSet(Relay.RelayMaskOff,o_relay-1);
@@ -204,7 +204,7 @@ void ReefAngelClass::Refresh()
 	conn=false;
 	Serial.flush();
 	}
-  
+
   }
   else
   {
@@ -269,7 +269,7 @@ void ReefAngelClass::StandardGUI()
 				LCD.Clear(255,0,0,131,131);
 				SelectedMenu=selmenu;
 				showmenu=false;
-				if (selmenu==menuqty) 
+				if (selmenu==menuqty)
 				{
 					ReturnMenuFunction();  // Return from menu function;
 				}
@@ -494,21 +494,87 @@ void ReefAngelClass::DisplayVersion()
 #endif  // wifi
 }
 
+void ReefAngelClass::SetupCalibratePH()
+{
+    bool bOKSel = false;
+    bool bSave = false;
+    bool bDone = false;
+    bool bDrawButtons = true;
+    int iTPHMin = 1024, iTPHMax = 0;
+    int iP = 0;
+    byte offset = 65;
+    // draw labels
+    LCD.Clear(0xFF, 0, 0, 131, 131);
+    LCD.DrawText(0x00, 0xFF, 7, 10, "Calibrate PH");
+    LCD.DrawText(0x00, 0xFF, 7, 10*3, "PH 7.0");
+    LCD.DrawText(0x00, 0xFF, 7, 10*7, "PH 10.0");
+    do
+    {
+        iP = analogRead(PHPin);
+        LCD.DrawCalibrate(iP, 7 + offset, 10*5);
+        if ( iP < iTPHMin )
+        {
+            iTPHMin = iP;
+            LCD.DrawCalibrate(iP, 7 + offset, 10*3);
+        }
+        if ( iP > iTPHMax )
+        {
+            iTPHMax = iP;
+            LCD.DrawCalibrate(iP, 7 + offset, 10*7);
+        }
+        if (  bDrawButtons )
+        {
+            if ( bOKSel )
+            {
+                LCD.DrawOK(true);
+                LCD.DrawCancel(false);
+            }
+            else
+            {
+                LCD.DrawOK(false);
+                LCD.DrawCancel(true);
+            }
+            bDrawButtons = false;
+        }
+        if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
+        {
+            // toggle the selection
+            bOKSel = !bOKSel;
+            bDrawButtons = true;
+        }
+        if ( Joystick.IsButtonPressed() )
+        {
+            bDone = true;
+            if ( bOKSel )
+            {
+                bSave = true;
+            }
+        }
+    } while ( ! bDone );
+
+    if ( bSave )
+    {
+        // save PHMin & PHMax to memory
+        EEPROM_writeAnything(PH_Max, iTPHMax);
+        EEPROM_writeAnything(PH_Min, iTPHMin);
+    }
+}
+
 
 LEDClass::LEDClass()
 {
-	pinMode(ledPin, OUTPUT); 
-	digitalWrite(ledPin,LOW); 
+	pinMode(ledPin, OUTPUT);
+	digitalWrite(ledPin,LOW);
 }
 
 void LEDClass::On()
 {
-	digitalWrite(ledPin,HIGH); 
+	digitalWrite(ledPin,HIGH);
 }
 
 void LEDClass::Off()
 {
-	digitalWrite(ledPin,LOW); 
+	digitalWrite(ledPin,LOW);
 }
 
 JoystickClass::JoystickClass()
@@ -645,7 +711,7 @@ void TempSensorClass::Init()
 			if (count==3) memcpy(addrT3,addr,8);
 		}
 	}
-	ds.reset_search();  
+	ds.reset_search();
 }
 
 void TempSensorClass::RequestConvertion()
@@ -675,7 +741,7 @@ int TempSensorClass::ReadTemperature(byte addr[8], byte unit)
 	//byte count=0;
 	int Temp=0;
 	byte data[12];
-	
+
 
 	//while (ds.search(addr))
 	//{
@@ -699,7 +765,7 @@ int TempSensorClass::ReadTemperature(byte addr[8], byte unit)
 		}
 	//	if (Temp != 0xffff) return Temp;
 	//}
-	//ds.reset_search();  
+	//ds.reset_search();
 	return Temp;
 }
 
@@ -770,7 +836,7 @@ void RelayClass::Write()
   byte TempRelay=RelayData;
   TempRelay&=RelayMaskOff;
   TempRelay|=RelayMaskOn;
-  
+
   Wire.beginTransmission(I2CExpander1);
   Wire.send(~TempRelay);   // MSB
   Wire.endTransmission();
@@ -824,7 +890,7 @@ void TimerClass::Start()
 
 bool TimerClass::IsTriggered()
 {
-	if (now()>Trigger && Trigger!=0) 
+	if (now()>Trigger && Trigger!=0)
 	{
 		Trigger=0;
 		return true;
@@ -872,10 +938,10 @@ void PROGMEMprint(const prog_uchar str[])
 
 byte intlength(int intin)
 {
-  if (intin>9999) return 5; 
-  if (intin>999) return 4; 
-  if (intin>99) return 3; 
-  if (intin>9) return 2; 
+  if (intin>9999) return 5;
+  if (intin>999) return 4;
+  if (intin>99) return 3;
+  if (intin>9) return 2;
   if (intin>=0 && intin<=9) return 1;
   if (intin<0) return 2;
 }

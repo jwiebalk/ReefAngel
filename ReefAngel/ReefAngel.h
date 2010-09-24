@@ -64,7 +64,7 @@
 #define KeyPressRate		250
 
 #ifdef wifi
-#define SERVER_HEADER1 "HTTP/1.1 200 OK" CRLF "Server: ReefAngel" CRLF "Cache-Control: no-store, no-cache, must-revalidate" CRLF "Pragma: no-cache" CRLF "Connection: close" CRLF "Content-Type: text/" 
+#define SERVER_HEADER1 "HTTP/1.1 200 OK" CRLF "Server: ReefAngel" CRLF "Cache-Control: no-store, no-cache, must-revalidate" CRLF "Pragma: no-cache" CRLF "Connection: close" CRLF "Content-Type: text/"
 #define SERVER_HEADER2 CRLF "Content-Length: "
 #define SERVER_HEADER3 CRLF CRLF
 #define SERVER_HEADER_HTML SERVER_HEADER1 "html" SERVER_HEADER2
@@ -272,6 +272,7 @@ public:
 	void StandardATO(byte ATORelay, int ATOTimeout);
 	char *Version();
 	void DisplayVersion();
+	void SetupCalibratePH();
 	byte SelectedMenu;
 
 private:

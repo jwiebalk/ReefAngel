@@ -4,8 +4,8 @@
 
 #include "WProgram.h"
 
-typedef struct  { 
-  int Temp1; 
+typedef struct  {
+  int Temp1;
   int Temp2;
   int Temp3;
   int PH;
@@ -38,7 +38,10 @@ NokiaLCD();
 	void DrawMonitor(byte x, byte y, ParamsStruct Params, byte DaylightPWMValue, byte ActinicPWMValue);
 	void DrawGraph(byte x, byte y, int I2CAddr, int pointer);
 	void DrawEEPromImage(int swidth, int sheight, byte x, byte y, int I2CAddr, int EEaddr);
-	
+	void DrawCancel(bool Selected);
+    void DrawOK(bool Selected);
+    void DrawCalibrate(int i, byte x, byte y);
+
 private:
 	void SetBox(byte x1, byte y1, byte x2, byte y2);
 	void SendCMD(byte data);
