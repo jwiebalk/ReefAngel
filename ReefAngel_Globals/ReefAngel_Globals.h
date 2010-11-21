@@ -18,17 +18,6 @@
 #ifndef __REEFANGEL_GLOBALS_H__
 #define __REEFANGEL_GLOBALS_H__
 
-/*
-If this next line is uncommented, you must include the following lines in
-the PDE file at the top above all other include statements:
-#include <ReefAngel_Colors.h>
-#include <ReefAngel_CustomColors.h>
-
-This is for a custom application generator for the colors, so the entire
-Globals header file doesn't have to be generated.
-*/
-//#define COLORS_PDE
-
 #include <ReefAngel_Features.h>
 #ifdef COLORS_PDE
 #include <ReefAngel_CustomColors.h>

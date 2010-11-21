@@ -172,4 +172,12 @@ Approximately 454 bytes to have this feature
 */
 //#define SingleATOSetup
 
+/*
+If this next line is uncommented, you must include the following lines in
+the PDE file at the top above all other include statements:
+#include <ReefAngel_Colors.h>
+#include <ReefAngel_CustomColors.h>
+*/
+//#define COLORS_PDE
+
 #endif  // __REEFANGEL_FEATURES_H__
