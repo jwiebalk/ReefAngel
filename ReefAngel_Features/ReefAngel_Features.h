@@ -160,7 +160,7 @@ the next line and all that stuff will be removed.
 
 Approximately 720 bytes to have this feature
 */
-//#define DisplayLEDPWM
+#define DisplayLEDPWM
 
 /*
 This next line will allow you to use the ATO switches independently from each other.  You can specify

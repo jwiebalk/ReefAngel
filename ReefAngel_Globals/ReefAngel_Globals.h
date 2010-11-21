@@ -18,7 +18,21 @@
 #ifndef __REEFANGEL_GLOBALS_H__
 #define __REEFANGEL_GLOBALS_H__
 
+/*
+If this next line is uncommented, you must include the following lines in
+the PDE file at the top above all other include statements:
+#include <ReefAngel_Colors.h>
+#include <ReefAngel_CustomColors.h>
+
+This is for a custom application generator for the colors, so the entire
+Globals header file doesn't have to be generated.
+*/
+//#define COLORS_PDE
+
 #include <ReefAngel_Features.h>
+#ifdef COLORS_PDE
+#include <ReefAngel_CustomColors.h>
+#endif  // COLORS_PDE
 #include <WProgram.h>
 #include <Time.h>
 #include <OneWire.h>
@@ -147,6 +161,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define DEFAULT_MENU_ITEM   0     // default menu item, first item on menu
 #define MAIN_MENU           0
 
+#ifndef COLORS_PDE
 //  Global Colors
 #define COLOR_BLACK                 0x00
 #define COLOR_NAVY                  0x02
@@ -241,7 +256,6 @@ When adding more variables, use the previous value plus 1 or 2
 #define COLOR_LIGHTGOLDENRODYELLOW  0xFE
 #define COLOR_WHITE                 0xFF
 
-
 /*
 Ability to completely customize all colors of the screen
 To change an aspect of the screen, you simply need to change the color defined for the variable.
@@ -281,6 +295,8 @@ on the ReefAngel Google Groups page is a Color Chart image that will show you th
 #define DefaultBGColor      COLOR_WHITE  // Default background color
 #define DefaultFGColor      COLOR_BLACK  // Default text color
 #define GraphDotLineColor   0x49    // color of the dotted line in the middle of the graph
+
+#endif  // COLORS_PDE
 
 /*
 Graph Range values
