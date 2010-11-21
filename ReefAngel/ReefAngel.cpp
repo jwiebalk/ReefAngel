@@ -722,11 +722,12 @@ void ReefAngelClass::Wavemaker1(byte WMRelay)
     static bool bSetup = false;
     if ( ! bSetup )
     {
-        //Wavemaker1Setup(Relay);
         Timer[1].SetInterval(InternalMemory.WM1Timer_read());
         Timer[1].Start();
         Relay.On(WMRelay);
+#ifdef WavemakerSetup
         WM1Port = WMRelay;
+#endif  // WavemakerSetup
         // once setup, don't setup again
         bSetup = true;
     }
@@ -734,37 +735,24 @@ void ReefAngelClass::Wavemaker1(byte WMRelay)
     Wavemaker(WMRelay, 1);
 }
 
-//void ReefAngelClass::Wavemaker1Setup(byte Relay)
-//{
-//    Timer[1].SetInterval(InternalMemory.WM1Timer_read());
-//    Timer[1].Start();
-//    Relay.On(Relay);
-//}
-
 void ReefAngelClass::Wavemaker2(byte WMRelay)
 {
     // TODO Update Timers appropriately
     static bool bSetup = false;
     if ( ! bSetup )
     {
-        //Wavemaker2Setup(Relay);
         Timer[2].SetInterval(InternalMemory.WM2Timer_read());
         Timer[2].Start();
         Relay.On(WMRelay);
+#ifdef WavemakerSetup
         WM2Port = WMRelay;
+#endif  // Wavemakersetup
         // once setup, don't setup again
         bSetup = true;
     }
 
     Wavemaker(WMRelay, 2);
 }
-
-//void ReefAngelClass::Wavemaker2Setup(byte Relay)
-//{
-//    Timer[2].SetInterval(InternalMemory.WM2Timer_read());
-//    Timer[2].Start();
-//    Relay.On(Relay);
-//}
 
 #ifdef VersionMenu
 void ReefAngelClass::DisplayVersion()
