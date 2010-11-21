@@ -18,6 +18,17 @@
 #ifndef __REEFANGEL_GLOBALS_H__
 #define __REEFANGEL_GLOBALS_H__
 
+/*
+If this next line is uncommented, you must include the following lines in
+the PDE file at the top above all other include statements:
+#include <ReefAngel_Colors.h>
+#include <ReefAngel_CustomColors.h>
+
+This is for a custom application generator for the colors, so the entire
+Globals header file doesn't have to be generated.
+*/
+//#define COLORS_PDE
+
 #include <ReefAngel_Features.h>
 #ifdef COLORS_PDE
 #include <ReefAngel_CustomColors.h>
@@ -262,6 +273,7 @@ The values can range from 0x00 to 0xFF.  Most of the common colors are specified
 of your own hex code (number) is most likely not needed.  If you want to see what the colors will look like,
 on the ReefAngel Google Groups page is a Color Chart image that will show you the colors.
 */
+
 #define T1TempColor         COLOR_RED  // Text color for the T1 temp probe (homescreen)
 #define T2TempColor         COLOR_CHOCOLATE  // Text color for the T2 temp probe (homescreen)
 #define T3TempColor         COLOR_MEDIUMORCHID  // Text color for the T3 temp probe (homescreen)
