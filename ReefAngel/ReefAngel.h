@@ -17,7 +17,7 @@
 #ifndef	ReefAngel_h
 #define ReefAngel_h
 
-#define ReefAngel_Version "0.8.5 beta 8"
+#define ReefAngel_Version "0.8.5.9"
 //#define DEV_MODE  // Developer Mode
 
 #include <ReefAngel_Globals.h>
@@ -54,33 +54,7 @@
 //#define SERVER_AJAX2 "</head><body><table border=0 cellspacing=0 cellpadding=0><tr><td colspan=4 align=center><img src='http://www.reefangel.com/images/ra.jpg'></td></tr><tr><td background='http://www.reefangel.com/images/t1.jpg' align=center><div id=T1 class=style1></div></td><td background='http://www.reefangel.com/images/t2.jpg' align=center><div id=T2 class=style1></div></td><td background='http://www.reefangel.com/images/t3.jpg' align=center><div id=T3 class=style1></div></td><td background='http://www.reefangel.com/images/ph.jpg' align=center><div id=PH class=style1></div></td></tr></table></body></html>"
 //http://www.xul.fr/ajax-get-xml.html
 
-const prog_uchar SERVER_RA[] PROGMEM = "<html><head><script language='javascript' src='http://www.reefangel.com/wifi/ra.js'></script><link href='http://www.reefangel.com/wifi/ra.css' rel='stylesheet' type='text/css'></head><body onLoad='t();'>"
-"<table><tr><td colspan=4 align=center><img src='http://www.reefangel.com/images/ra.jpg'></td></tr><tr>"
-"<td background='http://www.reefangel.com/images/t1.jpg' align=center><div id=T1 class=style1></div></td>"
-"<td background='http://www.reefangel.com/images/t2.jpg' align=center><div id=T2 class=style1></div></td>"
-"<td background='http://www.reefangel.com/images/t3.jpg' align=center><div id=T3 class=style1></div></td>"
-"<td background='http://www.reefangel.com/images/ph.jpg' align=center><div id=PH class=style1></div></td>"
-"</tr><tr><td height='184' colspan=4 align=center><table width='500'><tr><td height='184' background='http://www.reefangel.com/images/panel.jpg'><table width='400' class='style3'><tr class='style2'>"
-"<td><div id='l1'></div></td><td><div id='l2'></div></td><td><div id='l3'></div></td><td><div id='l4'></div></td><td><div id='l5'></div></td><td><div id='l6'></div></td><td><div id='l7'></div></td><td><div id='l8'></div></td>"
-"</tr><tr class='style2'>"
-"<td><div id='s1'><img src='http://www.reefangel.com/images/spacer.gif' width=41 height=85 border='0' usemap='#s1Map'></div></td>"
-"<td><div id='s2'><img src='http://www.reefangel.com/images/spacer.gif' width=41 height=85 border='0' usemap='#s2Map'></div></td>"
-"<td><div id='s3'><img src='http://www.reefangel.com/images/spacer.gif' width=41 height=85 border='0' usemap='#s3Map'></div></td>"
-"<td><div id='s4'><img src='http://www.reefangel.com/images/spacer.gif' width=41 height=85 border='0' usemap='#s4Map'></div></td>"
-"<td><div id='s5'><img src='http://www.reefangel.com/images/spacer.gif' width=41 height=85 border='0' usemap='#s5Map'></div></td>"
-"<td><div id='s6'><img src='http://www.reefangel.com/images/spacer.gif' width=41 height=85 border='0' usemap='#s6Map'></div></td>"
-"<td><div id='s7'><img src='http://www.reefangel.com/images/spacer.gif' width=41 height=85 border='0' usemap='#s7Map'></div></td>"
-"<td><div id='s8'><img src='http://www.reefangel.com/images/spacer.gif' width=41 height=85 border='0' usemap='#s8Map'></div></td>"
-"</tr></table></td></tr><tr><td><div id='temp'><H1>Please Wait... Loading...</H1></div></td></tr></table></td></tr></table>"
-"<map name='s1Map'><area shape='rect' coords='0,0,41,15' href=\"javascript:r('11');\"><area shape='rect' coords='0,33,41,53' href=\"javascript:r('10');\"><area shape='rect' coords='0,70,41,85' href=\"javascript:r('12');\"></map>"
-"<map name='s2Map'><area shape='rect' coords='0,0,41,15' href=\"javascript:r('21');\"><area shape='rect' coords='0,33,41,53' href=\"javascript:r('20');\"><area shape='rect' coords='0,70,41,85' href=\"javascript:r('22');\"></map>"
-"<map name='s3Map'><area shape='rect' coords='0,0,41,15' href=\"javascript:r('31');\"><area shape='rect' coords='0,33,41,53' href=\"javascript:r('30');\"><area shape='rect' coords='0,70,41,85' href=\"javascript:r('32');\"></map>"
-"<map name='s4Map'><area shape='rect' coords='0,0,41,15' href=\"javascript:r('41');\"><area shape='rect' coords='0,33,41,53' href=\"javascript:r('40');\"><area shape='rect' coords='0,70,41,85' href=\"javascript:r('42');\"></map>"
-"<map name='s5Map'><area shape='rect' coords='0,0,41,15' href=\"javascript:r('51');\"><area shape='rect' coords='0,33,41,53' href=\"javascript:r('50');\"><area shape='rect' coords='0,70,41,85' href=\"javascript:r('52');\"></map>"
-"<map name='s6Map'><area shape='rect' coords='0,0,41,15' href=\"javascript:r('61');\"><area shape='rect' coords='0,33,41,53' href=\"javascript:r('60');\"><area shape='rect' coords='0,70,41,85' href=\"javascript:r('62');\"></map>"
-"<map name='s7Map'><area shape='rect' coords='0,0,41,15' href=\"javascript:r('71');\"><area shape='rect' coords='0,33,41,53' href=\"javascript:r('70');\"><area shape='rect' coords='0,70,41,85' href=\"javascript:r('72');\"></map>"
-"<map name='s8Map'><area shape='rect' coords='0,0,41,15' href=\"javascript:r('81');\"><area shape='rect' coords='0,33,41,53' href=\"javascript:r('80');\"><area shape='rect' coords='0,70,41,85' href=\"javascript:r('82');\"></map>"
-"</body></html>";
+const prog_uchar SERVER_RA[] PROGMEM = "<script language='javascript' src='http://www.reefangel.com/wifi/ra1.js'></script>";
 
 static char m_pushback[32];
 static char m_pushbackDepth=0;
