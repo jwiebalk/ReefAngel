@@ -14,26 +14,12 @@
  * limitations under the License.
  */
 
-/*
------------------------------------------------------------------------------------------------------------------------------
-Contribution from Curt Binder
-06/24/2010
-ReefAngel::DisplayVersion();
------------------------------------------------------------------------------------------------------------------------------
-*/
-
-/*
-06/24/2010 - RI - Changed RTC sync to every hour
-*/
-
-/*
-6/28/2010 - Curt Binder - Added DosingPump function
-*/
 
 #include <ReefAngel_Globals.h>
 #include <Wire.h>
 #include <DS1307RTC.h>
 #include "ReefAngel.h"
+#include <ReefAngel_Wifi.h>
 
 byte ButtonPress = 0;
 
@@ -293,9 +279,6 @@ void ReefAngelClass::Init()
 	Timer[5].SetInterval(720);  // Store Params
 	Timer[5].ForceTrigger();
 
-#ifdef wifi
-	conn = false;
-#endif  // wifi
 
 #ifdef DisplayLEDPWM
     // Restore PWM values
@@ -329,102 +312,9 @@ void ReefAngelClass::Init()
 
 void ReefAngelClass::Refresh()
 {
-	now();
-
-#ifdef wifi
-  if (Serial.available()>0)
-  {
-	timeout=millis();
-	conn=true;
-	memcpy(&m_pushback[0], &m_pushback[1], 31);
-	m_pushback[30]=Serial.read();
-	m_pushback[31]=0;
-	if (strncmp("GET /", m_pushback, 5)==0) reqtype=1;
-	if (strncmp("GET /wifi", m_pushback, 9)==0) reqtype=2;
-	if (strncmp("GET /r", m_pushback, 6)==0) reqtype=3;
-	if (reqtype!=0)
-	{
-	Serial.flush();
-	m_pushback[0]=0;
-	if (reqtype==1)
-	{
-	  P(WebBodyMsg) = SERVER_DEFAULT;
-	  WebResponse(WebBodyMsg, sizeof(WebBodyMsg) - 1);
-	}
-	if (reqtype==2)
-	{
-	  P(WebBodyMsg) = SERVER_HEADER_HTML;
-	  printP(WebBodyMsg);
-	  Serial.print(sizeof(SERVER_RA) - 1,DEC);
-	  P(WebBodyMsg1) = SERVER_HEADER3;
-	  printP(WebBodyMsg1);
-	  PROGMEMprint(SERVER_RA);
-	}
-	if (reqtype==3)
-	{
-		byte o_relay=m_pushback[6]-'0';
-		byte o_type=m_pushback[7]-'0';
-		if (o_type==0)
-		{
-		  bitClear(Relay.RelayMaskOn,o_relay-1);
-		  bitClear(Relay.RelayMaskOff,o_relay-1);
-		}
-		if (o_type==1)
-		{
-		  bitSet(Relay.RelayMaskOn,o_relay-1);
-		  bitSet(Relay.RelayMaskOff,o_relay-1);
-		}
-		if (o_type==2)
-		{
-		  bitClear(Relay.RelayMaskOn,o_relay-1);
-		  bitSet(Relay.RelayMaskOff,o_relay-1);
-		}
-		Relay.Write();
-	  char temp[6];
-	  int s=76;
-
-	  s+=intlength(Params.Temp1);
-	  s+=intlength(Params.Temp2);
-	  s+=intlength(Params.Temp3);
-	  s+=intlength(Params.PH);
-	  s+=intlength(Relay.RelayData);
-	  s+=intlength(Relay.RelayMaskOn);
-	  s+=intlength(Relay.RelayMaskOff);
-	  P(WebBodyMsg) = SERVER_HEADER_XML;
-	  printP(WebBodyMsg);
-	  Serial.print(s);
-	  P(WebBodyMsg1) = SERVER_HEADER3;
-	  printP(WebBodyMsg1);
-	  Serial.print("<RA><T1>");
-	  Serial.print(Params.Temp1);
-	  Serial.print("</T1><T2>");
-	  Serial.print(Params.Temp2);
-	  Serial.print("</T2><T3>");
-	  Serial.print(Params.Temp3);
-	  Serial.print("</T3><PH>");
-	  Serial.print(Params.PH);
-	  Serial.print("</PH><R>");
-	  Serial.print(Relay.RelayData,DEC);
-	  Serial.print("</R><RON>");
-	  Serial.print(Relay.RelayMaskOn,DEC);
-	  Serial.print("</RON><ROFF>");
-	  Serial.print(Relay.RelayMaskOff,DEC);
-	  Serial.print("</ROFF></RA>");
-	}
-	reqtype=0;
-	conn=false;
-	Serial.flush();
-	}
-
-  }
-  else
-  {
-    if (conn && millis()-timeout>1000) conn=false;
-  }
-
-#endif  // wifi
-
+    pingSerial();
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
+	now();
 #ifdef DirectTempSensor
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 	Params.Temp1=TempSensor.ReadTemperature(TempSensor.addrT1);
@@ -811,145 +701,141 @@ void ReefAngelClass::ShowInterface()
 {
     Refresh();
 
-#ifdef wifi
-    if ( conn )
+    // are we displaying the menu or not??
+    if ( showmenu )
     {
-        // do something special when there is a connection
+        DisplayMenuHeading();
+        DisplayMenu();
     }
     else
     {
-#endif  // wifi
-        // are we displaying the menu or not??
-        if ( showmenu )
+        // not displaying the menu, so we're gonna show the default screen
+        if ( DisplayedMenu == DEFAULT_MENU )
         {
-            DisplayMenuHeading();
-            DisplayMenu();
-        }
-        else
-        {
-            // not displaying the menu, so we're gonna show the default screen
-            if ( DisplayedMenu == DEFAULT_MENU )
+            // process screensaver timeout
+            if ( Timer[3].IsTriggered() )
             {
-                // process screensaver timeout
-                if ( Timer[3].IsTriggered() )
+                // Screensaver timeout expired
+                LCD.BacklightOff();
+            }
+
+            if ( Joystick.IsButtonPressed() )
+            {
+                // turn the backlight on
+                LCD.BacklightOn();
+
+                // TODO check Timer[3] code
+                if ( Timer[3].Trigger == 0 )
                 {
-                    // Screensaver timeout expired
-                    LCD.BacklightOff();
-                }
-
-                if ( Joystick.IsButtonPressed() )
-                {
-                    // turn the backlight on
-                    LCD.BacklightOn();
-
-                    // TODO check Timer[3] code
-                    if ( Timer[3].Trigger == 0 )
-                    {
-                        Timer[3].Start();
-                        return;
-                    }
-
-                    // Clears the screen to draw the menu
-                    // Displays main menu, select first item, save existing menu
-                    ClearScreen(DefaultBGColor);
-                    SelectedMenuItem = DEFAULT_MENU_ITEM;
-                    PreviousMenu = DEFAULT_MENU;
-                    DisplayedMenu = MAIN_MENU;
-                    showmenu = true;
-                    redrawmenu = true;
-                    menutimeout = now();
-                    // get out of this function and display the menu
+                    Timer[3].Start();
                     return;
                 }
 
-                if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
-                {
-                    // Turn backlight on
-                    LCD.BacklightOn();
-                    Timer[3].Start();
-                }
-
-                // display everything on the home screen except the graph
-                // the graph is drawn/updated when we exit the main menu & when the parameters are saved
-                LCD.DrawDate(6, 112);
-#if defined DisplayLEDPWM && ! defined RemoveAllLights
-                LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
-#else  // defined DisplayLEDPWM && ! defined RemoveAllLights
-                LCD.DrawMonitor(15, 60, Params);
-#endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
-                byte TempRelay = Relay.RelayData;
-                TempRelay &= Relay.RelayMaskOff;
-                TempRelay |= Relay.RelayMaskOn;
-                LCD.DrawOutletBox(12, 93, TempRelay);
-
-                // Process any checks/tests/events that can happen while displaying the home screen
-                // This can be the timers for wavemakers or any overheat temperatures
-
-                // process timers
-                if ( Timer[5].IsTriggered() )
-                {
-                    byte a = InternalMemory.T1Pointer_read();
-                    int CurTemp;
-
-                    // Values are stored in the I2CEEPROM1
-                    a++;
-                    if (a>=120) a=0;
-                    Timer[5].Start();
-                    CurTemp = map(Params.Temp1, T1LOW, T1HIGH, 0, 50); // apply the calibration to the sensor reading
-                    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-                    //LCD.Clear(DefaultBGColor,0,0,1,1);
-                    Memory.Write(a, CurTemp);
-                    LCD.Clear(DefaultBGColor,0,0,1,1);
-                    CurTemp = map(Params.Temp2, T2LOW, T2HIGH, 0, 50); // apply the calibration to the sensor reading
-                    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-                    LCD.Clear(DefaultBGColor,0,0,1,1);
-                    Memory.Write(a+120, CurTemp);
-                    LCD.Clear(DefaultBGColor,0,0,1,1);
-                    CurTemp = map(Params.Temp3, T3LOW, T3HIGH, 0, 50); // apply the calibration to the sensor reading
-                    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-                    //LCD.Clear(DefaultBGColor,0,0,1,1);
-                    Memory.Write(a+240, CurTemp);
-                    LCD.Clear(DefaultBGColor,0,0,1,1);
-                    CurTemp = map(Params.PH, PHLOW, PHHIGH, 0, 50); // apply the calibration to the sensor reading
-                    CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-                    //LCD.Clear(DefaultBGColor,0,0,1,1);
-                    Memory.Write(a+360, CurTemp);
-                    LCD.Clear(DefaultBGColor,0,0,1,1);
-                    InternalMemory.T1Pointer_write(a);
-                    LCD.DrawGraph(5, 5);
-                }
-
-                // if temp2 exceeds overheat temp
-#ifdef OverheatSetup
-                if ( Params.Temp2 >= InternalMemory.OverheatTemp_read() )
-#else  // OverheatSetup
-                if ( Params.Temp2 >= 1500 )  // 150.0 F is the default
-#endif // OverheatSetup
-                {
-                    LED.On();
-                    // invert the ports that are activated
-                    Relay.RelayMaskOff = ~OverheatShutoffPorts;
-                }
-                // commit relay changes
-                Relay.Write();
+                // Clears the screen to draw the menu
+                // Displays main menu, select first item, save existing menu
+                ClearScreen(DefaultBGColor);
+                SelectedMenuItem = DEFAULT_MENU_ITEM;
+                PreviousMenu = DEFAULT_MENU;
+                DisplayedMenu = MAIN_MENU;
+                showmenu = true;
+                redrawmenu = true;
+                menutimeout = now();
+                // get out of this function and display the menu
+                return;
             }
-            else
-            {
-                // we are viewing another screen
-                if ( Joystick.IsButtonPressed() )
-                {
-                    // button is pressed, so we gotta exit out, show the menu & redraw it too
-                    redrawmenu = true;
-                    showmenu = true;
-                    Timer[0].ForceTrigger();
-                    Timer[3].Start();
-                }
-            }  // if DisplayedMenu == DEFAULT_MENU
-        }  // if showmenu
-#ifdef wifi
-    }  // if conn
-#endif  // wifi
 
+            if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
+            {
+                // Turn backlight on
+                LCD.BacklightOn();
+                Timer[3].Start();
+            }
+
+            pingSerial();
+            // display everything on the home screen except the graph
+            // the graph is drawn/updated when we exit the main menu & when the parameters are saved
+            LCD.DrawDate(6, 112);
+            pingSerial();
+#if defined DisplayLEDPWM && ! defined RemoveAllLights
+            LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
+#else  // defined DisplayLEDPWM && ! defined RemoveAllLights
+            LCD.DrawMonitor(15, 60, Params);
+#endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
+            pingSerial();
+            byte TempRelay = Relay.RelayData;
+            TempRelay &= Relay.RelayMaskOff;
+            TempRelay |= Relay.RelayMaskOn;
+            LCD.DrawOutletBox(12, 93, TempRelay);
+            pingSerial();
+
+            // Process any checks/tests/events that can happen while displaying the home screen
+            // This can be the timers for wavemakers or any overheat temperatures
+
+            // process timers
+            if ( Timer[5].IsTriggered() )
+            {
+                byte a = InternalMemory.T1Pointer_read();
+                int CurTemp;
+
+                // Values are stored in the I2CEEPROM1
+                a++;
+                if (a>=120) a=0;
+                Timer[5].Start();
+                CurTemp = map(Params.Temp1, T1LOW, T1HIGH, 0, 50); // apply the calibration to the sensor reading
+                CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+                //LCD.Clear(DefaultBGColor,0,0,1,1);
+                Memory.Write(a, CurTemp);
+                pingSerial();
+                LCD.Clear(DefaultBGColor,0,0,1,1);
+                CurTemp = map(Params.Temp2, T2LOW, T2HIGH, 0, 50); // apply the calibration to the sensor reading
+                CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+                LCD.Clear(DefaultBGColor,0,0,1,1);
+                Memory.Write(a+120, CurTemp);
+                pingSerial();
+                LCD.Clear(DefaultBGColor,0,0,1,1);
+                CurTemp = map(Params.Temp3, T3LOW, T3HIGH, 0, 50); // apply the calibration to the sensor reading
+                CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+                //LCD.Clear(DefaultBGColor,0,0,1,1);
+                Memory.Write(a+240, CurTemp);
+                pingSerial();
+                LCD.Clear(DefaultBGColor,0,0,1,1);
+                CurTemp = map(Params.PH, PHLOW, PHHIGH, 0, 50); // apply the calibration to the sensor reading
+                CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+                //LCD.Clear(DefaultBGColor,0,0,1,1);
+                Memory.Write(a+360, CurTemp);
+                pingSerial();
+                LCD.Clear(DefaultBGColor,0,0,1,1);
+                InternalMemory.T1Pointer_write(a);
+                LCD.DrawGraph(5, 5);
+            }
+
+            // if temp2 exceeds overheat temp
+#ifdef OverheatSetup
+            if ( Params.Temp2 >= InternalMemory.OverheatTemp_read() )
+#else  // OverheatSetup
+            if ( Params.Temp2 >= 1500 )  // 150.0 F is the default
+#endif // OverheatSetup
+            {
+                LED.On();
+                // invert the ports that are activated
+                Relay.RelayMaskOff = ~OverheatShutoffPorts;
+            }
+            // commit relay changes
+            Relay.Write();
+        }
+        else
+        {
+            // we are viewing another screen
+            if ( Joystick.IsButtonPressed() )
+            {
+                // button is pressed, so we gotta exit out, show the menu & redraw it too
+                redrawmenu = true;
+                showmenu = true;
+                Timer[0].ForceTrigger();
+                Timer[3].Start();
+            }
+        }  // if DisplayedMenu == DEFAULT_MENU
+    }  // if showmenu
 }
 
 void ReefAngelClass::DisplayMenu()
@@ -2755,43 +2641,6 @@ void ReefAngelClass::SetupDosingPump()
     }
 }
 #endif  // DosingPumpSetup
-
-
-#ifdef wifi
-
-void WebResponse (const prog_uchar *response, long strsize)
-{
-//  P(WebHeaderMsg) = SERVER_HEADER_HTML;
-//  printP(WebHeaderMsg);
-  P(WebBodyMsg) = SERVER_HEADER_HTML;
-  printP(WebBodyMsg);
-  Serial.print(strsize,DEC);
-  P(WebBodyMsg1) = SERVER_HEADER3;
-  printP(WebBodyMsg1);
-  printP(response);
-}
-
-void printP(const prog_uchar *str)
-{
-  char a;
-  do
-  {
-    a=pgm_read_byte(str++);
-    if (a!=0) Serial.print(a);
-  }
-  while (a!=0);
-}
-
-void PROGMEMprint(const prog_uchar str[])
-{
-  char c;
-  if(!str) return;
-  while((c = pgm_read_byte(str++)))
-    Serial.print(c,BYTE);
-}
-
-#endif
-
 
 
 ReefAngelClass ReefAngel = ReefAngelClass() ;

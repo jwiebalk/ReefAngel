@@ -17,6 +17,7 @@
 #include "ReefAngel_TempSensor.h"
 #include <ReefAngel_Globals.h>
 #include <OneWire.h>
+#include <ReefAngel_Wifi.h>
 
 OneWire ds(tempPin);
 
@@ -47,20 +48,29 @@ void ReefAngel_TempSensorClass::RequestConvertion()
 	if(addrT1[0]==0x28)
 	{
 		ds.reset();
+		pingSerial();
 		ds.select(addrT1);
+		pingSerial();
 		ds.write(0x44,0);
+		pingSerial();
 	}
 	if(addrT2[0]==0x28)
 	{
 		ds.reset();
+		pingSerial();
 		ds.select(addrT2);
+		pingSerial();
 		ds.write(0x44,0);
+		pingSerial();
 	}
 	if(addrT3[0]==0x28)
 	{
 		ds.reset();
+		pingSerial();
 		ds.select(addrT3);
+		pingSerial();
 		ds.write(0x44,0);
+		pingSerial();
 	}
 }
 
@@ -77,8 +87,11 @@ int ReefAngel_TempSensorClass::ReadTemperature(byte addr[8])
 		{
 	//		count+=1;
 			ds.reset();
+			pingSerial();
 			ds.select(addr);
+			pingSerial();
 			ds.write(0xBE);
+			pingSerial();
 			for (byte i = 0; i < 2; i++)
 			{	     // we need 9 bytes
 				data[i] = ds.read();
