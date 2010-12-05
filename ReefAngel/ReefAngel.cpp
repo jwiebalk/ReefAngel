@@ -273,17 +273,13 @@ void ReefAngelClass::Init()
 	TempSensor.Init();
 	setSyncProvider(RTC.get);   // the function to get the time from the RTC
 	setSyncInterval(SECS_PER_HOUR);  // Changed to sync every hour.
-	//now();
 	RAStart=now();
 	LCD.BacklightOn();
 	Relay.AllOff();
-	//EEPROM_writeAnything(PH_Max,840); // 840=PH10.0
-	//EEPROM_writeAnything(PH_Min,550); // 550=PH7.0
     PHMin = InternalMemory.PHMin_read();
     PHMax = InternalMemory.PHMax_read();
 	taddr = InternalMemory.T1Pointer_read();
-	// since byte can never be negative, taddr<0 is a pointless check
-	//if (taddr>120 || taddr<0) EEPROM_writeAnything(T1Pointer,t);
+
 	if (taddr>120) InternalMemory.T1Pointer_write(0);
 
 #ifdef SetupExtras
@@ -300,6 +296,12 @@ void ReefAngelClass::Init()
 #ifdef wifi
 	conn = false;
 #endif  // wifi
+
+#ifdef DisplayLEDPWM
+    // Restore PWM values
+    PWM.SetActinic(InternalMemory.LEDPWMActinic_read());
+    PWM.SetDaylight(InternalMemory.LEDPWMDaylight_read());
+#endif  // DisplayLEDPWM
 
     // Set the default ports to be turned on & off during the 2 modes
     // To enable a port to be toggled, place a 1 in the appropriate position
@@ -1449,6 +1451,9 @@ void ReefAngelClass::ProcessButtonPressLights()
             {
                 InternalMemory.LEDPWMActinic_write((uint8_t)v);
                 InternalMemory.LEDPWMDaylight_write((uint8_t)y);
+                // Restore PWM values
+                PWM.SetActinic((uint8_t)v);
+                PWM.SetDaylight((uint8_t)y);
             }
             break;
         }
