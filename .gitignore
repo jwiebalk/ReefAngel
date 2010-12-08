@@ -1,6 +1,5 @@
 # files/directories to be ignored in this project
 # ignore these directories
-.svn/
 DS1307RTC/
 EEPROM/
 Ethernet/
