@@ -83,6 +83,18 @@
 #define cbi(reg, bit) (reg&=~(1<<bit))
 #define sbi(reg, bit) (reg|= (1<<bit))
 
+#if defined(__AVR_ATmega2560__)
+#define BL0 cbi(PORTE,4);
+#define BL1 sbi(PORTE,4);
+#define CS0 cbi(PORTE,5);
+#define CS1 sbi(PORTE,5);
+#define CLK0 cbi(PORTG,5);
+#define CLK1 sbi(PORTG,5);
+#define SDA0 cbi(PORTE,3);
+#define SDA1 sbi(PORTE,3);
+#define RESET0 cbi(PORTH,3);
+#define RESET1 sbi(PORTH,3);
+#else  // __AVR_ATmega2560__
 #define CS0 cbi(PORTD,CS);
 #define CS1 sbi(PORTD,CS);
 #define CLK0 cbi(PORTD,CLK);
@@ -93,6 +105,7 @@
 #define RESET1 sbi(PORTD,RESET);
 #define BL0 cbi(PORTD,BL);
 #define BL1 sbi(PORTD,BL);
+#endif  // __AVR_ATmega2560__
 
 byte const font[475] = {
 0x00 , 0x00 , 0x00 , 0x00 , 0x00 ,
@@ -198,8 +211,21 @@ byte const font[475] = {
 
 ReefAngel_NokiaLCD::ReefAngel_NokiaLCD()
 {
+#if defined(__AVR_ATmega2560__)
+    pinMode(BL,OUTPUT);
+    pinMode(CS,OUTPUT);
+    pinMode(CLK,OUTPUT);
+    pinMode(SDA,OUTPUT);
+    pinMode(RESET,OUTPUT);
+    digitalWrite(BL,HIGH);
+    digitalWrite(CS,HIGH);
+    digitalWrite(CLK,HIGH);
+    digitalWrite(SDA,HIGH);
+    digitalWrite(RESET,HIGH);
+#else  // __AVR_ATmega2560__
     DDRD |= B01111100;   // Set SPI pins as output
     PORTD |= B01111000;  // Set SPI pins HIGH
+#endif  // __AVR_ATmega2560__
 }
 
 
