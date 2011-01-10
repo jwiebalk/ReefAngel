@@ -36,6 +36,84 @@
 #define Port2   2
 #define Port1   1
 
+// Relay Box Modules
+#define MAX_RELAY_EXPANSION_MODULES     8
+// Expansion Box Module Port Defines
+// Box0 is the main / original box
+// Boxes 1 - 8 are the expansion boxes
+#define Box0_Port1			Port1
+#define Box0_Port2			Port2
+#define Box0_Port3			Port3
+#define Box0_Port4			Port4
+#define Box0_Port5			Port5
+#define Box0_Port6			Port6
+#define Box0_Port7			Port7
+#define Box0_Port8			Port8
+#define Box1_Port1			11
+#define Box1_Port2			12
+#define Box1_Port3			13
+#define Box1_Port4			14
+#define Box1_Port5			15
+#define Box1_Port6			16
+#define Box1_Port7			17
+#define Box1_Port8			18
+#define Box2_Port1			21
+#define Box2_Port2			22
+#define Box2_Port3			23
+#define Box2_Port4			24
+#define Box2_Port5			25
+#define Box2_Port6			26
+#define Box2_Port7			27
+#define Box2_Port8			28
+#define Box3_Port1			31
+#define Box3_Port2			32
+#define Box3_Port3			33
+#define Box3_Port4			34
+#define Box3_Port5			35
+#define Box3_Port6			36
+#define Box3_Port7			37
+#define Box3_Port8			38
+#define Box4_Port1			41
+#define Box4_Port2			42
+#define Box4_Port3			43
+#define Box4_Port4			44
+#define Box4_Port5			45
+#define Box4_Port6			46
+#define Box4_Port7			47
+#define Box4_Port8			48
+#define Box5_Port1			51
+#define Box5_Port2			52
+#define Box5_Port3			53
+#define Box5_Port4			54
+#define Box5_Port5			55
+#define Box5_Port6			56
+#define Box5_Port7			57
+#define Box5_Port8			58
+#define Box6_Port1			61
+#define Box6_Port2			62
+#define Box6_Port3			63
+#define Box6_Port4			64
+#define Box6_Port5			65
+#define Box6_Port6			66
+#define Box6_Port7			67
+#define Box6_Port8			68
+#define Box7_Port1			71
+#define Box7_Port2			72
+#define Box7_Port3			73
+#define Box7_Port4			74
+#define Box7_Port5			75
+#define Box7_Port6			76
+#define Box7_Port7			77
+#define Box7_Port8			78
+#define Box8_Port1			81
+#define Box8_Port2			82
+#define Box8_Port3			83
+#define Box8_Port4			84
+#define Box8_Port5			85
+#define Box8_Port6			86
+#define Box8_Port7			87
+#define Box8_Port8			88
+
 //Analog I/O
 #define VPin                0
 #define HPin                1
@@ -57,6 +135,7 @@
 #define I2CClock            0x68
 #define I2CExpander1        0x20
 #define I2CExpander2        0x21
+#define I2CExpModule        0x38 // 0x38-3f
 
 // I2C Images Addresses
 #define I2CEEPROM2_Main              0     //0-2999
@@ -328,6 +407,7 @@ extern OneWire ds;  // Defined in TempSensor.cpp, used for TempSensorClass
 byte intlength(int intin);
 int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute);
 bool IsLeapYear(int year);
+byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, byte oldValue);
 
 // for virtual functions
 extern "C" void __cxa_pure_virtual(void);

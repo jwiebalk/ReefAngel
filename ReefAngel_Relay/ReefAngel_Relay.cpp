@@ -23,35 +23,70 @@ ReefAngel_RelayClass::ReefAngel_RelayClass()
 	RelayData = 0;
 	RelayMaskOn = 0;
 	RelayMaskOff = 0xff;
+#ifdef RelayExp
+	for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
+	{
+		RelayDataE[EID] = 0;
+		RelayMaskOnE[EID] = 0;
+		RelayMaskOffE[EID] = 0xff;
+	}
+#endif  // RelayExp
 }
 
 void ReefAngel_RelayClass::On(byte ID)
 {
-    bitSet(RelayData, ID-1);
+    if ( ID < 9 ) bitSet(RelayData, ID-1);
+#ifdef RelayExp
+	if ( ID > 88 ) return;
+	byte EID = byte(ID/10);
+	bitSet(RelayDataE[EID-1],(ID%10)-1);
+#endif  // RelayExp
 	//Write();
 }
 
 void ReefAngel_RelayClass::Off(byte ID)
 {
-    bitClear(RelayData, ID-1);
+    if ( ID < 9 ) bitClear(RelayData, ID-1);
+#ifdef RelayExp
+	if ( ID > 88 ) return;
+	byte EID = byte(ID/10);
+	bitSet(RelayDataE[EID-1],(ID%10)-1);
+#endif  // RelayExp
 	//Write();
 }
 
 void ReefAngel_RelayClass::AllOn()
 {
 	RelayData = 0xff;
-	Write();
+#ifdef RelayExp
+	for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
+	{
+		RelayDataE[EID] = 0xff;
+	}
+#endif  // RelayExp
+	//Write();
 }
 
 void ReefAngel_RelayClass::AllOff()
 {
 	RelayData = 0;
-	Write();
+#ifdef RelayExp
+	for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
+	{
+		RelayDataE[EID] = 0;
+	}
+#endif  // RelayExp
+	//Write();
 }
 
 void ReefAngel_RelayClass::Toggle(byte ID)
 {
-	RelayData ^= 1 << (ID-1);
+	if ( ID < 9 ) RelayData ^= 1 << (ID-1);
+#ifdef RelayExp
+	if ( ID > 88 ) return;
+	byte EID = byte(ID/10);
+	RelayDataE[EID-1] ^= 1 << ((ID%10)-1);
+#endif  // RelayExp
 }
 
 void ReefAngel_RelayClass::Write()
@@ -63,4 +98,15 @@ void ReefAngel_RelayClass::Write()
     Wire.beginTransmission(I2CExpander1);
     Wire.send(~TempRelay);   // MSB
     Wire.endTransmission();
+#ifdef RelayExp
+	for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
+	{
+		TempRelay = RelayDataE[EID];
+		TempRelay &= RelayMaskOffE[EID];
+		TempRelay |= RelayMaskOnE[EID];
+		Wire.beginTransmission(I2CExpModule+EID);
+		Wire.send(~TempRelay);  // MSB
+		Wire.endTransmission();
+	}
+#endif  // RelayExp
 }

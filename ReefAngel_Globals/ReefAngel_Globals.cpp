@@ -49,6 +49,29 @@ bool IsLeapYear(int year)
     return true;
 }
 
+byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, byte oldValue)
+{
+	int Now = NumMins(hour(), minute());
+	int Start = NumMins(startHour, startMinute);
+	int StartD = Start + Duration;
+	int End = NumMins(endHour, endMinute);
+	int StopD = End - Duration;
+
+	if ( Now >= Start && Now <= StartD )
+		return constrain(map(Now, Start, StartD, startPWM, endPWM),startPWM, endPWM);
+	else if ( Now >= StopD && Now <= End )
+	{
+		byte v = constrain(map(Now, StopD, End, startPWM, endPWM),startPWM, endPWM);
+		return endPWM-v;
+	}
+	else if ( Now > StartD && Now < StopD )
+		return endPWM;
+
+    // lastly return the existing value
+    return oldValue;
+}
+
+
 // for pure virtual functions
 void __cxa_pure_virtual(void){};
 // other fixes

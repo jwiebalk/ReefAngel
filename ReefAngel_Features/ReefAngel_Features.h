@@ -180,4 +180,11 @@ the PDE file at the top above all other include statements:
 */
 //#define COLORS_PDE
 
+/*
+This will enable code for multiple expansion modules.
+
+Approximately 530 bytes to have this feature
+*/
+//#define RelayExp
+
 #endif  // __REEFANGEL_FEATURES_H__

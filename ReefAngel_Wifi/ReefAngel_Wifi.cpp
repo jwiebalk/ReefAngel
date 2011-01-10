@@ -55,12 +55,13 @@ void pushbuffer(byte inStr)
 {
 
 	m_pushback[m_pushbackindex]=inStr;
+	m_pushback[m_pushbackindex+1]=0;
 	//memcpy(&m_pushback[0], &m_pushback[1], 31);
 	//m_pushback[30]=inStr;
 	//m_pushback[31]=0;
 	//if (~reqtype)
 	//{
-	if (reqtype>0)
+	if (reqtype>0 && reqtype<128)
 	{
 		if (authStr[m_pushbackindex]==inStr) m_pushbackindex++; else m_pushbackindex=0;
 		if (authStr[m_pushbackindex]==0) auth=true;
@@ -71,9 +72,24 @@ void pushbuffer(byte inStr)
 	{
 		m_pushbackindex++;
 		if (m_pushbackindex==32) m_pushbackindex=0;
-		if (strncmp("GET / ", m_pushback, 6)==0) reqtype=1;
-		if (strncmp("GET /wifi", m_pushback, 9)==0) reqtype=2;
-		if (strncmp("GET /r", m_pushback, 6)==0) reqtype=3;
+		if (reqtype>128)
+		{
+		    if (inStr==' ')
+		    {
+		        reqtype=256-reqtype;
+		    }
+		    else
+		    {
+		        weboption*=10;
+		        weboption+=inStr-'0';
+		    }
+		}
+		else
+		{
+            if (strncmp("GET / ", m_pushback, 6)==0) reqtype=1;
+            if (strncmp("GET /wifi", m_pushback, 9)==0) reqtype=2;
+            if (strncmp("GET /r", m_pushback, 6)==0) reqtype=3;
+		}
 	}
 }
 
@@ -86,7 +102,7 @@ void processHTTP()
 		if (millis()-timeout>100)
 		{
 			bIncoming=false;
-			for (int a=0;a<32;a++) pushbuffer(0);
+			//for (int a=0;a<32;a++) pushbuffer(0);
 		}
 		if (Serial.available()>0)
 		{
@@ -115,8 +131,8 @@ void processHTTP()
 		}
 		if (reqtype==3)
 		{
-			byte o_relay=m_pushback[6]-'0';
-			byte o_type=m_pushback[7]-'0';
+			byte o_relay=weboption/10;
+			byte o_type=weboption%10;
 			if (o_type==0)
 			{
 			  bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
@@ -162,7 +178,11 @@ void processHTTP()
 		  Serial.print(ReefAngel.Relay.RelayMaskOn,DEC);
 		  Serial.print("</RON><ROFF>");
 		  Serial.print(ReefAngel.Relay.RelayMaskOff,DEC);
-		  Serial.print("</ROFF></RA>");
+		  Serial.print("</ROFF><ATOLOW>");
+		  Serial.print(ReefAngel.ATO.IsLowActive());
+		  Serial.print("</ATOLOW><ATOHIGH>");
+		  Serial.print(ReefAngel.ATO.IsHighActive());
+		  Serial.print("</ATOHIGH></RA>");
 		}
     }
     else
@@ -176,6 +196,7 @@ void processHTTP()
 	Serial.flush();
 	m_pushbackindex=0;
     reqtype=0;
+    weboption=0;
 }
 
 char GetC(int c)

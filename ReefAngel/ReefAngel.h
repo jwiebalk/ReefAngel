@@ -17,7 +17,7 @@
 #ifndef	ReefAngel_h
 #define ReefAngel_h
 
-#define ReefAngel_Version "0.8.5.10"
+#define ReefAngel_Version "0.8.5.11"
 //#define DEV_MODE  // Developer Mode
 
 #include <ReefAngel_Globals.h>
@@ -73,8 +73,17 @@ public:
 	byte FeedingModePorts;
 	byte WaterChangePorts;
 	byte OverheatShutoffPorts;
+#ifdef RelayExp
+	// Expansion Module ports
+	byte FeedingModePortsE[MAX_RELAY_EXPANSION_MODULES];
+	byte WaterChangePortsE[MAX_RELAY_EXPANSION_MODULES];
+	byte OverheatShutoffPortsE[MAX_RELAY_EXPANSION_MODULES];
+#endif  // RelayExp
 #ifndef RemoveAllLights
 	byte LightsOnPorts;
+#ifdef RelayExp
+	byte LightsOnPortsE[MAX_RELAY_EXPANSION_MODULES];
+#endif  // RelayExp
 #endif  // RemoveAllLights
 
 	void Init();
@@ -107,6 +116,7 @@ public:
 	void DisplayVersion();
 #endif  // VersionMenu
 	void ClearScreen(byte Color);
+	void MoonlightPWM(byte RelayID, bool ShowPWM);
 
     // Nested Menu Functions
     void InitMenus();

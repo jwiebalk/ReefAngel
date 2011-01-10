@@ -241,7 +241,11 @@ enum TimeoutsMenuItem {
 
 ReefAngelClass::ReefAngelClass()
 {
+#if defined(__AVR_ATmega2560__)
+	PCMSK0 |= 128;
+#else  // __AVR_ATmega2560__
 	PCMSK0 |= 32;
+#endif  // __AVR_ATmega2560__
 	PCICR |= 1;
 }
 
@@ -262,6 +266,11 @@ void ReefAngelClass::Init()
 	RAStart=now();
 	LCD.BacklightOn();
 	Relay.AllOff();
+	/*
+	TODO Check this code, is it needed?
+    PHMin=EEPROM.read(PH_Min)*256 + EEPROM.read(PH_Min+1);
+	PHMax=EEPROM.read(PH_Max)*256 + EEPROM.read(PH_Max+1);
+	*/
     PHMin = InternalMemory.PHMin_read();
     PHMax = InternalMemory.PHMax_read();
 	taddr = InternalMemory.T1Pointer_read();
@@ -298,6 +307,19 @@ void ReefAngelClass::Init()
     // Default to have port 3 shutoff
     //                 Port 87654321
     OverheatShutoffPorts = B00000100;
+
+#ifdef RelayExp
+	// Expansion Module ports to toggle, defaults to not toggle any ports
+	for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+	{
+		FeedingModePortsE[i] = 0;
+		WaterChangePortsE[i] = 0;
+		OverheatShutoffPortsE[i] = 0;
+#ifndef RemoveAllLights
+		LightsOnPortsE[i] = 0;
+#endif  // RemoveAllLights
+	}
+#endif  // RelayExp
 
 #ifndef RemoveAllLights
     // Set the ports that get turned on when you select the Lights On
@@ -671,6 +693,32 @@ void ReefAngelClass::ClearScreen(byte Color)
     LCD.Clear(Color, 0, 0, 131, 131);
 }
 
+void ReefAngelClass::MoonlightPWM(byte RelayID, bool ShowPWM)
+{
+	int m,d,y;
+	int yy,mm;
+	long K1,K2,K3,J,V;
+	byte PWMvalue;
+	m = month();
+	d = day();
+	y = year();
+	yy = y - ((12-m)/10);
+	mm = m + 9;
+	if (mm>=12) mm -= 12;
+	K1 = 365.25 * (yy+4712);
+	K2 = 30.6 * mm+.5;
+	K3 = int(int((yy/100)+49)*.75)-38;
+	J = K1+K2+d+59-K3;
+	V = (J-2451550.1)/0.29530588853;
+	V -= int(V/100)*100;
+	V = abs(V-50);
+	PWMvalue = 4*abs(50-V);  // 5.12=100%    4=~80%
+	pinMode(lowATOPin,OUTPUT);
+	if (RelayID && (bitRead(Relay.RelayData,RelayID-1)==0)) PWMvalue=0;
+	analogWrite(lowATOPin,PWMvalue);
+	if (ShowPWM) PWM.SetActinic((PWMvalue*100)/255);
+}
+
 void ReefAngelClass::InitMenus()
 {
     // loads all the menus
@@ -819,6 +867,12 @@ void ReefAngelClass::ShowInterface()
                 LED.On();
                 // invert the ports that are activated
                 Relay.RelayMaskOff = ~OverheatShutoffPorts;
+#ifdef RelayExp
+				for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+				{
+					Relay.RelayMaskOffE[i] = ~OverheatShutoffPortsE[i];
+				}
+#endif  // RelayExp
             }
             // commit relay changes
             Relay.Write();
@@ -1124,11 +1178,24 @@ void ReefAngelClass::ProcessButtonPressMain()
             byte CurrentRelayState = Relay.RelayData;
 #endif  // SaveRelayState
             Relay.RelayMaskOff = ~FeedingModePorts;
+#ifdef RelayExp
+			byte i;
+			for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+			{
+				Relay.RelayMaskOffE[i] = ~FeedingModePortsE[i];
+			}
+#endif  // RelayExp
             Relay.Write();
             // run feeding mode
             FeedingMode();
             // turn on ports
             Relay.RelayMaskOff = B11111111;
+#ifdef RelayExp
+			for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+			{
+				Relay.RelayMaskOffE[i] = B11111111;
+			}
+#endif  // RelayExp
             // restore ports
 #ifdef SaveRelayState
             Relay.RelayData = CurrentRelayState;
@@ -1144,11 +1211,24 @@ void ReefAngelClass::ProcessButtonPressMain()
             byte CurrentRelayState = Relay.RelayData;
 #endif  // SaveRelayState
             Relay.RelayMaskOff = ~WaterChangePorts;
+#ifdef RelayExp
+			byte i;
+			for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+			{
+				Relay.RelayMaskOffE[i] = ~WaterChangePortsE[i];
+			}
+#endif  // RelayExp
             Relay.Write();
             // Display the water change mode
             WaterChangeMode();
             // turn on ports
             Relay.RelayMaskOff = B11111111;
+#ifdef RelayExp
+			for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+			{
+				Relay.RelayMaskOffE[i] = B11111111;
+			}
+#endif  // RelayExp
 #ifdef SaveRelayState
             Relay.RelayData = CurrentRelayState;
 #endif  // SaveRelayState
@@ -1281,6 +1361,12 @@ void ReefAngelClass::ProcessButtonPressLights()
         {
             // turn on ports
             Relay.RelayMaskOn = LightsOnPorts;
+#ifdef RelayExp
+			for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+			{
+				Relay.RelayMaskOnE[i] = LightsOnPortsE[i];
+			}
+#endif  // RelayExp
 #ifdef DisplayLEDPWM
             PWM.SetActinic(InternalMemory.LEDPWMActinic_read());
             PWM.SetDaylight(InternalMemory.LEDPWMDaylight_read());
@@ -1294,6 +1380,12 @@ void ReefAngelClass::ProcessButtonPressLights()
         {
             // reset ports
             Relay.RelayMaskOn = B00000000;
+#ifdef RelayExp
+			for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+			{
+				Relay.RelayMaskOnE[i] = B00000000;
+			}
+#endif  // RelayExp
 #ifdef DisplayLEDPWM
             // sets PWM to 0%
             PWM.SetActinic(0);
@@ -1399,6 +1491,12 @@ void ReefAngelClass::ProcessButtonPressTemps()
         {
             LED.Off();
             Relay.RelayMaskOff = B11111111;
+#ifdef RelayExp
+			for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+			{
+				Relay.RelayMaskOffE[i] = B11111111;
+			}
+#endif  // RelayExp
             Relay.Write();
             DisplayMenuEntry("Clear Overheat");
             showmenu = false;

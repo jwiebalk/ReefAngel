@@ -33,6 +33,11 @@ public:
 	byte RelayData;
 	byte RelayMaskOn;
 	byte RelayMaskOff;
+#ifdef RelayExp
+	byte RelayDataE[MAX_RELAY_EXPANSION_MODULES];
+	byte RelayMaskOnE[MAX_RELAY_EXPANSION_MODULES];
+	byte RelayMaskOffE[MAX_RELAY_EXPANSION_MODULES];
+#endif  // RelayExp
 
 private:
 

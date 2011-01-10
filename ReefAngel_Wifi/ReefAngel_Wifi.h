@@ -42,6 +42,7 @@ static unsigned long timeout;
 static boolean bIncoming=false;
 static boolean auth=false;
 static char authStr[32];
+static int weboption=0;
 
 
 void WebResponse (const prog_uchar *response, long strsize);
