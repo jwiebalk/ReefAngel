@@ -179,9 +179,9 @@ void processHTTP()
 		  Serial.print("</RON><ROFF>");
 		  Serial.print(ReefAngel.Relay.RelayMaskOff,DEC);
 		  Serial.print("</ROFF><ATOLOW>");
-		  Serial.print(ReefAngel.ATO.IsLowActive());
+		  Serial.print(ReefAngel.LowATO.IsActive());
 		  Serial.print("</ATOLOW><ATOHIGH>");
-		  Serial.print(ReefAngel.ATO.IsHighActive());
+		  Serial.print(ReefAngel.HighATO.IsActive());
 		  Serial.print("</ATOHIGH></RA>");
 		}
     }
