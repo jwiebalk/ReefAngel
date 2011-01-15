@@ -20,6 +20,9 @@
 
 #ifdef wifi
 
+#include <DS1307RTC.h>
+#include <ReefAngel.h>
+
 void WebResponse (const prog_uchar *response, long strsize)
 {
 //  P(WebHeaderMsg) = SERVER_HEADER_HTML;

@@ -18,6 +18,7 @@
 #define __REEFANGEL_WIFI_H__
 
 #include <ReefAngel_Globals.h>
+#include <avr/pgmspace.h>
 
 #ifdef wifi
 #define SERVER_DENY "HTTP/1.1 401 Access Denied" CRLF "WWW-Authenticate: Basic realm=Reef Angel Controller" SERVER_HEADER2 "0" SERVER_HEADER3

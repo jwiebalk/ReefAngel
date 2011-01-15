@@ -17,7 +17,7 @@
 #ifndef	ReefAngel_h
 #define ReefAngel_h
 
-#define ReefAngel_Version "0.8.5.11"
+#define ReefAngel_Version "0.8.5.12"
 //#define DEV_MODE  // Developer Mode
 
 #include <ReefAngel_Globals.h>
