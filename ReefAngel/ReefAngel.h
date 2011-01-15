@@ -118,6 +118,9 @@ public:
 	void ClearScreen(byte Color);
 	void MoonlightPWM(byte RelayID, bool ShowPWM);
 
+	// Logging Functions - WebBanner and PCLogging
+	void PCLogging();
+
     // Nested Menu Functions
     void InitMenus();
     void ShowInterface();
@@ -160,6 +163,8 @@ private:
 	byte DisplayedMenu;
 	byte PreviousMenu;
 	bool redrawmenu;
+
+	// WebBanner Stuff - Web & PC XML data
 
 #ifdef WavemakerSetup
     // TODO find a better way to save the wavemaker ports for restarting once timers are updated from setup screen

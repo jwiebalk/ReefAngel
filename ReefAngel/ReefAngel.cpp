@@ -719,6 +719,31 @@ void ReefAngelClass::MoonlightPWM(byte RelayID, bool ShowPWM)
 	if (ShowPWM) PWM.SetActinic((PWMvalue*100)/255);
 }
 
+void ReefAngelClass::PCLogging()
+{
+	// This function is used for logging the data to Dave's PC Client software
+	// It prints the strings from program memory instead of RAM
+	PROGMEMprint(XML_T1);
+	Serial.print(Params.Temp1);
+	PROGMEMprint(XML_T2);
+	Serial.print(Params.Temp2);
+	PROGMEMprint(XML_T3);
+	Serial.print(Params.Temp3);
+	PROGMEMprint(XML_PH);
+	Serial.print(Params.PH);
+	PROGMEMprint(XML_R);
+	Serial.print(Relay.RelayData,DEC);
+	PROGMEMprint(XML_RON);
+	Serial.print(Relay.RelayMaskOn,DEC);
+	PROGMEMprint(XML_ROFF);
+	Serial.print(Relay.RelayMaskOff,DEC);
+	PROGMEMprint(XML_ATOLOW);
+	Serial.print(LowATO.IsActive());
+	PROGMEMprint(XML_ATOHIGH);
+	Serial.print(HighATO.IsActive());
+	PROGMEMprint(XML_END);
+}
+
 void ReefAngelClass::InitMenus()
 {
     // loads all the menus
