@@ -23,7 +23,7 @@
 #include <DS1307RTC.h>
 #include <ReefAngel.h>
 
-void WebResponse (const prog_uchar *response, long strsize)
+void WebResponse (const prog_char *response, long strsize)
 {
 //  P(WebHeaderMsg) = SERVER_HEADER_HTML;
 //  printP(WebHeaderMsg);
@@ -35,7 +35,7 @@ void WebResponse (const prog_uchar *response, long strsize)
     printP(response);
 }
 
-void printP(const prog_uchar *str)
+void printP(const prog_char *str)
 {
     char a;
     do
@@ -46,7 +46,7 @@ void printP(const prog_uchar *str)
     while (a!=0);
 }
 
-void PROGMEMprint(const prog_uchar str[])
+void PROGMEMprint(const prog_char str[])
 {
     char c;
     if(!str) return;
@@ -167,25 +167,25 @@ void processHTTP()
 		  Serial.print(s);
 		  P(WebBodyMsg1) = SERVER_HEADER3;
 		  printP(WebBodyMsg1);
-		  Serial.print("<RA><T1>");
+		  PROGMEMprint(XML_T1);
 		  Serial.print(ReefAngel.Params.Temp1);
-		  Serial.print("</T1><T2>");
+		  PROGMEMprint(XML_T2);
 		  Serial.print(ReefAngel.Params.Temp2);
-		  Serial.print("</T2><T3>");
+		  PROGMEMprint(XML_T3);
 		  Serial.print(ReefAngel.Params.Temp3);
-		  Serial.print("</T3><PH>");
+		  PROGMEMprint(XML_PH);
 		  Serial.print(ReefAngel.Params.PH);
-		  Serial.print("</PH><R>");
+		  PROGMEMprint(XML_R);
 		  Serial.print(ReefAngel.Relay.RelayData,DEC);
-		  Serial.print("</R><RON>");
+		  PROGMEMprint(XML_RON);
 		  Serial.print(ReefAngel.Relay.RelayMaskOn,DEC);
-		  Serial.print("</RON><ROFF>");
+		  PROGMEMprint(XML_ROFF);
 		  Serial.print(ReefAngel.Relay.RelayMaskOff,DEC);
-		  Serial.print("</ROFF><ATOLOW>");
+		  PROGMEMprint(XML_ATOLOW);
 		  Serial.print(ReefAngel.LowATO.IsActive());
-		  Serial.print("</ATOLOW><ATOHIGH>");
+		  PROGMEMprint(XML_ATOHIGH);
 		  Serial.print(ReefAngel.HighATO.IsActive());
-		  Serial.print("</ATOHIGH></RA>");
+		  PROGMEMprint(XML_END);
 		}
     }
     else
