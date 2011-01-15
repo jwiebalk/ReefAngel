@@ -744,6 +744,53 @@ void ReefAngelClass::PCLogging()
 	PROGMEMprint(XML_END);
 }
 
+#ifdef wifi
+void ReefAngelClass::LoadWebBanner(int pointer, byte qty)
+{
+	webbannerpointer = pointer;
+	webbannerqty = qty;
+}
+
+void ReefAngelClass::WebBanner()
+{
+	int ptr = webbannerpointer;
+	int tagptr = pgm_read_word(&(webbanner_tags[0]));
+
+	PROGMEMprint(BannerGET);
+	Serial.print(Params.Temp1, DEC);
+	PROGMEMprint(BannerT2);
+	Serial.print(Params.Temp2, DEC);
+	PROGMEMprint(BannerT3);
+	Serial.print(Params.Temp3, DEC);
+	PROGMEMprint(BannerPH);
+	Serial.print(Params.PH, DEC);
+	PROGMEMprint(BannerRelayData);
+	Serial.print(Relay.RelayData, DEC);
+
+	char buffer[22];
+	for ( int i = 0; i < WEB_BANNER_QTY; i++ )
+	{
+		strcpy_P(buffer, (char *)tagptr++);
+		tagptr += strlen(buffer);
+		Serial.print("&");
+		Serial.print(buffer);
+		Serial.print("=");
+		if ( webbannerqty == WEB_BANNER_QTY )
+		{
+			strcpy_P(buffer, (char *)ptr++);
+			ptr += strlen(buffer);
+			Serial.print(buffer);
+		}
+		else
+		{
+			P(badmsg) = BAD;
+			printP(badmsg);
+		}
+	}  // for i
+	Serial.println("\n\n");
+}
+#endif  // wifi
+
 void ReefAngelClass::InitMenus()
 {
     // loads all the menus

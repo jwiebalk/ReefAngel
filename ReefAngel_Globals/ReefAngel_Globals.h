@@ -201,6 +201,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define DEGREE_F            0
 #define DEGREE_C            1
 #define MAX_TEMP_SWING      50  // Maximum value of temp change that can occur in 1 second, 100 = 10.0 F Degrees, 50 = 5.0 F Degrees
+#define WEB_BANNER_QTY		12  // Quantity of parameters when sending the web banner
 
 // Menu Defines
 #if defined SetupExtras || defined ATOSetup

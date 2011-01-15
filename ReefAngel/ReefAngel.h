@@ -120,6 +120,10 @@ public:
 
 	// Logging Functions - WebBanner and PCLogging
 	void PCLogging();
+#ifdef wifi
+	void LoadWebBanner(int pointer, byte qty);
+	void WebBanner();
+#endif  // wifi
 
     // Nested Menu Functions
     void InitMenus();
@@ -164,7 +168,11 @@ private:
 	byte PreviousMenu;
 	bool redrawmenu;
 
-	// WebBanner Stuff - Web & PC XML data
+#ifdef wifi
+	// WebBanner variables
+	int webbannerpointer;
+	byte webbannerqty;
+#endif  // wifi
 
 #ifdef WavemakerSetup
     // TODO find a better way to save the wavemaker ports for restarting once timers are updated from setup screen

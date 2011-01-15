@@ -46,16 +46,6 @@ void printP(const prog_char *str)
     while (a!=0);
 }
 
-/*
-void PROGMEMprint(const prog_char str[])
-{
-    char c;
-    if(!str) return;
-    while((c = pgm_read_byte(str++)))
-        Serial.print(c,BYTE);
-}
-*/
-
 void pushbuffer(byte inStr)
 {
 
