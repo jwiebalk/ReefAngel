@@ -27,7 +27,11 @@ const prog_char XML_PH[] PROGMEM = "</T3><PH>";
 const prog_char XML_R[] PROGMEM = "</PH><R>";
 const prog_char XML_RON[] PROGMEM = "</R><RON>";
 const prog_char XML_ROFF[] PROGMEM = "</RON><ROFF>";
-const prog_char XML_ATOLOW[] PROGMEM = "</ROFF><ATOLOW>";
+const prog_char XML_RE_OPEN[] PROGMEM = "<R";
+const prog_char XML_RE_CLOSE[] PROGMEM = "</R";
+const prog_char XML_RE_ON[] PROGMEM = "ON";
+const prog_char XML_RE_OFF[] PROGMEM = "OFF";
+const prog_char XML_ATOLOW[] PROGMEM = "<ATOLOW>";
 const prog_char XML_ATOHIGH[] PROGMEM = "</ATOLOW><ATOHIGH>";
 const prog_char XML_END[] PROGMEM = "</ATOHIGH></RA>";
 
@@ -43,7 +47,7 @@ const prog_char XML_END[] PROGMEM = "</ATOHIGH></RA>";
 #define CRLF "\r\n"
 #define CR "\r"
 #define LF "\n"
-#define BAD "Bad%20Config"
+#define BAD "bad=1"
 
 #define P(name)   static const prog_char name[] PROGMEM
 const prog_char SERVER_RA[] PROGMEM = "<script language='javascript' src='http://www.reefangel.com/wifi/ra1.js'></script>";

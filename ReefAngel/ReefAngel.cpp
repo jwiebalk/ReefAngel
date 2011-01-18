@@ -737,6 +737,42 @@ void ReefAngelClass::PCLogging()
 	Serial.print(Relay.RelayMaskOn,DEC);
 	PROGMEMprint(XML_ROFF);
 	Serial.print(Relay.RelayMaskOff,DEC);
+	PROGMEMprint(XML_RE_CLOSE);
+	PROGMEMprint(XML_RE_OFF);
+	Serial.print(">");
+#ifdef RelayExp
+	for ( int EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
+	{
+		// relay data
+		PROGMEMprint(XML_RE_OPEN);
+		Serial.print(EID, DEC);
+		Serial.print(">");
+		Serial.print(Relay.RelayDataE[EID]);
+		PROGMEMprint(XML_RE_CLOSE);
+		Serial.print(EID, DEC);
+		Serial.print(">");
+		// relay on mask
+		PROGMEMprint(XML_RE_OPEN);
+		PROGMEMprint(XML_RE_ON);
+		Serial.print(EID, DEC);
+		Serial.print(">");
+		Serial.print(Relay.RelayMaskOnE[EID]);
+		PROGMEMprint(XML_RE_CLOSE);
+		PROGMEMprint(XML_RE_ON);
+		Serial.print(EID, DEC);
+		Serial.print(">");
+		// relay off mask
+		PROGMEMprint(XML_RE_OPEN);
+		PROGMEMprint(XML_RE_OFF);
+		Serial.print(EID, DEC);
+		Serial.print(">");
+		Serial.print(Relay.RelayMaskOffE[EID]);
+		PROGMEMprint(XML_RE_CLOSE);
+		PROGMEMprint(XML_RE_OFF);
+		Serial.print(EID, DEC);
+		Serial.print(">");
+	}
+#endif  // RelayExp
 	PROGMEMprint(XML_ATOLOW);
 	Serial.print(LowATO.IsActive());
 	PROGMEMprint(XML_ATOHIGH);

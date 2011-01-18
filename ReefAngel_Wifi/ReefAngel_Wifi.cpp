@@ -108,21 +108,21 @@ void processHTTP()
 	if (authStr[0]==0) auth=true;
     if (auth)
     {
-      //Serial.println(reqtype,DEC);
+		//Serial.println(reqtype,DEC);
 		auth=false;
 		if (reqtype==1)
 		{
-		  P(WebBodyMsg) = SERVER_DEFAULT;
-		  WebResponse(WebBodyMsg, sizeof(WebBodyMsg) - 1);
+			P(WebBodyMsg) = SERVER_DEFAULT;
+			WebResponse(WebBodyMsg, sizeof(WebBodyMsg) - 1);
 		}
 		if (reqtype==2)
 		{
-		  P(WebBodyMsg) = SERVER_HEADER_HTML;
-		  printP(WebBodyMsg);
-		  Serial.print(sizeof(SERVER_RA) - 1,DEC);
-		  P(WebBodyMsg1) = SERVER_HEADER3;
-		  printP(WebBodyMsg1);
-		  PROGMEMprint(SERVER_RA);
+			P(WebBodyMsg) = SERVER_HEADER_HTML;
+			printP(WebBodyMsg);
+			Serial.print(sizeof(SERVER_RA) - 1,DEC);
+			P(WebBodyMsg1) = SERVER_HEADER3;
+			printP(WebBodyMsg1);
+			PROGMEMprint(SERVER_RA);
 		}
 		if (reqtype==3)
 		{
@@ -130,36 +130,46 @@ void processHTTP()
 			byte o_type=weboption%10;
 			if (o_type==0)
 			{
-			  bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
-			  bitClear(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+				bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
+				bitClear(ReefAngel.Relay.RelayMaskOff,o_relay-1);
 			}
 			if (o_type==1)
 			{
-			  bitSet(ReefAngel.Relay.RelayMaskOn,o_relay-1);
-			  bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+				bitSet(ReefAngel.Relay.RelayMaskOn,o_relay-1);
+				bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
 			}
 			if (o_type==2)
 			{
-			  bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
-			  bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+				bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
+				bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
 			}
 			ReefAngel.Relay.Write();
-		  char temp[6];
-		  int s=76;
+			char temp[6];
+			int s=408;
 
-		  s+=intlength(ReefAngel.Params.Temp1);
-		  s+=intlength(ReefAngel.Params.Temp2);
-		  s+=intlength(ReefAngel.Params.Temp3);
-		  s+=intlength(ReefAngel.Params.PH);
-		  s+=intlength(ReefAngel.Relay.RelayData);
-		  s+=intlength(ReefAngel.Relay.RelayMaskOn);
-		  s+=intlength(ReefAngel.Relay.RelayMaskOff);
-		  P(WebBodyMsg) = SERVER_HEADER_XML;
-		  printP(WebBodyMsg);
-		  Serial.print(s);
-		  P(WebBodyMsg1) = SERVER_HEADER3;
-		  printP(WebBodyMsg1);
-		  ReefAngel.PCLogging();  // print the XML data
+			s += intlength(ReefAngel.Params.Temp1);
+			s += intlength(ReefAngel.Params.Temp2);
+			s += intlength(ReefAngel.Params.Temp3);
+			s += intlength(ReefAngel.Params.PH);
+			s += intlength(ReefAngel.Relay.RelayData);
+			s += intlength(ReefAngel.Relay.RelayMaskOn);
+			s += intlength(ReefAngel.Relay.RelayMaskOff);
+#ifdef RelayExp
+			for ( int EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
+			{
+				s += intlengh(ReefAngel.Relay.RelayDataE[EID];
+				s += intlengh(ReefAngel.Relay.RelayMaskOnE[EID];
+				s += intlenth(ReefAngel.Relay.RelayMaskOffE[EID];
+			}
+#endif  // RelayExp
+			s += intlength(ReefAngel.LowATO.IsActive());
+			s += intlength(ReefAngel.HighATO.IsActive());
+			P(WebBodyMsg) = SERVER_HEADER_XML;
+			printP(WebBodyMsg);
+			Serial.print(s);
+			P(WebBodyMsg1) = SERVER_HEADER3;
+			printP(WebBodyMsg1);
+			ReefAngel.PCLogging();  // print the XML data
 		}
     }
     else
