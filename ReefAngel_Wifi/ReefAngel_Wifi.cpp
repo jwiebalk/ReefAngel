@@ -159,25 +159,7 @@ void processHTTP()
 		  Serial.print(s);
 		  P(WebBodyMsg1) = SERVER_HEADER3;
 		  printP(WebBodyMsg1);
-		  PROGMEMprint(XML_T1);
-		  Serial.print(ReefAngel.Params.Temp1);
-		  PROGMEMprint(XML_T2);
-		  Serial.print(ReefAngel.Params.Temp2);
-		  PROGMEMprint(XML_T3);
-		  Serial.print(ReefAngel.Params.Temp3);
-		  PROGMEMprint(XML_PH);
-		  Serial.print(ReefAngel.Params.PH);
-		  PROGMEMprint(XML_R);
-		  Serial.print(ReefAngel.Relay.RelayData,DEC);
-		  PROGMEMprint(XML_RON);
-		  Serial.print(ReefAngel.Relay.RelayMaskOn,DEC);
-		  PROGMEMprint(XML_ROFF);
-		  Serial.print(ReefAngel.Relay.RelayMaskOff,DEC);
-		  PROGMEMprint(XML_ATOLOW);
-		  Serial.print(ReefAngel.LowATO.IsActive());
-		  PROGMEMprint(XML_ATOHIGH);
-		  Serial.print(ReefAngel.HighATO.IsActive());
-		  PROGMEMprint(XML_END);
+		  ReefAngel.PCLogging();  // print the XML data
 		}
     }
     else
