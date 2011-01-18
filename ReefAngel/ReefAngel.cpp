@@ -753,6 +753,7 @@ void ReefAngelClass::LoadWebBanner(int pointer, byte qty)
 
 void ReefAngelClass::WebBanner()
 {
+	char buffer[22];
 	int ptr = webbannerpointer;
 	int tagptr = pgm_read_word(&(webbanner_tags[0]));
 
@@ -767,26 +768,34 @@ void ReefAngelClass::WebBanner()
 	PROGMEMprint(BannerRelayData);
 	Serial.print(Relay.RelayData, DEC);
 
-	char buffer[22];
-	for ( int i = 0; i < WEB_BANNER_QTY; i++ )
+	if ( webbannerqty == WEB_BANNER_QTY )
+	{
+		for ( int i = 0; i < WEB_BANNER_QTY; i++ )
+		{
+			strcpy_P(buffer, (char *)tagptr++);
+			tagptr += strlen(buffer);
+			Serial.print("&");
+			Serial.print(buffer);
+			Serial.print("=");
+			strcpy_P(buffer, (char *)ptr++);
+			ptr += strlen(buffer);
+			Serial.print(buffer);
+		}  // for i
+	}
+	else
 	{
 		strcpy_P(buffer, (char *)tagptr++);
 		tagptr += strlen(buffer);
 		Serial.print("&");
 		Serial.print(buffer);
 		Serial.print("=");
-		if ( webbannerqty == WEB_BANNER_QTY )
-		{
-			strcpy_P(buffer, (char *)ptr++);
-			ptr += strlen(buffer);
-			Serial.print(buffer);
-		}
-		else
-		{
-			P(badmsg) = BAD;
-			printP(badmsg);
-		}
-	}  // for i
+		strcpy_P(buffer, (char *)ptr++);
+		ptr += strlen(buffer);
+		Serial.print(buffer);
+		Serial.print("&");
+		P(badmsg)=BAD;
+		printP(badmsg);
+	}
 	Serial.println("\n\n");
 }
 #endif  // wifi
