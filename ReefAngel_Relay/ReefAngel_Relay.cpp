@@ -37,9 +37,11 @@ void ReefAngel_RelayClass::On(byte ID)
 {
     if ( ID < 9 ) bitSet(RelayData, ID-1);
 #ifdef RelayExp
-	if ( ID > 88 ) return;
-	byte EID = byte(ID/10);
-	bitSet(RelayDataE[EID-1],(ID%10)-1);
+	if ( (ID > 10) && (ID < 89) )
+	{
+		byte EID = byte(ID/10);
+		bitSet(RelayDataE[EID-1],(ID%10)-1);
+	}
 #endif  // RelayExp
 	//Write();
 }
@@ -48,9 +50,11 @@ void ReefAngel_RelayClass::Off(byte ID)
 {
     if ( ID < 9 ) bitClear(RelayData, ID-1);
 #ifdef RelayExp
-	if ( ID > 88 ) return;
-	byte EID = byte(ID/10);
-	bitSet(RelayDataE[EID-1],(ID%10)-1);
+	if ( (ID > 10) && (ID < 89) )
+	{
+		byte EID = byte(ID/10);
+		bitSet(RelayDataE[EID-1],(ID%10)-1);
+	}
 #endif  // RelayExp
 	//Write();
 }
@@ -83,9 +87,11 @@ void ReefAngel_RelayClass::Toggle(byte ID)
 {
 	if ( ID < 9 ) RelayData ^= 1 << (ID-1);
 #ifdef RelayExp
-	if ( ID > 88 ) return;
-	byte EID = byte(ID/10);
-	RelayDataE[EID-1] ^= 1 << ((ID%10)-1);
+	if ( (ID > 10) && (ID < 89) )
+	{
+		byte EID = byte(ID/10);
+		RelayDataE[EID-1] ^= 1 << ((ID%10)-1);
+	}
 #endif  // RelayExp
 }
 
