@@ -49,6 +49,11 @@ const prog_char XML_END[] PROGMEM = "</ATOHIGH></RA>";
 #define LF "\n"
 #define BAD "bad=1"
 
+// REQUEST TYPES
+#define REQ_ROOT	1
+#define REQ_WIFI	2
+#define REQ_RELAY	3
+
 #define P(name)   static const prog_char name[] PROGMEM
 const prog_char SERVER_RA[] PROGMEM = "<script language='javascript' src='http://www.reefangel.com/wifi/ra1.js'></script>";
 const prog_char EncodingChars[] PROGMEM = {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};

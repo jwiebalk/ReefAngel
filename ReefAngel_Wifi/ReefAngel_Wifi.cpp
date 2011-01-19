@@ -81,9 +81,9 @@ void pushbuffer(byte inStr)
 		}
 		else
 		{
-            if (strncmp("GET / ", m_pushback, 6)==0) reqtype = 1;
-            if (strncmp("GET /wifi", m_pushback, 9)==0) reqtype = 2;
-            if (strncmp("GET /r", m_pushback, 6)==0) reqtype = -3;
+            if (strncmp("GET / ", m_pushback, 6)==0) reqtype = REQ_ROOT;
+            if (strncmp("GET /wifi", m_pushback, 9)==0) reqtype = REQ_WIFI;
+            if (strncmp("GET /r", m_pushback, 6)==0) reqtype = -REQ_RELAY;
 		}
 	}
 }
@@ -110,12 +110,12 @@ void processHTTP()
     {
 		//Serial.println(reqtype,DEC);
 		auth=false;
-		if (reqtype == 1)
+		if (reqtype == REQ_ROOT)
 		{
 			P(WebBodyMsg) = SERVER_DEFAULT;
 			WebResponse(WebBodyMsg, sizeof(WebBodyMsg) - 1);
 		}
-		if (reqtype == 2)
+		if (reqtype == REQ_WIFI)
 		{
 			P(WebBodyMsg) = SERVER_HEADER_HTML;
 			printP(WebBodyMsg);
@@ -124,7 +124,7 @@ void processHTTP()
 			printP(WebBodyMsg1);
 			PROGMEMprint(SERVER_RA);
 		}
-		if (reqtype == 3)
+		if (reqtype == REQ_RELAY)
 		{
 			byte o_relay=weboption/10;
 			byte o_type=weboption%10;
