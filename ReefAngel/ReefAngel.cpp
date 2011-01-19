@@ -450,6 +450,9 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
         LowATO.Timer = millis();
         LowATO.StartTopping();
         Relay.On(ATORelay);
+#ifdef DAVE_TEST
+		PCLogging();
+#endif  // DAVE_TEST
     }
 
     // If the high switch is activated, this is a safeguard to prevent over running of the top off pump
@@ -457,6 +460,9 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
     {
 		LowATO.StopTopping();  // stop the low ato timer
 		Relay.Off(ATORelay);
+#ifdef DAVE_TEST
+		PCLogging();
+#endif  // DAVE_TEST
     }
 
     /*
@@ -469,6 +475,9 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 	{
 		LED.On();
 		Relay.Off(ATORelay);
+#ifdef DAVE_TEST
+		PCLogging();
+#endif  // DAVE_TEST
 	}
 }
 
@@ -506,6 +515,9 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte 
         iLastTop = NumMins(hour(), minute());
         ato->StopTopping();
         Relay.Off(ATORelay);
+#ifdef DAVE_TEST
+		PCLogging();
+#endif  // DAVE_TEST
     }
     else if ( !ato->IsTopping() )
     {
@@ -514,12 +526,18 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte 
             ato->Timer = millis();
             ato->StartTopping();
             Relay.On(ATORelay);
+#ifdef DAVE_TEST
+			PCLogging();
+#endif  // DAVE_TEST
         }
     }
     if ( (millis() - ato->Timer > t) && ato->IsTopping() )
     {
         LED.On();
         Relay.Off(ATORelay);
+#ifdef DAVE_TEST
+		PCLogging();
+#endif  // DAVE_TEST
     }
 }
 
