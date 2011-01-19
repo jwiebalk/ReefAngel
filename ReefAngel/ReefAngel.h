@@ -116,7 +116,9 @@ public:
 	void DisplayVersion();
 #endif  // VersionMenu
 	void ClearScreen(byte Color);
+#ifdef DisplayLEDPWM
 	void MoonlightPWM(byte RelayID, bool ShowPWM);
+#endif  // DisplayLEDPWM
 
 	// Logging Functions - WebBanner and PCLogging
 	void PCLogging();

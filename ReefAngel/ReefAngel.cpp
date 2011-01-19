@@ -711,6 +711,7 @@ void ReefAngelClass::ClearScreen(byte Color)
     LCD.Clear(Color, 0, 0, 131, 131);
 }
 
+#ifdef DisplayLEDPWM
 void ReefAngelClass::MoonlightPWM(byte RelayID, bool ShowPWM)
 {
 	int m,d,y;
@@ -736,6 +737,7 @@ void ReefAngelClass::MoonlightPWM(byte RelayID, bool ShowPWM)
 	analogWrite(lowATOPin,PWMvalue);
 	if (ShowPWM) PWM.SetActinic((PWMvalue*100)/255);
 }
+#endif  // DisplayLEDPWM
 
 void ReefAngelClass::PCLogging()
 {
