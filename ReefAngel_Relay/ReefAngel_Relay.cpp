@@ -43,7 +43,6 @@ void ReefAngel_RelayClass::On(byte ID)
 		bitSet(RelayDataE[EID-1],(ID%10)-1);
 	}
 #endif  // RelayExp
-	//Write();
 }
 
 void ReefAngel_RelayClass::Off(byte ID)
@@ -56,7 +55,6 @@ void ReefAngel_RelayClass::Off(byte ID)
 		bitSet(RelayDataE[EID-1],(ID%10)-1);
 	}
 #endif  // RelayExp
-	//Write();
 }
 
 void ReefAngel_RelayClass::AllOn()
@@ -68,7 +66,6 @@ void ReefAngel_RelayClass::AllOn()
 		RelayDataE[EID] = 0xff;
 	}
 #endif  // RelayExp
-	//Write();
 }
 
 void ReefAngel_RelayClass::AllOff()
@@ -80,7 +77,6 @@ void ReefAngel_RelayClass::AllOff()
 		RelayDataE[EID] = 0;
 	}
 #endif  // RelayExp
-	//Write();
 }
 
 void ReefAngel_RelayClass::Toggle(byte ID)
