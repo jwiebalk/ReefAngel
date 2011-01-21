@@ -128,20 +128,53 @@ void processHTTP()
 		{
 			byte o_relay=weboption/10;
 			byte o_type=weboption%10;
-			if (o_type==0)
+			if (o_type==0)  // Turn port off
 			{
-				bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
-				bitClear(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+				if ( o_relay < 9 )
+				{
+					bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
+					bitClear(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+				}
+#ifdef RelayExp
+				if ( (o_relay > 10) && (o_relay < 89) )
+				{
+					byte EID = byte(o_relay/10);
+					bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
+					bitClear(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
+				}
+#endif  // RelayExp
 			}
-			if (o_type==1)
+			if (o_type==1)  // Turn port on
 			{
-				bitSet(ReefAngel.Relay.RelayMaskOn,o_relay-1);
-				bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+				if ( o_relay < 9 )
+				{
+					bitSet(ReefAngel.Relay.RelayMaskOn,o_relay-1);
+					bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+				}
+#ifdef RelayExp
+				if ( (o_relay > 10) && (o_relay < 89) )
+				{
+					byte EID = byte(o_relay/10);
+					bitSet(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
+					bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
+				}
+#endif  // RelayExp
 			}
-			if (o_type==2)
+			if (o_type==2)  // Set port back to Auto
 			{
-				bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
-				bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+				if ( o_relay < 9 )
+				{
+					bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
+					bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+				}
+#ifdef RelayExp
+				if ( (o_relay > 10) && (o_relay < 89) )
+				{
+					byte EID = byte(o_relay/10);
+					bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
+					bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
+				}
+#endif  // RelayExp
 			}
 			ReefAngel.Relay.Write();
 			char temp[6];
