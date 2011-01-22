@@ -822,7 +822,13 @@ void ReefAngelClass::WebBanner()
 	PROGMEMprint(BannerPH);
 	Serial.print(Params.PH, DEC);
 	PROGMEMprint(BannerRelayData);
-	Serial.print(Relay.RelayData, DEC);
+	// compute the correct relay data, when we force a port on or off, it does not get reflected in the relaydata
+	// so we must compute it based on the mask and send the data to the banner (compute just like when sending the
+	// relay data on the wire)
+    byte TempRelay = Relay.RelayData;
+    TempRelay &= Relay.RelayMaskOff;
+    TempRelay |= Relay.RelayMaskOn;
+	Serial.print(TempRelay, DEC);
 
 	if ( webbannerqty == WEB_BANNER_QTY )
 	{
