@@ -73,10 +73,20 @@ void pushbuffer(byte inStr)
 		    {
 		        reqtype=256-reqtype;
 		    }
+		    /*
+		    else if (inStr == ',')
+		    {
+		    	// when we hit a comma, copy the first value (weboption) to memory location
+		    	// then skip over the comma and put the value to be written into weboption
+		    	webmemoryloc = weboption;
+		    	// reset weboption to zero
+		    	weboption = 0;
+		    }
+		    */
 		    else
 		    {
-		        weboption*=10;
-		        weboption+=inStr-'0';
+				weboption*=10;
+				weboption+=inStr-'0';
 		    }
 		}
 		else
@@ -84,6 +94,8 @@ void pushbuffer(byte inStr)
             if (strncmp("GET / ", m_pushback, 6)==0) reqtype = REQ_ROOT;
             if (strncmp("GET /wifi", m_pushback, 9)==0) reqtype = REQ_WIFI;
             if (strncmp("GET /r", m_pushback, 6)==0) reqtype = -REQ_RELAY;
+            //if (strncmp("GET /mb", m_pushback, 7)==0) reqtype = -REQ_M_BYTE;
+            //if (strncmp("GET /mi", m_pushback, 7)==0) reqtype = -REQ_M_INT;
 		}
 	}
 }
@@ -110,6 +122,109 @@ void processHTTP()
     {
 		//Serial.println(reqtype,DEC);
 		auth=false;
+		switch ( reqtype )
+		{
+			case REQ_ROOT:
+			{
+				P(WebBodyMsg) = SERVER_DEFAULT;
+				WebResponse(WebBodyMsg, sizeof(WebBodyMsg) - 1);
+				break;
+			}  // REQ_ROOT
+			case REQ_WIFI:
+			{
+				P(WebBodyMsg) = SERVER_HEADER_HTML;
+				printP(WebBodyMsg);
+				Serial.print(sizeof(SERVER_RA) - 1,DEC);
+				P(WebBodyMsg1) = SERVER_HEADER3;
+				printP(WebBodyMsg1);
+				PROGMEMprint(SERVER_RA);
+				break;
+			}  // REQ_WIFI
+			case REQ_RELAY:
+			{
+				byte o_relay=weboption/10;
+				byte o_type=weboption%10;
+				if (o_type==0)  // Turn port off
+				{
+					if ( o_relay < 9 )
+					{
+						bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
+						bitClear(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+					}
+#ifdef RelayExp
+					if ( (o_relay > 10) && (o_relay < 89) )
+					{
+						byte EID = byte(o_relay/10);
+						bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
+						bitClear(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
+					}
+#endif  // RelayExp
+				}
+				if (o_type==1)  // Turn port on
+				{
+					if ( o_relay < 9 )
+					{
+						bitSet(ReefAngel.Relay.RelayMaskOn,o_relay-1);
+						bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+					}
+#ifdef RelayExp
+					if ( (o_relay > 10) && (o_relay < 89) )
+					{
+						byte EID = byte(o_relay/10);
+						bitSet(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
+						bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
+					}
+#endif  // RelayExp
+				}
+				if (o_type==2)  // Set port back to Auto
+				{
+					if ( o_relay < 9 )
+					{
+						bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
+						bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+					}
+#ifdef RelayExp
+					if ( (o_relay > 10) && (o_relay < 89) )
+					{
+						byte EID = byte(o_relay/10);
+						bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
+						bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
+					}
+#endif  // RelayExp
+				}
+				ReefAngel.Relay.Write();
+				char temp[6];
+				int s=408;
+
+				s += intlength(ReefAngel.Params.Temp1);
+				s += intlength(ReefAngel.Params.Temp2);
+				s += intlength(ReefAngel.Params.Temp3);
+				s += intlength(ReefAngel.Params.PH);
+				s += intlength(ReefAngel.Relay.RelayData);
+				s += intlength(ReefAngel.Relay.RelayMaskOn);
+				s += intlength(ReefAngel.Relay.RelayMaskOff);
+#ifdef RelayExp
+				for ( int EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
+				{
+					s += intlengh(ReefAngel.Relay.RelayDataE[EID];
+					s += intlengh(ReefAngel.Relay.RelayMaskOnE[EID];
+					s += intlenth(ReefAngel.Relay.RelayMaskOffE[EID];
+				}
+#endif  // RelayExp
+				s += intlength(ReefAngel.LowATO.IsActive());
+				s += intlength(ReefAngel.HighATO.IsActive());
+				P(WebBodyMsg) = SERVER_HEADER_XML;
+				printP(WebBodyMsg);
+				Serial.print(s);
+				P(WebBodyMsg1) = SERVER_HEADER3;
+				printP(WebBodyMsg1);
+				ReefAngel.PCLogging();  // print the XML data
+				break;
+			}  // REQ_RELAY
+			default:
+				break;
+		}  // switch reqtype
+		/*
 		if (reqtype == REQ_ROOT)
 		{
 			P(WebBodyMsg) = SERVER_DEFAULT;
@@ -204,6 +319,7 @@ void processHTTP()
 			printP(WebBodyMsg1);
 			ReefAngel.PCLogging();  // print the XML data
 		}
+		*/
     }
     else
     {
