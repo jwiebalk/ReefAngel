@@ -72,21 +72,42 @@ void pushbuffer(byte inStr)
 		    if (inStr==' ')
 		    {
 		        reqtype=256-reqtype;
+		        if ( (reqtype == REQ_M_BYTE) || (reqtype == REQ_M_INT) )
+		        {
+		        	// if a memory request, verify that the second value was given
+		        	if ( m_pushback[m_pushbackindex-2] != ',' )
+		        	{
+		        		// if the previous value was a comma, then the second value was most likely not given
+		        		bHasSecondValue = true;
+		        	}
+		        }
 		    }
-		    /*
 		    else if (inStr == ',')
 		    {
 		    	// when we hit a comma, copy the first value (weboption) to memory location
 		    	// then skip over the comma and put the value to be written into weboption
 		    	webmemoryloc = weboption;
-		    	// reset weboption to zero
+		    	// reset weboption to 0
 		    	weboption = 0;
 		    }
-		    */
 		    else
 		    {
-				weboption*=10;
-				weboption+=inStr-'0';
+		    	// consider limiting to only numeric chars (0-9) instead of alphanumeric
+		    	//if ( (inStr >= '0') && (inStr <= '9') )
+		    	//{
+					weboption*=10;
+					weboption+=inStr-'0';
+		    	//}
+		    	/*
+		    	else
+		    	{
+		    		// alpha char, so set weboption to 9 so the relay mask won't process it
+		    		// if the value is 0 it will try to set the -1 bit
+		    		// if the value is 1 - 8, it will turn off the port
+		    		// 9 is not a valid port, so it will just be ignored
+					weboption = 9;
+		    	}
+		    	*/
 		    }
 		}
 		else
@@ -94,8 +115,8 @@ void pushbuffer(byte inStr)
             if (strncmp("GET / ", m_pushback, 6)==0) reqtype = REQ_ROOT;
             if (strncmp("GET /wifi", m_pushback, 9)==0) reqtype = REQ_WIFI;
             if (strncmp("GET /r", m_pushback, 6)==0) reqtype = -REQ_RELAY;
-            //if (strncmp("GET /mb", m_pushback, 7)==0) reqtype = -REQ_M_BYTE;
-            //if (strncmp("GET /mi", m_pushback, 7)==0) reqtype = -REQ_M_INT;
+            if (strncmp("GET /mb", m_pushback, 7)==0) { reqtype = -REQ_M_BYTE; webmemoryloc = -1; bHasSecondValue = false; }
+            if (strncmp("GET /mi", m_pushback, 7)==0) { reqtype = -REQ_M_INT; webmemoryloc = -1; bHasSecondValue = false; }
 		}
 	}
 }
@@ -160,7 +181,7 @@ void processHTTP()
 					}
 #endif  // RelayExp
 				}
-				if (o_type==1)  // Turn port on
+				else if (o_type==1)  // Turn port on
 				{
 					if ( o_relay < 9 )
 					{
@@ -176,7 +197,7 @@ void processHTTP()
 					}
 #endif  // RelayExp
 				}
-				if (o_type==2)  // Set port back to Auto
+				else if (o_type==2)  // Set port back to Auto
 				{
 					if ( o_relay < 9 )
 					{
@@ -221,6 +242,22 @@ void processHTTP()
 				ReefAngel.PCLogging();  // print the XML data
 				break;
 			}  // REQ_RELAY
+			case REQ_M_BYTE:
+			case REQ_M_INT:
+			{
+				// webmemoryloc is location
+				// weboption is value
+				if ( bHasSecondValue && (webmemoryloc >= 0) )
+				{
+					if ( reqtype == REQ_M_BYTE )
+						InternalMemory.write(webmemoryloc, weboption);
+					else
+						InternalMemory.write_int(webmemoryloc, weboption);
+					Serial.print("OK");
+				}
+				else Serial.print("ERR");
+				break;
+			}  // REQ_M_BYTE || REQ_M_INT
 			default:
 				break;
 		}  // switch reqtype

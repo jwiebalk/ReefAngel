@@ -53,6 +53,8 @@ const prog_char XML_END[] PROGMEM = "</ATOHIGH></RA>";
 #define REQ_ROOT	1
 #define REQ_WIFI	2
 #define REQ_RELAY	3
+#define REQ_M_BYTE	4
+#define REQ_M_INT	5
 
 #define P(name)   static const prog_char name[] PROGMEM
 const prog_char SERVER_RA[] PROGMEM = "<script language='javascript' src='http://www.reefangel.com/wifi/ra1.js'></script>";
@@ -87,6 +89,8 @@ static boolean bIncoming=false;
 static boolean auth=false;
 static char authStr[32];
 static int weboption=0;
+static int webmemoryloc=-1;
+static byte bHasSecondValue = false;
 
 
 void WebResponse (const prog_char *response, long strsize);
