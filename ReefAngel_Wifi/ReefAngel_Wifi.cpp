@@ -227,9 +227,9 @@ void processHTTP()
 #ifdef RelayExp
 				for ( int EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
 				{
-					s += intlengh(ReefAngel.Relay.RelayDataE[EID];
-					s += intlengh(ReefAngel.Relay.RelayMaskOnE[EID];
-					s += intlenth(ReefAngel.Relay.RelayMaskOffE[EID];
+					s += intlength(ReefAngel.Relay.RelayDataE[EID]);
+					s += intlength(ReefAngel.Relay.RelayMaskOnE[EID]);
+					s += intlength(ReefAngel.Relay.RelayMaskOffE[EID]);
 				}
 #endif  // RelayExp
 				s += intlength(ReefAngel.LowATO.IsActive());
