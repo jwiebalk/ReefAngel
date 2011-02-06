@@ -767,7 +767,7 @@ void ReefAngelClass::PCLogging()
 		PROGMEMprint(XML_RE_OPEN);
 		Serial.print(EID, DEC);
 		Serial.print(">");
-		Serial.print(Relay.RelayDataE[EID]);
+		Serial.print(Relay.RelayDataE[EID],DEC);
 		PROGMEMprint(XML_RE_CLOSE);
 		Serial.print(EID, DEC);
 		Serial.print(">");
@@ -776,7 +776,7 @@ void ReefAngelClass::PCLogging()
 		PROGMEMprint(XML_RE_ON);
 		Serial.print(EID, DEC);
 		Serial.print(">");
-		Serial.print(Relay.RelayMaskOnE[EID]);
+		Serial.print(Relay.RelayMaskOnE[EID],DEC);
 		PROGMEMprint(XML_RE_CLOSE);
 		PROGMEMprint(XML_RE_ON);
 		Serial.print(EID, DEC);
@@ -786,7 +786,7 @@ void ReefAngelClass::PCLogging()
 		PROGMEMprint(XML_RE_OFF);
 		Serial.print(EID, DEC);
 		Serial.print(">");
-		Serial.print(Relay.RelayMaskOffE[EID]);
+		Serial.print(Relay.RelayMaskOffE[EID],DEC);
 		PROGMEMprint(XML_RE_CLOSE);
 		PROGMEMprint(XML_RE_OFF);
 		Serial.print(EID, DEC);
