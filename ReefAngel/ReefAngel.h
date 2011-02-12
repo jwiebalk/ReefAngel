@@ -65,8 +65,10 @@ public:
 	3 - Backlight timer / Sleep timer
 	4 - Not used
 	5 - Store params to eeprom
+	6 - DP 1
+	7 - DP 2
 	*/
-	ReefAngel_TimerClass Timer[6];
+	ReefAngel_TimerClass Timer[8];
 	byte SelectedMenuItem;
 
 	// Ports to toggle during different modes

@@ -633,7 +633,7 @@ void ReefAngelClass::SingleATOHigh(byte Relay)
 void ReefAngelClass::DosingPump1(byte Relay)
 {
     // TODO Update Timers appropriately
-    DosingPump(Relay, 1,
+    DosingPump(Relay, 6,
                InternalMemory.DP1OnHour_read(),
                InternalMemory.DP1OnMinute_read(),
                InternalMemory.DP1Timer_read());
@@ -642,7 +642,7 @@ void ReefAngelClass::DosingPump1(byte Relay)
 void ReefAngelClass::DosingPump2(byte Relay)
 {
     // TODO Update Timers appropriately
-    DosingPump(Relay, 2,
+    DosingPump(Relay, 7,
                InternalMemory.DP2OnHour_read(),
                InternalMemory.DP2OnMinute_read(),
                InternalMemory.DP2Timer_read());

@@ -31,7 +31,7 @@ during water changes and feeding modes.
 
 Approximately 346 bytes to have this feature
 */
-#define DisplayImages  // do we display the graphics for feeding or water change mode
+//#define DisplayImages  // do we display the graphics for feeding or water change mode
 
 /*
 The next line is for displaying the setup screens to configure the values for the Feeding Mode timer and
@@ -54,7 +54,7 @@ Approximately 2000 bytes to have DosingPumpSetup
 Approximately 378 bytes to have WavemakerSetup
 */
 //#define DosingPumpSetup
-#define WavemakerSetup
+//#define WavemakerSetup
 
 /*
 Overheat Temperature is fairly constant.  This value will most likely not get changed very often (if ever).
@@ -73,7 +73,7 @@ Comment the next line to remove this ability.
 
 Approximately 1984 bytes to have this feature
 */
-#define DateTimeSetup
+//#define DateTimeSetup
 
 /*
 If you do not want to have a Version menu entry to see what version of the software is on the controller,
@@ -93,7 +93,7 @@ When this or SetupExtras are defined, the Timeouts menu is included.
 Timeouts menu requires approximately 710 bytes
 This feature requires approximately 190 bytes if SetupExtras is defined
 */
-#define ATOSetup
+//#define ATOSetup
 
 /*
 This item will remove all lighting functionality from the controller.  It is the equivalent to
@@ -110,7 +110,7 @@ you can comment out the next line to remove the Metal Halide Setup and Metal Hal
 
 Approximately 258 bytes to have this feature
 */
-#define MetalHalideSetup
+//#define MetalHalideSetup
 
 /*
 If you do not use standard lights and do not wish to have the setup screens on your controller,
@@ -118,7 +118,7 @@ you can comment out the next line to remove the Standard Lights Setup
 
 Approximately 90 bytes to have this feature
 */
-#define StandardLightSetup
+//#define StandardLightSetup
 
 /*
 If you want to use the old way of reading the temp sensor which is always reading the value in
@@ -147,7 +147,7 @@ Currently untested.
 If you have the wifi module for your controller and wish to use it, you must uncomment this next line
 to utilize the built-in webserver for the controller.
 */
-//#define wifi
+#define wifi
 
 /*
 This next line will control the displaying of all LED PWM related items.  The items it controls are:
@@ -160,7 +160,7 @@ the next line and all that stuff will be removed.
 
 Approximately 720 bytes to have this feature
 */
-#define DisplayLEDPWM
+//#define DisplayLEDPWM
 
 /*
 This next line will allow you to use the ATO switches independently from each other.  You can specify
@@ -185,6 +185,6 @@ This will enable code for multiple expansion modules.
 
 Approximately 530 bytes to have this feature
 */
-//#define RelayExp
+#define RelayExp
 
 #endif  // __REEFANGEL_FEATURES_H__
