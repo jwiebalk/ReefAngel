@@ -44,17 +44,44 @@ Approximately 362 bytes to have this feature
 //#define SetupExtras  // feeding mode & screensaver timeout setup. ACTIVATE WITH CAUTION
 
 /*
-Since we may or may not need to always configure the Wavemakers or Dosing Pumps, give the option to
-turn off the setup screens to keep the compile size down.  You can still use the Dosing Pump or Wavemakers,
-you just will not have the setup screens available to configure the values.  You will have to manually set
+Since we may or may not need to always configure the Wavemakers, give the option to
+turn off the setup screens to keep the compile size down.  You can still use the Wavemakers,
+you just will not have the setup screen available to configure the values.  You will have to manually set
 the intervals inside the Sketch (hardcode or have it read from memory if the memory contains the correct values).
-Comment out the appropriate line to remove the corresponding setup screens.
 
-Approximately 2000 bytes to have DosingPumpSetup
 Approximately 378 bytes to have WavemakerSetup
 */
-//#define DosingPumpSetup
 #define WavemakerSetup
+
+/*
+These next two options are for the Dosing Pumps.  They operate differently, so read carefully to determine
+what option you want.
+
+DosingPumpSetup
+  Allows for specifying a specific time in which you want the dosing pump to turn on and run for.
+  It only runs once per day and for the specified duration/run time.
+  This feature will allow you to configure the start time and run time from the setup screens.
+
+DosingPumpIntervalSetup
+  Allows for specifying a minute interval that you would like the pump to turn on and run for.
+  It runs every minute interval for the entire day.  It's start time is based off of midnight of the current day.
+  If you specified a 60 minute interval, it will run for the specified duration every hour.
+  This feature will allow you to configure the minute interval and run time from the setup screens.
+
+Both options use the same Run Time that is stored in memory, so you will only be able to use one or the other
+if you plan on configuring the run time from the setup screens.  If you use the hard coded values, you won't
+need to use these options and you can use separate run times.
+
+You can still use the DosingPump and DosingPumpInterval functions without these options,
+you will just need to have the memory already be set or specifically set the values in the PDE file.
+You just will not be able to change the values from the controller's setup screen.
+
+Approximately 2000 bytes to have DosingPumpSetup
+Approximately 368 bytes to have DosingPumpIntervalSetup
+*/
+//#define DosingPumpSetup
+//#define DosingPumpIntervalSetup
+
 
 /*
 Overheat Temperature is fairly constant.  This value will most likely not get changed very often (if ever).

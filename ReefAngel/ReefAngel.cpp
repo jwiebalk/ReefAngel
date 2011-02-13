@@ -99,11 +99,14 @@ enum MainMenuItem {
 prog_char setupmenu_0_label[] PROGMEM = "Wavemaker";
 #endif  // WavemakerSetup
 #ifdef DosingPumpSetup
-prog_char setupmenu_1_label[] PROGMEM = "Dosing Pump";
+prog_char setupmenu_1_label[] PROGMEM = "Single Dose";
 #endif  // DosingPumpSetup
-prog_char setupmenu_2_label[] PROGMEM = "Calibrate pH";
+#ifdef DosingPumpIntervalSetup
+prog_char setupmenu_2_label[] PROGMEM = "Multi Dose";
+#endif  // DosingPumpIntervalSetup
+prog_char setupmenu_3_label[] PROGMEM = "Calibrate pH";
 #ifdef DateTimeSetup
-prog_char setupmenu_3_label[] PROGMEM = "Date / Time";
+prog_char setupmenu_4_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
 PROGMEM const char *setupmenu_items[] = {
 #ifdef WavemakerSetup
@@ -112,9 +115,12 @@ PROGMEM const char *setupmenu_items[] = {
 #ifdef DosingPumpSetup
                     setupmenu_1_label,
 #endif  // DosingPumpSetup
-                    setupmenu_2_label,
+#ifdef DosingPumpIntervalSetup
+					setupmenu_2_label,
+#endif  // DosingPumpIntervalSetup
+                    setupmenu_3_label,
 #ifdef DateTimeSetup
-                    setupmenu_3_label
+                    setupmenu_4_label
 #endif  // DateTimeSetup
                     };
 enum SetupMenuItem {
@@ -124,6 +130,9 @@ enum SetupMenuItem {
 #ifdef DosingPumpSetup
     SetupMenu_DosingPump,
 #endif  // DosingPumpSetup
+#ifdef DosingPumpIntervalSetup
+	SetupMenu_DosingPumpInterval,
+#endif  // DosingPumpIntervalSetup
     SetupMenu_CalibratePH,
 #ifdef DateTimeSetup
     SetupMenu_DateTime
@@ -1528,6 +1537,26 @@ void ReefAngelClass::ProcessButtonPressSetup()
             break;
         }
 #endif  // DosingPumpSetup
+#ifdef DosingPumpIntervalSetup
+		case SetupMenu_DosingPumpInterval:
+		{
+            int v = InternalMemory.DP1RepeatInterval_read();
+            int y = InternalMemory.DP2RepeatInterval_read();
+            if ( SetupOption(v, y, 1, 1440, 4, "m", "", "Repeat Interval", "DP1:", "DP2:") )
+            {
+            	InternalMemory.DP1RepeatInterval_write(v);
+            	InternalMemory.DP2RepeatInterval_write(y);
+            }
+            v = InternalMemory.DP1Timer_read();
+            y = InternalMemory.DP2Timer_read();
+            if ( SetupOption(v, y, 1, 255, 3, "s", "", "Run Time", "DP1:", "DP2:") )
+            {
+            	InternalMemory.DP1Timer_write(v);
+            	InternalMemory.DP2Timer_write(y);
+            }
+			break;
+		}
+#endif  // DosingPumpIntervalSetup
         case SetupMenu_CalibratePH:
         {
             SetupCalibratePH();
