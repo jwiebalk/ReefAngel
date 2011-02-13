@@ -95,6 +95,10 @@ class ReefAngel_EEPROMClass {
         void PHMax_write(const int value);
         int PHMin_read();
         void PHMin_write(const int value);
+        int DP1RepeatInterval_read();
+        void DP1RepeatInterval_write(const int value);
+        int DP2RepeatInterval_read();
+        void DP2RepeatInterval_write(const int value);
 
         // Functions that do the reading/writing to memory
         uint8_t read(uint8_t);

@@ -541,7 +541,7 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte 
     }
 }
 
-void ReefAngelClass::DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime)
+void ReefAngelClass::DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, byte RunTime)
 {
     /*
     This function configures and sets up the dosing pump and turns it on at the appropriate time
@@ -569,6 +569,47 @@ void ReefAngelClass::DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte On
         Relay.Off(DPRelay);
         //LED.Off();
     }
+}
+
+void ReefAngelClass::DosingPumpRepeat(byte DPRelay, byte DPTimer, int RepeatMinute, byte RunTime)
+{
+	/*
+	This function runs the specified relay for the RunTime seconds every RepeatMinute minutes.
+	So you can run the relay for 10 seconds every 60 minutes (1 hour)
+
+	This function bases the RepeatMinute off of Midnight (00:00) of the current day.  It uses midnight to
+	compute when the pump will run.
+
+	DPRelay - Relay that contains the dosing pump
+	Timer - number of the timer in the timer array to use
+	RepeatMinute - number of minutes to wait before running the pump again
+	RunTime - duration (in seconds) to run the pump
+	*/
+
+	// if the current minutes since midnight are divisible by the repeat interval and the current seconds
+	// are zero (top of the minute), then we can run the pump
+	time_t t = now();
+	uint8_t h = hour(t);
+	if ( (h == 0) && (minute(t) == 0) )
+	{
+		// if we are at midnight, change hours to 24 so we can get the correct minutes for computation
+		h = 24;
+	}
+	int current_min = NumMins(h, minute(t));
+	int r = current_min % RepeatMinute;
+	if ( (r == 0) && (second(t) == 0) )
+	{
+		Relay.On(DPRelay);
+		Timer[DPTimer].SetInterval(RunTime);
+		Timer[DPTimer].Start();
+	}
+
+	// Should change the timer to be a Dosing Pump Timer
+	// is the timer expired?
+	if ( Timer[DPTimer].IsTriggered() )
+	{
+		Relay.Off(DPRelay);
+	}
 }
 
 void ReefAngelClass::Wavemaker(byte WMRelay, byte WMTimer)
@@ -646,6 +687,22 @@ void ReefAngelClass::DosingPump2(byte Relay)
                InternalMemory.DP2OnHour_read(),
                InternalMemory.DP2OnMinute_read(),
                InternalMemory.DP2Timer_read());
+}
+
+void ReefAngelClass::DosingPumpRepeat1(byte Relay)
+{
+	// TODO Update Timers appropriately
+	DosingPumpRepeat(Relay, 1,
+					InternalMemory.DP1RepeatInterval_read(),
+					InternalMemory.DP1Timer_read());
+}
+
+void ReefAngelClass::DosingPumpRepeat2(byte Relay)
+{
+	// TODO Update Timers appropriately
+	DosingPumpRepeat(Relay, 2,
+					InternalMemory.DP2RepeatInterval_read(),
+					InternalMemory.DP2Timer_read());
 }
 
 void ReefAngelClass::Wavemaker1(byte WMRelay)

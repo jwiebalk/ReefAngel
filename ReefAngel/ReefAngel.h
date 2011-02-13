@@ -17,7 +17,7 @@
 #ifndef	ReefAngel_h
 #define ReefAngel_h
 
-#define ReefAngel_Version "0.8.5.12"
+#define ReefAngel_Version "0.8.5.13"
 //#define DEV_MODE  // Developer Mode
 
 #include <ReefAngel_Globals.h>
@@ -95,7 +95,8 @@ public:
 	void StandardFan(byte FanRelay, int LowTemp, int HighTemp);
 	void StandardATO(byte ATORelay, int ATOTimeout);
 	void SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte byteHrInterval);
-	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime);
+	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, byte RunTime);
+	void DosingPumpRepeat(byte DPRelay, byte DPTimer, int RepeatMinute, byte RunTime);
 	void Wavemaker(byte WMRelay, byte WMTimer);
 
 	// Simplified PDE versions of the calls
@@ -108,10 +109,10 @@ public:
 	void SingleATOHigh(byte Relay);
 	void DosingPump1(byte Relay);
 	void DosingPump2(byte Relay);
+	void DosingPumpRepeat1(byte Relay);
+	void DosingPumpRepeat2(byte Relay);
 	void Wavemaker1(byte WMRelay);
-	//void Wavemaker1Setup(byte Relay);
 	void Wavemaker2(byte WMRelay);
-	//void Wavemaker2Setup(byte Relay);
 #ifdef VersionMenu
 	void DisplayVersion();
 #endif  // VersionMenu

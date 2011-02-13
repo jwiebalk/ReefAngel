@@ -190,7 +190,9 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_ATOHourInterval     VarsStart+40
 #define Mem_B_ATOHighHourInterval VarsStart+41
 #define Mem_B_ATOHighTimeout      VarsStart+42
-// Next value starts VarsStart+43
+#define Mem_I_DP1RepeatInterval	  VarsStart+43
+#define Mem_I_DP2RepeatInterval	  VarsStart+45
+// Next value starts VarsStart+47
 
 // EEProm Pointers
 #define PH_Min		        949

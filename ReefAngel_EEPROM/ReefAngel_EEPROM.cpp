@@ -334,6 +334,26 @@ void ReefAngel_EEPROMClass::PHMin_write(const int value)
     write_int(Mem_I_PHMin, value);
 }
 
+int ReefAngel_EEPROMClass::DP1RepeatInterval_read()
+{
+	return read_int(Mem_I_DP1RepeatInterval);
+}
+
+void ReefAngel_EEPROMClass::DP1RepeatInterval_write(const int value)
+{
+	write_int(Mem_I_DP1RepeatInterval, value);
+}
+
+int ReefAngel_EEPROMClass::DP2RepeatInterval_read()
+{
+	return read_int(Mem_I_DP2RepeatInterval);
+}
+
+void ReefAngel_EEPROMClass::DP2RepeatInterval_write(const int value)
+{
+	write_int(Mem_I_DP2RepeatInterval, value);
+}
+
 // Private functions
 uint8_t ReefAngel_EEPROMClass::read(uint8_t address)
 {
