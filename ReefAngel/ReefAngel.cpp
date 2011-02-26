@@ -1062,7 +1062,7 @@ void ReefAngelClass::ShowInterface()
                 Memory.Write(a+360, CurTemp);
                 pingSerial();
                 LCD.Clear(DefaultBGColor,0,0,1,1);
-                InternalMemory.T1Pointer_write(a);
+                if ((a%10)==0) InternalMemory.T1Pointer_write(a);
                 LCD.DrawGraph(5, 5);
             }
 
