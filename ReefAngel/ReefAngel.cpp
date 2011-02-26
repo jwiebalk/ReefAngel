@@ -860,9 +860,15 @@ void ReefAngelClass::PCLogging()
 	}
 #endif  // RelayExp
 	PROGMEMprint(XML_ATOLOW);
-	Serial.print(LowATO.IsActive());
+	if ((DDRB & 8) == 8)
+		Serial.print("0");
+	else
+		Serial.print(LowATO.IsActive());
 	PROGMEMprint(XML_ATOHIGH);
-	Serial.print(HighATO.IsActive());
+	if ((DDRB & 8) == 8)
+		Serial.print("0");
+	else
+		Serial.print(HighATO.IsActive());
 	PROGMEMprint(XML_END);
 }
 
