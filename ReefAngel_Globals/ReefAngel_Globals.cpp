@@ -62,7 +62,7 @@ byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, by
 	else if ( Now >= StopD && Now <= End )
 	{
 		byte v = constrain(map(Now, StopD, End, startPWM, endPWM),startPWM, endPWM);
-		return endPWM-v;
+		return endPWM-v+startPWM;
 	}
 	else if ( Now > StartD && Now < StopD )
 		return endPWM;
