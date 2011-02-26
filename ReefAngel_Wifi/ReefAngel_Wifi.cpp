@@ -232,8 +232,7 @@ void processHTTP()
 					s += intlength(ReefAngel.Relay.RelayMaskOffE[EID]);
 				}
 #endif  // RelayExp
-				s += intlength(ReefAngel.LowATO.IsActive());
-				s += intlength(ReefAngel.HighATO.IsActive());
+				s += 2;  // one digit for each ATO
 				P(WebBodyMsg) = SERVER_HEADER_XML;
 				printP(WebBodyMsg);
 				Serial.print(s);
