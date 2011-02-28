@@ -117,6 +117,11 @@ void pushbuffer(byte inStr)
             if (strncmp("GET /r", m_pushback, 6)==0) reqtype = -REQ_RELAY;
             if (strncmp("GET /mb", m_pushback, 7)==0) { reqtype = -REQ_M_BYTE; webmemoryloc = -1; bHasSecondValue = false; }
             if (strncmp("GET /mi", m_pushback, 7)==0) { reqtype = -REQ_M_INT; webmemoryloc = -1; bHasSecondValue = false; }
+            if (strncmp("GET /tr", m_pushback, 7)==0) reqtype = -REQ_TR;
+            // Need a TimerReload command to force the timers to reload themselves if their value has been changed
+            // Should be a separate command so we don't always reload after every change AND this will prevent having to have
+            // a special check for the memory locations to associate with timers.  But will require the client to send an
+            // additional command
 		}
 	}
 }
@@ -248,15 +253,30 @@ void processHTTP()
 				// weboption is value
 				if ( bHasSecondValue && (webmemoryloc >= 0) )
 				{
+					// if we have a second value, we write the value to memory
 					if ( reqtype == REQ_M_BYTE )
 						InternalMemory.write(webmemoryloc, weboption);
 					else
 						InternalMemory.write_int(webmemoryloc, weboption);
 					Serial.print("OK");
 				}
+				else if ( !bHasSecondValue && (webmemoryloc >= 0) )
+				{
+					// no second value, so we read the value from memory
+					if ( reqtype == REQ_M_BYTE )
+						Serial.print(InternalMemory.read(webmemoryloc),DEC);
+					else
+						Serial.print(InternalMemory.read_int(webmemoryloc),DEC);
+					//Serial.print("OK");
+				}
 				else Serial.print("ERR");
 				break;
 			}  // REQ_M_BYTE || REQ_M_INT
+			case REQ_TR:
+			{
+				// reload all the timers here
+				break;
+			}
 			default:
 				break;
 		}  // switch reqtype

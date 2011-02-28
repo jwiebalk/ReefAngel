@@ -53,8 +53,9 @@ const prog_char XML_END[] PROGMEM = "</ATOHIGH></RA>";
 #define REQ_ROOT	1
 #define REQ_WIFI	2
 #define REQ_RELAY	3
-#define REQ_M_BYTE	4
-#define REQ_M_INT	5
+#define REQ_M_BYTE	4  // Memory read/write byte
+#define REQ_M_INT	5  // Memory read/write int
+#define REQ_TR		6  // Timer Reload
 
 #define P(name)   static const prog_char name[] PROGMEM
 const prog_char SERVER_RA[] PROGMEM = "<script language='javascript' src='http://www.reefangel.com/wifi/ra1.js'></script>";
