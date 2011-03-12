@@ -75,9 +75,10 @@ void pushbuffer(byte inStr)
 		        if ( (reqtype == REQ_M_BYTE) || (reqtype == REQ_M_INT) )
 		        {
 		        	// if a memory request, verify that the second value was given
-		        	if ( m_pushback[m_pushbackindex-2] != ',' )
+		        	if (m_pushback[m_pushbackindex-2] != ',')
 		        	{
 		        		// if the previous value was a comma, then the second value was most likely not given
+		        		// so we check if the previous value is not a comma which implies a value given
 		        		bHasSecondValue = true;
 		        	}
 		        }
@@ -220,7 +221,7 @@ void processHTTP()
 				}
 				ReefAngel.Relay.Write();
 				char temp[6];
-				int s=408;
+				int s=112;
 
 				s += intlength(ReefAngel.Params.Temp1);
 				s += intlength(ReefAngel.Params.Temp2);
@@ -230,6 +231,7 @@ void processHTTP()
 				s += intlength(ReefAngel.Relay.RelayMaskOn);
 				s += intlength(ReefAngel.Relay.RelayMaskOff);
 #ifdef RelayExp
+				s += 296;
 				for ( int EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
 				{
 					s += intlength(ReefAngel.Relay.RelayDataE[EID]);
@@ -251,6 +253,15 @@ void processHTTP()
 			{
 				// webmemoryloc is location
 				// weboption is value
+				Serial.print("LOC: ");
+				Serial.print(webmemoryloc,DEC);
+				Serial.print("\nVAL: ");
+				Serial.print(weboption,DEC);
+				Serial.print("\n2nd: ");
+				if ( bHasSecondValue )
+					Serial.print("T\n");
+				else
+					Serial.print("F\n");
 				if ( bHasSecondValue && (webmemoryloc >= 0) )
 				{
 					// if we have a second value, we write the value to memory
@@ -261,6 +272,7 @@ void processHTTP()
 					Serial.print("OK");
 				}
 				else if ( !bHasSecondValue && (webmemoryloc >= 0) )
+				//else if ( webmemoryloc >= 0 )
 				{
 					// no second value, so we read the value from memory
 					if ( reqtype == REQ_M_BYTE )
