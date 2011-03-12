@@ -260,8 +260,6 @@ ReefAngelClass::ReefAngelClass()
 
 void ReefAngelClass::Init()
 {
-	byte taddr = 0;
-
 	Wire.begin();
 	Serial.begin(57600);
 	pinMode(Piezo, OUTPUT);
@@ -284,7 +282,11 @@ void ReefAngelClass::Init()
     PHMax = InternalMemory.PHMax_read();
 	taddr = InternalMemory.T1Pointer_read();
 
-	if (taddr>120) InternalMemory.T1Pointer_write(0);
+	if ((taddr>120) || (taddr<0))
+	{
+		InternalMemory.T1Pointer_write(0);
+		taddr = 0;
+	}
 
 #ifdef SetupExtras
 	Timer[0].SetInterval(InternalMemory.FeedingTimer_read());  // Default Feeding timer
@@ -842,15 +844,9 @@ void ReefAngelClass::PCLogging()
 	}
 #endif  // RelayExp
 	PROGMEMprint(XML_ATOLOW);
-	if ((DDRB & 8) == 8)
-		Serial.print("0");
-	else
-		Serial.print(LowATO.IsActive());
+	Serial.print(LowATO.IsActive());
 	PROGMEMprint(XML_ATOHIGH);
-	if ((DDRB & 8) == 8)
-		Serial.print("0");
-	else
-		Serial.print(HighATO.IsActive());
+	Serial.print(HighATO.IsActive());
 	PROGMEMprint(XML_END);
 }
 
@@ -1019,38 +1015,37 @@ void ReefAngelClass::ShowInterface()
             // process timers
             if ( Timer[5].IsTriggered() )
             {
-                byte a = InternalMemory.T1Pointer_read();
                 int CurTemp;
 
                 // Values are stored in the I2CEEPROM1
-                a++;
-                if (a>=120) a=0;
+                taddr++;
+                if ( taddr >= 120 ) taddr = 0;
                 Timer[5].Start();
                 CurTemp = map(Params.Temp1, T1LOW, T1HIGH, 0, 50); // apply the calibration to the sensor reading
                 CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
                 //LCD.Clear(DefaultBGColor,0,0,1,1);
-                Memory.Write(a, CurTemp);
+                Memory.Write(taddr, CurTemp);
                 pingSerial();
                 LCD.Clear(DefaultBGColor,0,0,1,1);
                 CurTemp = map(Params.Temp2, T2LOW, T2HIGH, 0, 50); // apply the calibration to the sensor reading
                 CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
                 LCD.Clear(DefaultBGColor,0,0,1,1);
-                Memory.Write(a+120, CurTemp);
+                Memory.Write(taddr+120, CurTemp);
                 pingSerial();
                 LCD.Clear(DefaultBGColor,0,0,1,1);
                 CurTemp = map(Params.Temp3, T3LOW, T3HIGH, 0, 50); // apply the calibration to the sensor reading
                 CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
                 //LCD.Clear(DefaultBGColor,0,0,1,1);
-                Memory.Write(a+240, CurTemp);
+                Memory.Write(taddr+240, CurTemp);
                 pingSerial();
                 LCD.Clear(DefaultBGColor,0,0,1,1);
                 CurTemp = map(Params.PH, PHLOW, PHHIGH, 0, 50); // apply the calibration to the sensor reading
                 CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
                 //LCD.Clear(DefaultBGColor,0,0,1,1);
-                Memory.Write(a+360, CurTemp);
+                Memory.Write(taddr+360, CurTemp);
                 pingSerial();
                 LCD.Clear(DefaultBGColor,0,0,1,1);
-                if ((a%10)==0) InternalMemory.T1Pointer_write(a);
+                if ((taddr%10)==0) InternalMemory.T1Pointer_write(taddr);
                 LCD.DrawGraph(5, 5);
             }
 

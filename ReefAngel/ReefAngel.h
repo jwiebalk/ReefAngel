@@ -163,6 +163,7 @@ public:
 private:
 	bool showmenu;
 	time_t menutimeout;
+	byte taddr;
 
 	// Nested Menu variables
 	int menusptr[Total_Menus];
