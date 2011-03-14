@@ -74,12 +74,20 @@ void pushbuffer(byte inStr)
 		        reqtype=256-reqtype;
 		        if ( (reqtype == REQ_M_BYTE) || (reqtype == REQ_M_INT) )
 		        {
-		        	// if a memory request, verify that the second value was given
-		        	if (m_pushback[m_pushbackindex-2] != ',')
+		        	// must have a comma to have second value
+		        	// verify that the last char was a digit
+		        	if ( isdigit(m_pushback[m_pushbackindex-2]) )
 		        	{
-		        		// if the previous value was a comma, then the second value was most likely not given
-		        		// so we check if the previous value is not a comma which implies a value given
-		        		bHasSecondValue = true;
+		        		// check for the comma to determine how we proceed
+		        		if ( bHasComma )
+		        		{
+		        			bHasSecondValue = true;
+		        		}
+		        		else
+		        		{
+		        			bHasSecondValue = false;
+		        			webmemoryloc = weboption;
+		        		}
 		        	}
 		        }
 		    }
@@ -87,37 +95,43 @@ void pushbuffer(byte inStr)
 		    {
 		    	// when we hit a comma, copy the first value (weboption) to memory location
 		    	// then skip over the comma and put the value to be written into weboption
+		    	bHasComma = true;
 		    	webmemoryloc = weboption;
 		    	// reset weboption to 0
 		    	weboption = 0;
 		    }
-		    else
+		    else if(isdigit(inStr))
 		    {
-		    	// consider limiting to only numeric chars (0-9) instead of alphanumeric
-		    	//if ( (inStr >= '0') && (inStr <= '9') )
-		    	//{
-					weboption*=10;
-					weboption+=inStr-'0';
-		    	//}
-		    	/*
-		    	else
-		    	{
-		    		// alpha char, so set weboption to 9 so the relay mask won't process it
-		    		// if the value is 0 it will try to set the -1 bit
-		    		// if the value is 1 - 8, it will turn off the port
-		    		// 9 is not a valid port, so it will just be ignored
-					weboption = 9;
-		    	}
-		    	*/
+		    	// process digits here
+				weboption*=10;
+				weboption+=inStr-'0';
 		    }
+		    // 3/14/11 - curt
+		    //else all other chars are discarded
+		    // consider further sanity checks to ensure that we don't get any malformed strings or commands
+		    // right now, we can embed non digits in the parameters and as long as the last char is a digit,
+		    // it is ok and the non digits are just skipped over
+		    // we may want to signal an error or break out of processing the string to indicate there is an error
+		    // maybe set webmemoryloc and weboption to -1 or 0
+		    // could also flush the buffer and set reqtype to a REQ_ERROR or something
+		    // need to give this more thought
+		    //
+		    // NOTES about too large of value being stored
+		    //   if you exceed the storage limit for the variable, the negative value gets stored
+		    //   so we should limit the value being saved from the client side
+		    //   otherwise we would have to do additional checks in here for the size and that would
+		    //   require more code
+		    //   Users shouldn't be manually changing values from the web without an interface that
+		    //   limits them, so we "should" be safe (in theory), but this may need to be revisited
+		    //   in the future.  - curt (3/14/11)
 		}
 		else
 		{
             if (strncmp("GET / ", m_pushback, 6)==0) reqtype = REQ_ROOT;
             if (strncmp("GET /wifi", m_pushback, 9)==0) reqtype = REQ_WIFI;
             if (strncmp("GET /r", m_pushback, 6)==0) reqtype = -REQ_RELAY;
-            if (strncmp("GET /mb", m_pushback, 7)==0) { reqtype = -REQ_M_BYTE; webmemoryloc = -1; bHasSecondValue = false; }
-            if (strncmp("GET /mi", m_pushback, 7)==0) { reqtype = -REQ_M_INT; webmemoryloc = -1; bHasSecondValue = false; }
+            if (strncmp("GET /mb", m_pushback, 7)==0) { reqtype = -REQ_M_BYTE; webmemoryloc = -1; bHasSecondValue = false; bHasComma = false;}
+            if (strncmp("GET /mi", m_pushback, 7)==0) { reqtype = -REQ_M_INT; webmemoryloc = -1; bHasSecondValue = false; bHasComma = false;}
             if (strncmp("GET /tr", m_pushback, 7)==0) reqtype = -REQ_TR;
             // Need a TimerReload command to force the timers to reload themselves if their value has been changed
             // Should be a separate command so we don't always reload after every change AND this will prevent having to have
@@ -253,15 +267,6 @@ void processHTTP()
 			{
 				// webmemoryloc is location
 				// weboption is value
-				Serial.print("LOC: ");
-				Serial.print(webmemoryloc,DEC);
-				Serial.print("\nVAL: ");
-				Serial.print(weboption,DEC);
-				Serial.print("\n2nd: ");
-				if ( bHasSecondValue )
-					Serial.print("T\n");
-				else
-					Serial.print("F\n");
 				if ( bHasSecondValue && (webmemoryloc >= 0) )
 				{
 					// if we have a second value, we write the value to memory
@@ -271,15 +276,13 @@ void processHTTP()
 						InternalMemory.write_int(webmemoryloc, weboption);
 					Serial.print("OK");
 				}
-				else if ( !bHasSecondValue && (webmemoryloc >= 0) )
-				//else if ( webmemoryloc >= 0 )
+				else if ( !bHasSecondValue && (webmemoryloc >= 0) && !bHasComma )
 				{
-					// no second value, so we read the value from memory
+					// no second value and no comma, so we read the value from memory
 					if ( reqtype == REQ_M_BYTE )
 						Serial.print(InternalMemory.read(webmemoryloc),DEC);
 					else
 						Serial.print(InternalMemory.read_int(webmemoryloc),DEC);
-					//Serial.print("OK");
 				}
 				else Serial.print("ERR");
 				break;

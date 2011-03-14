@@ -92,6 +92,7 @@ static char authStr[32];
 static int weboption=0;
 static int webmemoryloc=-1;
 static byte bHasSecondValue = false;
+static byte bHasComma = false;
 
 
 void WebResponse (const prog_char *response, long strsize);
