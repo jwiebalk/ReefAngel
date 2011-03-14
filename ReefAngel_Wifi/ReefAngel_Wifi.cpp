@@ -132,11 +132,6 @@ void pushbuffer(byte inStr)
             if (strncmp("GET /r", m_pushback, 6)==0) reqtype = -REQ_RELAY;
             if (strncmp("GET /mb", m_pushback, 7)==0) { reqtype = -REQ_M_BYTE; webmemoryloc = -1; bHasSecondValue = false; bHasComma = false;}
             if (strncmp("GET /mi", m_pushback, 7)==0) { reqtype = -REQ_M_INT; webmemoryloc = -1; bHasSecondValue = false; bHasComma = false;}
-            if (strncmp("GET /tr", m_pushback, 7)==0) reqtype = -REQ_TR;
-            // Need a TimerReload command to force the timers to reload themselves if their value has been changed
-            // Should be a separate command so we don't always reload after every change AND this will prevent having to have
-            // a special check for the memory locations to associate with timers.  But will require the client to send an
-            // additional command
 		}
 	}
 }
@@ -274,6 +269,21 @@ void processHTTP()
 						InternalMemory.write(webmemoryloc, weboption);
 					else
 						InternalMemory.write_int(webmemoryloc, weboption);
+					if ( (webmemoryloc == Mem_I_WM1Timer) || (webmemoryloc == Mem_I_WM2Timer) )
+					{
+						// Restart wavemaker timers once they are set
+						byte i = 1;
+						byte p = ReefAngel.WM1Port;
+						if ( webmemoryloc == Mem_I_WM2Timer )
+						{
+							i = 2;
+							p = ReefAngel.WM2Port;
+						}
+						ReefAngel.Timer[i].Trigger = 0;
+						ReefAngel.Timer[i].SetInterval(weboption);
+						ReefAngel.Timer[i].Start();
+						ReefAngel.Relay.On(p);
+					}
 					Serial.print("OK");
 				}
 				else if ( !bHasSecondValue && (webmemoryloc >= 0) && !bHasComma )
@@ -287,11 +297,6 @@ void processHTTP()
 				else Serial.print("ERR");
 				break;
 			}  // REQ_M_BYTE || REQ_M_INT
-			case REQ_TR:
-			{
-				// reload all the timers here
-				break;
-			}
 			default:
 				break;
 		}  // switch reqtype

@@ -86,6 +86,12 @@ public:
 #endif  // RelayExp
 #endif  // RemoveAllLights
 
+#ifdef WavemakerSetup
+    // TODO find a better way to save the wavemaker ports for restarting once timers are updated from setup screen
+    byte WM1Port;
+    byte WM2Port;
+#endif  // WavemakerSetup
+
 	void Init();
 	void Refresh();
 	void SetTemperatureUnit(byte unit);
@@ -178,11 +184,6 @@ private:
 	byte webbannerqty;
 #endif  // wifi
 
-#ifdef WavemakerSetup
-    // TODO find a better way to save the wavemaker ports for restarting once timers are updated from setup screen
-    byte WM1Port;
-    byte WM2Port;
-#endif  // WavemakerSetup
 };
 
 
