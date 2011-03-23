@@ -57,7 +57,7 @@ void ReefAngel_RelayClass::Off(byte ID)
 	if ( (ID > 10) && (ID < 89) )
 	{
 		byte EID = byte(ID/10);
-		bitSet(RelayDataE[EID-1],(ID%10)-1);
+		bitClear(RelayDataE[EID-1],(ID%10)-1);
 	}
 #endif  // RelayExp
 }
