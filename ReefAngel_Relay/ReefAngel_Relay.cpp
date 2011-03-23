@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+ /*
+  * Updated by:  Curt Binder
+  * Updates Released under Apache License, Version 2.0
+  */
+
 #include "ReefAngel_Relay.h"
 #include <ReefAngel_Globals.h>
 #include <Wire.h>
