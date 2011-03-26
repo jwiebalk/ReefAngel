@@ -1797,7 +1797,7 @@ void ReefAngelClass::ProcessButtonPressTimeouts()
         {
             int v = InternalMemory.LCDTimer_read();
             int y = -1;
-            if ( SetupOption(v, y, 0, 3600, 4, "s", "", "Screen Timeout", "" "") )
+            if ( SetupOption(v, y, 0, 3600, 4, "s", "", "Screen Timeout", "", "") )
             {
                 InternalMemory.LCDTimer_write(v);
                 // update the timer value
