@@ -289,17 +289,19 @@ void processHTTP()
 						ReefAngel.Timer[i].Start();
 						ReefAngel.Relay.On(p);
 					}
-					Serial.print("OK");
+					Serial.print("<M>OK</M>");
 				}
 				else if ( !bHasSecondValue && (webmemoryloc >= 0) && !bHasComma )
 				{
 					// no second value and no comma, so we read the value from memory
+					Serial.print("<M>");
 					if ( reqtype == REQ_M_BYTE )
 						Serial.print(InternalMemory.read(webmemoryloc),DEC);
 					else
 						Serial.print(InternalMemory.read_int(webmemoryloc),DEC);
+					Serial.print("</M>");
 				}
-				else Serial.print("ERR");
+				else Serial.print("<M>ERR</M>");
 				break;
 			}  // REQ_M_BYTE || REQ_M_INT
 			default:
