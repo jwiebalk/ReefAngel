@@ -274,6 +274,7 @@ void processHTTP()
 						InternalMemory.write(webmemoryloc, weboption);
 					else
 						InternalMemory.write_int(webmemoryloc, weboption);
+#ifdef WavemakerSetup
 					if ( (webmemoryloc == Mem_I_WM1Timer) || (webmemoryloc == Mem_I_WM2Timer) )
 					{
 						// Restart wavemaker timers once they are set
@@ -289,6 +290,7 @@ void processHTTP()
 						ReefAngel.Timer[i].Start();
 						ReefAngel.Relay.On(p);
 					}
+#endif  // WavemakerSetup
 					Serial.print("<M>OK</M>");
 				}
 				else if ( !bHasSecondValue && (webmemoryloc >= 0) && !bHasComma )
