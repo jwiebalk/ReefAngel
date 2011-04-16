@@ -233,6 +233,8 @@ When adding more variables, use the previous value plus 1 or 2
 #define MAX_X               128
 #define DEFAULT_MENU        255
 #define EXCEED_TIMEOUT_MENU 254
+#define FEEDING_MODE		253
+#define WATERCHANGE_MODE	252
 #define DEFAULT_MENU_ITEM   0     // default menu item, first item on menu
 #define MAIN_MENU           0
 

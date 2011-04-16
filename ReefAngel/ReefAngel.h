@@ -145,8 +145,6 @@ public:
     void DisplayMenu();
     void DisplayMenuHeading();
     void DisplayMenuEntry(char *text);
-    void FeedingMode();
-    void WaterChangeMode();
     void ProcessButtonPress();
     void ProcessButtonPressMain();
     void ProcessButtonPressSetup();
