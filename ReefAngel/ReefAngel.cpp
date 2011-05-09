@@ -2330,6 +2330,8 @@ void ReefAngelClass::SetupCalibratePH()
         // save PHMin & PHMax to memory
         InternalMemory.PHMax_write(iTPHMax);
         InternalMemory.PHMin_write(iTPHMin);
+		PHMax = iTPHMax;
+        PHMin = iTPHMin;
     }
 }
 
