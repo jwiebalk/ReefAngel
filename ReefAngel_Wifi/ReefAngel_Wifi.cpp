@@ -246,7 +246,7 @@ void processHTTP()
 				s += intlength(ReefAngel.Relay.RelayMaskOff);
 #ifdef RelayExp
 				s += 296;
-				for ( int EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
+				for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
 				{
 					s += intlength(ReefAngel.Relay.RelayDataE[EID]);
 					s += intlength(ReefAngel.Relay.RelayMaskOnE[EID]);
