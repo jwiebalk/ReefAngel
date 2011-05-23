@@ -42,6 +42,16 @@
 
 // Relay Box Modules
 #define MAX_RELAY_EXPANSION_MODULES     8
+#ifdef RelayExp
+// Relay Expansion is defined in Features file
+// Check if the user specified how many expansion modules they have
+// if they have not or specified 0, assume they have 1 expansion module
+#if !defined InstalledRelayExpansionModules || defined InstalledRelayExpansionModules == 0
+#undef InstalledRelayExpansionModules
+#define InstalledRelayExpansionModules	1
+#endif  // InstalledRelayExpansionModules
+#endif  // RelayExp
+
 // Expansion Box Module Port Defines
 // Box0 is the main / original box
 // Boxes 1 - 8 are the expansion boxes
@@ -207,7 +217,28 @@ When adding more variables, use the previous value plus 1 or 2
 #define DEGREE_F            0
 #define DEGREE_C            1
 #define MAX_TEMP_SWING      50  // Maximum value of temp change that can occur in 1 second, 100 = 10.0 F Degrees, 50 = 5.0 F Degrees
-#define WEB_BANNER_QTY		12  // Quantity of parameters when sending the web banner
+// WEB_BANNER_QTY - Quantity of Parameters when sending the web banner, default is 12 but changes as we have more relays installed
+#ifdef RelayExp
+#if InstalledRelayExpansionModules == 1
+#define WEB_BANNER_QTY		20
+#elif InstalledRelayExpansionModules == 2
+#define WEB_BANNER_QTY		28
+#elif InstalledRelayExpansionModules == 3
+#define WEB_BANNER_QTY		36
+#elif InstalledRelayExpansionModules == 4
+#define WEB_BANNER_QTY		44
+#elif InstalledRelayExpansionModules == 5
+#define WEB_BANNER_QTY		52
+#elif InstalledRelayExpansionModules == 6
+#define WEB_BANNER_QTY		60
+#elif InstalledRelayExpansionModules == 7
+#define WEB_BANNER_QTY		68
+#else
+#define WEB_BANNER_QTY		72
+#endif  // InstalledRelayExpansionModules
+#else
+#define WEB_BANNER_QTY		12  // Quantity of parameters when sending the web banner: userid, 3 probe labels, 8 relay labels
+#endif  // RelayExp
 
 // Menu Defines
 #if defined SetupExtras || defined ATOSetup

@@ -208,10 +208,20 @@ the PDE file at the top above all other include statements:
 //#define COLORS_PDE
 
 /*
-This will enable code for multiple expansion modules.
+This will enable code for multiple expansion modules.  If you have expasion modules this must
+be enabled to make use of them.
 
-Approximately 530 bytes to have this feature
+If you have more than 1 expansion module, you will need to uncomment and adjust the number of
+expansion modules.  If it's left commented out, it is assumed to have 1 expansion module.  This
+is only necessary when 2 or more modules are enabled so the web banner data gets sent
+appropriately and possibly other enhancments in the future (in an attempt to keep code size
+down and make the controller more customized for the user)
+
+Approximately 530 bytes to have RelayExp
+Approximately 94, 176 or 270 additional bytes needed when increasing InstalledRelayExpansionModules
 */
 //#define RelayExp
+//#define InstalledRelayExpansionModules	1
+
 
 #endif  // __REEFANGEL_FEATURES_H__

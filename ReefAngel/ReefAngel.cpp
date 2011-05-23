@@ -371,35 +371,14 @@ void ReefAngelClass::Refresh()
     int y;
     y = x - Params.Temp1;
     // check to make sure the temp readings aren't beyond max allowed
-#ifdef DEV_MODE
-    Serial.print("T1: ");
-    Serial.print(x);
-    Serial.print("(");
-    Serial.print(y);
-    Serial.print(")");
-#endif  // DEV_MODE
     if ( abs(y) < MAX_TEMP_SWING || Params.Temp1 == 0) Params.Temp1 = x;
     x = TempSensor.ReadTemperature(TempSensor.addrT2);
     LCD.Clear(DefaultBGColor,0,0,1,1);
     y = x - Params.Temp2;
-#ifdef DEV_MODE
-    Serial.print(", T2: ");
-    Serial.print(x);
-    Serial.print("(");
-    Serial.print(y);
-    Serial.print(")");
-#endif  // DEV_MODE
     if ( abs(y) < MAX_TEMP_SWING || Params.Temp2 == 0) Params.Temp2 = x;
     x = TempSensor.ReadTemperature(TempSensor.addrT3);
     LCD.Clear(DefaultBGColor,0,0,1,1);
     y = x - Params.Temp3;
-#ifdef DEV_MODE
-    Serial.print(", T3: ");
-    Serial.print(x);
-    Serial.print("(");
-    Serial.print(y);
-    Serial.println(")");
-#endif  // DEV_MODE
     if ( abs(y) < MAX_TEMP_SWING || Params.Temp3 == 0) Params.Temp3 = x;
 	Params.PH=analogRead(PHPin);
     LCD.Clear(DefaultBGColor,0,0,1,1);
@@ -746,16 +725,15 @@ void ReefAngelClass::DisplayVersion()
     // Display the Software Version
     LCD.DrawText(ModeScreenColor,DefaultBGColor,10,10,"Reef Angel");
     LCD.DrawText(ModeScreenColor,DefaultBGColor,10,20,"v"ReefAngel_Version);
-#ifdef DEV_MODE
-    LCD.DrawText(ModeScreenColor,DefaultBGColor,10,30,"Dev Mode");
-#endif  // DEV_MODE
-
 #ifdef wifi
     // Display wifi related information
     // Place holder information currently, need wifi module
     // to be able to write functions to retrieve actual information
-    LCD.DrawText(ModeScreenColor,DefaultBGColor,10,40,"Wifi Enabled");
+    LCD.DrawText(ModeScreenColor,DefaultBGColor,10,30,"Wifi");
 #endif  // wifi
+#ifdef RelayExp
+	LCD.DrawText(ModeScreenColor,DefaultBGColor,10,40,InstalledRelayExpansionModules);
+#endif  // RelayExp
 }
 #endif  // VersionMenu
 
@@ -815,7 +793,7 @@ void ReefAngelClass::PCLogging()
 	PROGMEMprint(XML_RE_OFF);
 	Serial.print(">");
 #ifdef RelayExp
-	for ( int EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
+	for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
 	{
 		// relay data
 		PROGMEMprint(XML_RE_OPEN);
@@ -876,6 +854,7 @@ void ReefAngelClass::WebBanner()
 	PROGMEMprint(BannerPH);
 	Serial.print(Params.PH, DEC);
 	PROGMEMprint(BannerRelayData);
+	Serial.print("=");
 	// compute the correct relay data, when we force a port on or off, it does not get reflected in the relaydata
 	// so we must compute it based on the mask and send the data to the banner (compute just like when sending the
 	// relay data on the wire)
@@ -883,10 +862,22 @@ void ReefAngelClass::WebBanner()
     TempRelay &= Relay.RelayMaskOff;
     TempRelay |= Relay.RelayMaskOn;
 	Serial.print(TempRelay, DEC);
+#ifdef RelayExp
+	for ( byte x = 0; x < InstalledRelayExpansionModules && x < MAX_RELAY_EXPANSION_MODULES; x++ )
+	{
+		PROGMEMprint(BannerRelayData);
+		Serial.print(x+1, DEC);
+		Serial.print("=");
+		TempRelay = Relay.RelayDataE[x];
+		TempRelay &= Relay.RelayMaskOffE[x];
+		TempRelay |= Relay.RelayMaskOnE[x];
+		Serial.print(TempRelay, DEC);
+	}  // for x
+#endif  // RelayExp
 
 	if ( webbannerqty == WEB_BANNER_QTY )
 	{
-		for ( int i = 0; i < WEB_BANNER_QTY; i++ )
+		for ( byte i = 0; i < WEB_BANNER_QTY; i++ )
 		{
 			strcpy_P(buffer, (char *)tagptr++);
 			tagptr += strlen(buffer);
@@ -1106,7 +1097,7 @@ void ReefAngelClass::ShowInterface()
 					// turn on ports
 					Relay.RelayMaskOff = B11111111;
 #ifdef RelayExp
-					for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+					for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
 					{
 						Relay.RelayMaskOffE[i] = B11111111;
 					}
@@ -1135,7 +1126,7 @@ void ReefAngelClass::ShowInterface()
 					// turn on ports
 					Relay.RelayMaskOff = B11111111;
 #ifdef RelayExp
-					for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+					for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
 					{
 						Relay.RelayMaskOffE[i] = B11111111;
 					}
@@ -1619,6 +1610,7 @@ void ReefAngelClass::ProcessButtonPressLights()
 			}
 #endif  // RelayExp
 #ifdef DisplayLEDPWM
+			// TODO should possibly store the PWM value to be reset instead of turning off completely
             // sets PWM to 0%
             PWM.SetActinic(0);
             PWM.SetDaylight(0);

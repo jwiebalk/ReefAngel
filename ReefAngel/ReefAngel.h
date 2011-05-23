@@ -22,8 +22,7 @@
 #ifndef	ReefAngel_h
 #define ReefAngel_h
 
-#define ReefAngel_Version "0.8.5.14"
-//#define DEV_MODE  // Developer Mode
+#define ReefAngel_Version "0.8.5.15"
 
 #include <ReefAngel_Globals.h>
 #include <ReefAngel_EEPROM.h>  // NOTE read/write internal memory
