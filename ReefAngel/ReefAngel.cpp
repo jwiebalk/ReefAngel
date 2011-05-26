@@ -1085,6 +1085,7 @@ void ReefAngelClass::ShowInterface()
 				{
 					LCD.Clear(DefaultBGColor,60+(intlength(t)*5),100,100,108);
 					LCD.DrawText(DefaultFGColor,DefaultBGColor,60,100,t);
+					delay(200);  // to keep from redraw flicker on timer
 				}
 				else
 				{
