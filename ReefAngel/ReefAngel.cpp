@@ -275,6 +275,7 @@ void ReefAngelClass::Init()
 	setSyncProvider(RTC.get);   // the function to get the time from the RTC
 	setSyncInterval(SECS_PER_HOUR);  // Changed to sync every hour.
 	RAStart=now();
+	LastStart = RAStart;  // Set the time normal mode is started
 	LCD.BacklightOn();
 	Relay.AllOff();
 	/*
@@ -323,6 +324,9 @@ void ReefAngelClass::Init()
     //                 Port 87654321
     OverheatShutoffPorts = B00000100;
 
+    // DelayedOn ports, do not manually modify this variable, let the DelayedOn function modify it
+    DelayedOnPorts = 0;
+
 #ifdef RelayExp
 	// Expansion Module ports to toggle, defaults to not toggle any ports
 	for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
@@ -330,6 +334,7 @@ void ReefAngelClass::Init()
 		FeedingModePortsE[i] = 0;
 		WaterChangePortsE[i] = 0;
 		OverheatShutoffPortsE[i] = 0;
+		DelayedOnPortsE[i] = 0;
 #ifndef RemoveAllLights
 		LightsOnPortsE[i] = 0;
 #endif  // RemoveAllLights
@@ -392,6 +397,30 @@ void ReefAngelClass::SetTemperatureUnit(byte unit)
     // 0 (or DEGREE_F) for farenheit
     // 1 (or DEGREE_C) for celcius
     TempSensor.unit = unit;
+}
+
+void ReefAngelClass::DelayedOn(byte OnRelay, byte MinuteDelay)
+{
+	/*
+	We need to see if the MinuteDelay since LastStart has elapsed before we can turn on our port
+
+	Set the DelayedOnPorts flag indicating that it's a delayed on port
+	*/
+    if ( OnRelay < 9 ) bitSet(DelayedOnPorts, OnRelay-1);
+#ifdef RelayExp
+	if ( (OnRelay > 10) && (OnRelay < 89) )
+	{
+		byte EID = byte(OnRelay/10);
+		bitSet(DelayedOnPortsE[EID-1],(OnRelay%10)-1);
+	}
+#endif  // RelayExp
+
+	uint16_t x = MinuteDelay;
+	x *= SECS_PER_MIN;
+	if ( now()-LastStart > x )
+	{
+		Relay.On(OnRelay);
+	}
 }
 
 void ReefAngelClass::StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute)
@@ -1082,6 +1111,7 @@ void ReefAngelClass::ShowInterface()
 					bDone = true;
 				}
 
+				LastStart = now();  // Set the time normal mode is started
 				if ( Joystick.IsButtonPressed() )
 				{
 					// joystick button pressed, so we stop the feeding mode
@@ -1094,18 +1124,21 @@ void ReefAngelClass::ShowInterface()
 					Timer[3].Start();  // start LCD shutoff timer
 
 					// Restore the ports
+#ifdef SaveRelayState
+					Relay.RelayData = CurrentRelayState;
+#endif  // SaveRelayState
+
 					// turn on ports
 					Relay.RelayMaskOff = B11111111;
+					// Compare the delayed on ports with the previous port states
+					Relay.RelayData &= ~(FeedingModePorts & DelayedOnPorts);
 #ifdef RelayExp
 					for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
 					{
 						Relay.RelayMaskOffE[i] = B11111111;
+						Relay.RelayDataE[i] &= ~(FeedingModePortsE[i] & DelayedOnPortsE[i]);
 					}
 #endif  // RelayExp
-					// restore ports
-#ifdef SaveRelayState
-					Relay.RelayData = CurrentRelayState;
-#endif  // SaveRelayState
 					Relay.Write();
 
 					// Draw main screen
@@ -1117,23 +1150,28 @@ void ReefAngelClass::ShowInterface()
 			}
 			case WATERCHANGE_MODE:
 			{
+				LastStart = now();  // Set the time normal mode is started
 				if ( Joystick.IsButtonPressed() )
 				{
 					// we're finished, so let's clear the screen and return
 					ClearScreen(DefaultBGColor);
 					Timer[3].Start();  // start LCD shutoff timer
 
+#ifdef SaveRelayState
+					Relay.RelayData = CurrentRelayState;
+#endif  // SaveRelayState
+
 					// turn on ports
 					Relay.RelayMaskOff = B11111111;
+					// Compare the delayed on ports with the previous port states
+					Relay.RelayData &= ~(WaterChangePorts & DelayedOnPorts);
 #ifdef RelayExp
 					for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
 					{
 						Relay.RelayMaskOffE[i] = B11111111;
+						Relay.RelayDataE[i] &= ~(WaterChangePortsE[i] & DelayedOnPortsE[i]);
 					}
 #endif  // RelayExp
-#ifdef SaveRelayState
-					Relay.RelayData = CurrentRelayState;
-#endif  // SaveRelayState
 					Relay.Write();
 
 					// Draw main screen

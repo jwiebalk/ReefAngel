@@ -442,6 +442,12 @@ PH: 7 - 10
 // external globally defined variables
 extern byte ButtonPress;  // Defined in ReefCentral.cpp, used for joystick button presses
 extern OneWire ds;  // Defined in TempSensor.cpp, used for TempSensorClass
+// delayed on variables
+static uint32_t LastStart;
+static byte DelayedOnPorts;
+#ifdef RelayExp
+static byte DelayedOnPortsE[MAX_RELAY_EXPANSION_MODULES];
+#endif  // RelayExp
 
 // globally useable functions
 byte intlength(int intin);
