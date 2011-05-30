@@ -223,6 +223,24 @@ Approximately 94, 176 or 270 additional bytes needed when increasing InstalledRe
 //#define RelayExp
 //#define InstalledRelayExpansionModules	1
 
+/*
+This will enable the ability for people to create a custom main screen with the complete menu system
+and without having to modify the libraries.
+Once this is defined/enabled, you MUST create the following functions inside your PDE file.  If you do
+not, then you will receive errors about missing functions.  If you create them and leave them blank,
+you will have a blank main screen.  :)
+
+void DrawCustomMain()
+{
+}
+void DrawCustomGraph()
+{
+}
+
+Just copy and paste the framework of the functions above into your PDE file.
+
+If you do not want a graph to be displayed, you can leave it blank/empty.
+*/
 #define CUSTOM_MAIN
 
 #endif  // __REEFANGEL_FEATURES_H__
