@@ -72,6 +72,8 @@ private:
 	void SendData(byte data);
 	void ShiftBits(byte b);
 	void DrawTextLine(byte fcolor, byte bcolor,byte x, byte y,char c);
+
+public:
 	void DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte decimal);
 	void DrawSingleGraph(byte color, byte x, byte y, int EEaddr);
 

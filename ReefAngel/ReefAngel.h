@@ -189,6 +189,10 @@ private:
 
 };
 
+#ifdef CUSTOM_MAIN
+void DrawCustomMain();
+void DrawCustomGraph();
+#endif  // CUSTOM_MAIN
 
 extern ReefAngelClass ReefAngel;  // make an instance for the user
 

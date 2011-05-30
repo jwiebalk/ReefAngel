@@ -1019,6 +1019,9 @@ void ReefAngelClass::ShowInterface()
 				}
 
 				pingSerial();
+#ifdef CUSTOM_MAIN
+				DrawCustomMain();
+#else
 				// display everything on the home screen except the graph
 				// the graph is drawn/updated when we exit the main menu & when the parameters are saved
 				LCD.DrawDate(6, 112);
@@ -1033,6 +1036,8 @@ void ReefAngelClass::ShowInterface()
 				TempRelay &= Relay.RelayMaskOff;
 				TempRelay |= Relay.RelayMaskOn;
 				LCD.DrawOutletBox(12, 93, TempRelay);
+#endif  // CUSTOM_MAIN
+
 				pingSerial();
 
 				// Process any checks/tests/events that can happen while displaying the home screen
@@ -1072,7 +1077,11 @@ void ReefAngelClass::ShowInterface()
 					pingSerial();
 					LCD.Clear(DefaultBGColor,0,0,1,1);
 					if ((taddr%10)==0) InternalMemory.T1Pointer_write(taddr);
+#ifdef CUSTOM_MAIN
+					DrawCustomGraph();
+#else
 					LCD.DrawGraph(5, 5);
+#endif  // CUSTOM_MAIN
 				}
 
 				// if temp2 exceeds overheat temp
@@ -1145,7 +1154,11 @@ void ReefAngelClass::ShowInterface()
 					// Draw main screen
 					SelectedMenuItem = DEFAULT_MENU_ITEM;
 					DisplayedMenu = DEFAULT_MENU;
+#ifdef CUSTOM_MAIN
+					DrawCustomGraph();
+#else
 					LCD.DrawGraph(5, 5);
+#endif  // CUSTOM_MAIN
 				}
 				break;
 			}
@@ -1178,7 +1191,11 @@ void ReefAngelClass::ShowInterface()
 					// Draw main screen
 					SelectedMenuItem = DEFAULT_MENU_ITEM;
 					DisplayedMenu = DEFAULT_MENU;
+#ifdef CUSTOM_MAIN
+					DrawCustomGraph();
+#else
 					LCD.DrawGraph(5, 5);
+#endif  // CUSTOM_MAIN
 				}
 				break;
 			}
@@ -1409,7 +1426,11 @@ void ReefAngelClass::ProcessButtonPress()
             ClearScreen(DefaultBGColor);
             bResetMenuTimeout = false;
             // we are exiting the menu, so draw the graph
-            LCD.DrawGraph(5, 5);  // Redraw graphic of params
+#ifdef CUSTOM_MAIN
+			DrawCustomGraph();
+#else
+			LCD.DrawGraph(5, 5);  // Redraw graphic of params
+#endif  // CUSTOM_MAIN
             break;
         }
     }
@@ -1527,7 +1548,11 @@ void ReefAngelClass::ProcessButtonPressMain()
             // disable the menu, display main screen
             showmenu = false;
             // When we exit the main menu, we will redraw the graph
-            LCD.DrawGraph(5, 5);  // Redraw graphic of params
+#ifdef CUSTOM_MAIN
+			DrawCustomGraph();
+#else
+			LCD.DrawGraph(5, 5);  // Redraw graphic of params
+#endif  // CUSTOM_MAIN
             break;
         }
     }

@@ -223,5 +223,6 @@ Approximately 94, 176 or 270 additional bytes needed when increasing InstalledRe
 //#define RelayExp
 //#define InstalledRelayExpansionModules	1
 
+#define CUSTOM_MAIN
 
 #endif  // __REEFANGEL_FEATURES_H__
