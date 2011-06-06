@@ -241,6 +241,6 @@ Just copy and paste the framework of the functions above into your PDE file.
 
 If you do not want a graph to be displayed, you can leave it blank/empty.
 */
-#define CUSTOM_MAIN
+//#define CUSTOM_MAIN
 
 #endif  // __REEFANGEL_FEATURES_H__
