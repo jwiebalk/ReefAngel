@@ -25,6 +25,7 @@
 #include <Wire.h>
 #include <ReefAngel_EEPROM.h>
 #include <ReefAngel_Memory.h>
+#include <avr/pgmspace.h>
 
 // Define Software SPI Pin Signal
 
@@ -112,7 +113,7 @@
 #define BL1 sbi(PORTD,BL);
 #endif  // __AVR_ATmega2560__
 
-byte const font[475] = {
+const prog_uchar font[] PROGMEM = {
 0x00 , 0x00 , 0x00 , 0x00 , 0x00 ,
 0x00 , 0x06 , 0x5F , 0x06 , 0x00 ,                      // !
 0x07 , 0x03 , 0x00 , 0x07 , 0x03 ,                      // ,
@@ -283,7 +284,7 @@ void ReefAngel_NokiaLCD::SetBox(byte x1, byte y1, byte x2, byte y2)
 
 void ReefAngel_NokiaLCD::Clear(byte color, byte x1, byte y1, byte x2, byte y2)
 {
-    uint16_t xmin, xmax, ymin, ymax;
+    uint8_t xmin, xmax, ymin, ymax;
     uint16_t i;
     unsigned int icolor;
     icolor = ~color;
@@ -398,38 +399,33 @@ void ReefAngel_NokiaLCD::BacklightOff()
 }
 
 
-void ReefAngel_NokiaLCD::DrawTextLine(byte fcolor, byte bcolor,byte x, byte y,char c)
+void ReefAngel_NokiaLCD::DrawTextLine(byte fcolor, byte bcolor, byte x, byte y,char c)
 {
-    //unsigned int i;
     byte i;
-    unsigned int ifcolor, ibcolor;
-    ifcolor = ~fcolor;
-    ibcolor = ~bcolor;
     SetBox(x,y,x,y+7);
     SendCMD(RAMWR);
     for(i=0;i<8;i++)
     {
         if (1<<i & c)
-            SendData(ifcolor);
+            SendData(~fcolor);
         else
-            SendData(ibcolor);
+            SendData(~bcolor);
     }
 }
 
-void ReefAngel_NokiaLCD::DrawText(byte fcolor, byte bcolor, byte x, byte y,char *text)
+void ReefAngel_NokiaLCD::DrawText(byte fcolor, byte bcolor, byte x, byte y, char *text)
 {
     byte c;
-    byte t;
-    unsigned int i;
-    unsigned int j;
+    int t;
+	int j;
     while(*text != 0)
     {
         t = *text;
-        i = t - 32;
-        i = i * 5;
-        for(j = i; j < i+5; j++)
+        t -= 32;
+        t *= 5;
+        for(j = t; j < t+5; j++)
         {
-            c = font[j];
+            c = pgm_read_byte_near(font + j);
             DrawTextLine(fcolor, bcolor, x++, y, c);
         }
         DrawTextLine(fcolor, bcolor, x++, y, 0);
@@ -460,9 +456,6 @@ void ReefAngel_NokiaLCD::DrawText(byte fcolor, byte bcolor, byte x, byte y,long 
 
 void ReefAngel_NokiaLCD::PutPixel(byte color, byte x, byte y)
 {
-    unsigned int icolor;
-    icolor = ~color;
-
     SendCMD(CASET);   // page start/end ram
     SendData(x);      // for some reason starts at 2
     SendData(x+1);
@@ -471,7 +464,7 @@ void ReefAngel_NokiaLCD::PutPixel(byte color, byte x, byte y)
     SendData(y);
     SendData(y+1);
     SendCMD(RAMWR);
-    SendData(icolor);
+    SendData(~color);
 }
 
 void ReefAngel_NokiaLCD::SetContrast(byte Contrast)
