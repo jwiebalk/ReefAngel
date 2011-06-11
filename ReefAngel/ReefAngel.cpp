@@ -497,10 +497,15 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 
 void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte byteHrInterval)
 {
-    // if switch is active, stop the pump because the resevoir is full
-    // when the switch is not active, we need to turn on the relay to fill up resevoir
+	/*
+	If the switch is active, the float is opposite of the 2 wires,
+		If we have an hour interval, check if we can run
+		If we can run, activate the pump because we need water
+	Otherwise the switch is not active, we need to see if we are currently topping
+		If we are topping, then we need to stop the pump because we are topped off
+	*/
     bool bCanRun = true;
-    static int iLastTop = 0;
+    static int iLastTop = -1;
     if ( byteHrInterval )
     {
         int iSafeTop = NumMins(hour(), minute()) - iLastTop;
@@ -508,7 +513,7 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte 
         {
             iSafeTop += 1440;
         }
-        if ( iSafeTop < (byteHrInterval * 60) )
+        if ( (iSafeTop < (byteHrInterval * 60)) && (iLastTop >= 0) )
         {
             bCanRun = false;
         }
@@ -526,12 +531,6 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte 
     t *= 1000;
     if ( ato->IsActive() )
     {
-        iLastTop = NumMins(hour(), minute());
-        ato->StopTopping();
-        Relay.Off(ATORelay);
-    }
-    else if ( !ato->IsTopping() )
-    {
         if ( bCanRun )
         {
             ato->Timer = millis();
@@ -539,6 +538,17 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte 
             Relay.On(ATORelay);
         }
     }
+    else
+    {
+    	// not active
+		if ( ato->IsTopping() )
+		{
+			iLastTop = NumMins(hour(), minute());
+			ato->StopTopping();
+			Relay.Off(ATORelay);
+		}
+    }
+
     if ( (millis() - ato->Timer > t) && ato->IsTopping() )
     {
         LED.On();
