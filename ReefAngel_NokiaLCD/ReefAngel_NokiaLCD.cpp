@@ -529,9 +529,9 @@ void ReefAngel_NokiaLCD::DrawOutletBox(byte x, byte y,byte RelayData)
             bcolor = OutletOnBGColor;
             fcolor = OutletOnFGColor;
         }
-        Clear(bcolor,x+1+(a*13),y+1,x+14+(a*13),y+11);
+        Clear(bcolor,x+(a*13),y+1,x+13+(a*13),y+11);
         itoa(a+1,temp,10);
-        DrawText(fcolor,bcolor,x+5+(a*13),y+3,temp);
+        DrawText(fcolor,bcolor,x+4+(a*13),y+3,temp);
     }
 }
 
