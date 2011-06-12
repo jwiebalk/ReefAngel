@@ -120,7 +120,7 @@ When this or SetupExtras are defined, the Timeouts menu is included.
 Timeouts menu requires approximately 710 bytes
 This feature requires approximately 190 bytes if SetupExtras is defined
 */
-#define ATOSetup
+//#define ATOSetup
 
 /*
 This item will remove all lighting functionality from the controller.  It is the equivalent to
@@ -241,6 +241,8 @@ Just copy and paste the framework of the functions above into your PDE file.
 
 If you do not want a graph to be displayed, you can leave it blank/empty.
 */
-//#define CUSTOM_MAIN
+#define CUSTOM_MAIN
+
+#define NUMBERS_16x16
 
 #endif  // __REEFANGEL_FEATURES_H__

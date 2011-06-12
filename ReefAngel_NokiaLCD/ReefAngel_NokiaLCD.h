@@ -44,6 +44,9 @@ public:
 	void BacklightOn();
 	void BacklightOff();
 	void Clear(byte color, byte x1, byte y1, byte x2, byte y2);
+#ifdef NUMBERS_16x16
+	void DrawHugeNumbers(byte fcolor, byte bcolor, byte x, byte y, char *text);
+#endif  // NUMBERS_16x16
 	void DrawText(byte fcolor, byte bcolor, byte x, byte y, char *text);
 	void DrawText(byte fcolor, byte bcolor, byte x, byte y, int text);
 	void DrawText(byte fcolor, byte bcolor, byte x, byte y, byte text);
@@ -71,7 +74,10 @@ private:
 	void SendCMD(byte data);
 	void SendData(byte data);
 	void ShiftBits(byte b);
-	void DrawTextLine(byte fcolor, byte bcolor,byte x, byte y,char c);
+	void DrawTextLine(byte fcolor, byte bcolor, byte x, byte y, char c);
+#ifdef NUMBERS_16x16
+	void DrawHugeNumbersLine(byte fcolor, byte bcolor, byte x, byte y, uint16_t c);
+#endif  // NUMBERS_16x16
 
 public:
 	void DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte decimal);

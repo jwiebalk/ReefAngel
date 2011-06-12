@@ -214,6 +214,22 @@ const prog_uchar font[] PROGMEM = {
 0x02 , 0x01 , 0x02 , 0x01 , 0x00                        // ~
 };
 
+#ifdef NUMBERS_16x16
+const prog_uint16_t num_16x16[] PROGMEM = {
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x7000, 0x7000, 0x7000, 0x7000, 0x0000, 0x0000,  // .
+0xC000, 0xC000, 0x3000, 0x3000, 0x0C00, 0x0C00, 0x0300, 0x0300, 0x00C0, 0x00C0, 0x0030, 0x0030, 0x000C, 0x000C, 0x0003, 0x0003,  // /
+0x0000, 0x1FF8, 0x3FFC, 0x6006, 0xC003, 0xC003, 0xC003, 0xC3C3, 0xC3C3, 0xC003, 0xC003, 0xC003, 0x6006, 0x3FFC, 0x1FF8, 0x0000,  // 0
+0x0000, 0xC020, 0xC030, 0xC038, 0xC03C, 0xC03E, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xC000, 0xC000, 0xC000, 0xC000, 0xC000, 0x0000,  // 1
+0x0000, 0xF008, 0xFC0C, 0xDE0E, 0xC707, 0xC303, 0xC183, 0xC183, 0xC183, 0xC1C3, 0xC0C3, 0xC0C7, 0xE0FE, 0xE07C, 0xE038, 0x0000,  // 2
+0x0000, 0x1008, 0x300C, 0x700E, 0xE007, 0xC183, 0xC183, 0xC183, 0xC183, 0xC183, 0xC183, 0xE3C7, 0x77EE, 0x3E7C, 0x1C38, 0x0000,  // 3
+0x0000, 0x0780, 0x07C0, 0x07E0, 0x0670, 0x0638, 0x061C, 0xC60E, 0xC607, 0xFFFF, 0xFFFF, 0xFFFF, 0xC600, 0xC600, 0x0000, 0x0000,  // 4
+0x0000, 0x607F, 0xE0FF, 0xC1FF, 0xC183, 0xC183, 0xC183, 0xC183, 0xC183, 0xC183, 0xC183, 0xE383, 0x7703, 0x3E03, 0x1C03, 0x0000,  // 5
+0x0000, 0x1FC0, 0x3FF0, 0x77F8, 0xE3BC, 0xC19E, 0xC18E, 0xC187, 0xC183, 0xC183, 0xC183, 0xE383, 0x7700, 0x3E00, 0x1C00, 0x0000,  // 6
+0x0000, 0x0002, 0x0003, 0x0003, 0x0003, 0xFE03, 0xFF03, 0xFF83, 0x01C3, 0x00E3, 0x0073, 0x003B, 0x001F, 0x000F, 0x0006, 0x0000,  // 7
+0x0000, 0x1C38, 0x3E7C, 0x77EE, 0xE3C7, 0xC183, 0xC183, 0xC183, 0xC183, 0xC183, 0xC183, 0xE3C7, 0x77EE, 0x3E7C, 0x1C38, 0x0000,  // 8
+0x0000, 0x0038, 0x007C, 0x00EE, 0xC1C7, 0xC183, 0xC183, 0xC183, 0xE183, 0x7183, 0x7983, 0x3DC7, 0x1FEE, 0x0FFC, 0x03F8, 0x0000,  // 9
+};
+#endif  // NUMBERS_16x16
 
 ReefAngel_NokiaLCD::ReefAngel_NokiaLCD()
 {
@@ -256,19 +272,20 @@ void ReefAngel_NokiaLCD::ShiftBits(byte b)
     }
 }
 
-void ReefAngel_NokiaLCD::SendData(byte data) {
+void ReefAngel_NokiaLCD::SendData(byte data)
+{
     CLK0
     SDA1
     CLK1
     ShiftBits(data);
 }
 
-void ReefAngel_NokiaLCD::SendCMD(byte data) {
+void ReefAngel_NokiaLCD::SendCMD(byte data)
+{
     CLK0
     SDA0
     CLK1
     ShiftBits(data);
-
 }
 
 void ReefAngel_NokiaLCD::SetBox(byte x1, byte y1, byte x2, byte y2)
@@ -286,8 +303,6 @@ void ReefAngel_NokiaLCD::Clear(byte color, byte x1, byte y1, byte x2, byte y2)
 {
     uint8_t xmin, xmax, ymin, ymax;
     uint16_t i;
-    unsigned int icolor;
-    icolor = ~color;
 
     // best way to create a filled rectangle is to define a drawing box
     // and loop two pixels at a time
@@ -319,7 +334,7 @@ void ReefAngel_NokiaLCD::Clear(byte color, byte x1, byte y1, byte x2, byte y2)
         //SendData((color << 4) | ((color & 0xF0) >> 4));
         //SendData(((color >> 4) & 0xF0) | (color & 0x0F));
         //SendData((color & 0xF0) | (color >> 8));
-        SendData(icolor);
+        SendData(~color);
     }
 }
 
@@ -398,6 +413,39 @@ void ReefAngel_NokiaLCD::BacklightOff()
     BL0
 }
 
+#ifdef NUMBERS_16x16
+void ReefAngel_NokiaLCD::DrawHugeNumbersLine(byte fcolor, byte bcolor, byte x, byte y, uint16_t c)
+{
+	int i;
+	SetBox(x,y,x,y+15);
+	SendCMD(RAMWR);
+	for(i=0;i<16;i++)
+	{
+		if (1<<i & c)
+			SendData(~fcolor);
+		else
+			SendData(~bcolor);
+	}
+}
+
+void ReefAngel_NokiaLCD::DrawHugeNumbers(byte fcolor, byte bcolor, byte x, byte y, char* text)
+{
+	uint16_t c;
+	int t;
+	while(*text != 0)
+	{
+		t=*text;
+		t-=46;
+		t*=16;
+		for(int j = t; j < t+16; j++)
+		{
+			c = pgm_read_word_near(num_16x16 + j);
+			DrawHugeNumbersLine(fcolor, bcolor, x++, y, c);
+		}
+		text++;
+	}
+}
+#endif  // NUMBERS_16x16
 
 void ReefAngel_NokiaLCD::DrawTextLine(byte fcolor, byte bcolor, byte x, byte y,char c)
 {
@@ -553,7 +601,7 @@ void ReefAngel_NokiaLCD::DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y
 }
 
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
-void ReefAngel_NokiaLCD::DrawMonitor(byte x, byte y, ParamsStruct Params, byte DaylightPWMValue, byte ActnicPWMValue)
+void ReefAngel_NokiaLCD::DrawMonitor(byte x, byte y, ParamsStruct Params, byte DaylightPWMValue, byte ActinicPWMValue)
 #else  // defined DisplayLEDPWM && ! defined RemoveAllLights
 void ReefAngel_NokiaLCD::DrawMonitor(byte x, byte y, ParamsStruct Params)
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
@@ -570,7 +618,7 @@ void ReefAngel_NokiaLCD::DrawMonitor(byte x, byte y, ParamsStruct Params)
     DrawText(DPColor,DefaultBGColor,x+60,y+10,"DP:");
     DrawSingleMonitor(DaylightPWMValue, DPColor, x+78, y+10,1);
     DrawText(APColor,DefaultBGColor,x+60,y+20,"AP:");
-    DrawSingleMonitor(ActnicPWMValue, APColor, x+78, y+20,1);
+    DrawSingleMonitor(ActinicPWMValue, APColor, x+78, y+20,1);
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
 }
 
