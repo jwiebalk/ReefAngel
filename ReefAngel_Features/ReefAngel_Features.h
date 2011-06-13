@@ -243,4 +243,58 @@ If you do not want a graph to be displayed, you can leave it blank/empty.
 */
 //#define CUSTOM_MAIN
 
+
+/*
+This is for the simplified menu.  All the additional / extra menus have been stripped down.
+The bare basics are only left for operating on the controller.  This is useful for those who want
+all the extra memory they can get on the controller.  Also for those who hardcode their values or
+use the Client Suite (or other app or SetInternalMemory PDE) to update their memory values.
+
+The menu system only contains:
+	- Feeding Mode
+	- Water Change Mode
+	- ATO Clear
+	- Overheat Clear
+	- PH Calibration
+	- Date / Time Setup (ability to be removed)
+	- Version Menu (ability to be removed)
+
+When this is enabled, the following other features are ignored, you can still use the functions,
+you just won't have a setup menu for them:
+	- StandardLightsSetup
+	- MetalHalideSetup
+	- ATOSetup
+	- DosingPumpSetup
+	- DosingPumpIntervalSetup
+	- WavemakerSetup
+	- SingleATOSetup
+
+The following features are available for use with this feature:
+	- DisplayLEDPWM / RemoveAllLights - shows or hides the LED PWM values on the main screen, no setup menu
+	- wifi
+	- SaveRelayState
+	- DirectTempSensor
+	- VersionMenu
+	- DateTimeSetup
+	- DisplayImages
+	- CUSTOM_MAIN
+	- COLORS_PDE
+	- RelayExp
+	- InstalledRelayExpansionModules
+
+The following features partially work.  There is no setup menu for them, BUT if you want to use
+the Internal Memory values for them you must enable the features:
+	- SetupExtras (Feeding Timer and LCD Timeout Timer)
+	- OverheatSetup (Change the overheat temperature)
+
+Approximately 4566 bytes removed when using the Simplified Menu
+*/
+#define SIMPLE_MENU
+
+/*
+This option allows for the user to handle the menu in their PDE file
+
+See the comments about SIMPLE_MENU for what features will work and what will not.
+*/
+//#define CUSTOM_MENU
 #endif  // __REEFANGEL_FEATURES_H__

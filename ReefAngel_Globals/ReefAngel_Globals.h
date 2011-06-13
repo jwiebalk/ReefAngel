@@ -241,6 +241,13 @@ When adding more variables, use the previous value plus 1 or 2
 #endif  // RelayExp
 
 // Menu Defines
+#ifdef SIMPLE_MENU
+// This overrides everything else with the menus
+// If it's enabled there is only 1 menu
+#define Total_Menus			1
+
+#else  // SIMPLE_MENU
+// Standard Menu Checks
 #if defined SetupExtras || defined ATOSetup
 #ifndef RemoveAllLights
 #define Total_Menus         5    // total number of menus
@@ -254,6 +261,9 @@ When adding more variables, use the previous value plus 1 or 2
 #define Total_Menus         3
 #endif  // RemoveAllLights
 #endif  // if defined SetupExtras || defined ATOSetup
+#endif  // SIMPLE_MENU
+
+
 #define MENU_TIMEOUT        10   // timeout for menu to return to main screen
 #define MENU_HEADING_SIZE   25   // pixels used for Menu Heading
 #define MENU_ITEM_HEIGHT    9    // pixel height of a line of text

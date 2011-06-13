@@ -139,6 +139,11 @@ public:
 	void WebBanner();
 #endif  // wifi
 
+	void FeedingModeStart();
+	void WaterChangeModeStart();
+	void ATOClear();
+	void OverheatClear();
+
     // Nested Menu Functions
     void InitMenus();
     void ShowInterface();
@@ -147,6 +152,8 @@ public:
     void DisplayMenuEntry(char *text);
     void ProcessButtonPress();
     void ProcessButtonPressMain();
+
+#ifndef SIMPLE_MENU
     void ProcessButtonPressSetup();
 #ifndef RemoveAllLights
     void ProcessButtonPressLights();
@@ -161,13 +168,17 @@ public:
                      char* unit, char* subunit, char* title,
                      char* prefix1, char* prefix2);
     void SetupLightsOptionDisplay(bool bMetalHalide);
+#endif  // SIMPLE_MENU
+
     void SetupCalibratePH();
 #ifdef DateTimeSetup
     void SetupDateTime();
 #endif  // DateTimeSetup
+#ifndef SIMPLE_MENU
 #ifdef DosingPumpSetup
     void SetupDosingPump();
 #endif  // DosingPumpSetup
+#endif  // SIMPLE_MENU
 
 private:
 	bool showmenu;

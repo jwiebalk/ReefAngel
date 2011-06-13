@@ -42,6 +42,7 @@ SIGNAL(PCINT0_vect) {
 // the total number must match the max number of menus
 enum Menus {
     MainMenu,
+#ifndef SIMPLE_MENU
     SetupMenu,
 #ifndef RemoveAllLights
     LightsMenu,
@@ -50,7 +51,52 @@ enum Menus {
 #if defined SetupExtras || defined ATOSetup
     TimeoutsMenu
 #endif  // if defined SetupExtras || defined ATOSetup
+#endif  // SIMPLE_MENU
 };
+
+#ifdef SIMPLE_MENU
+// This is the simplified menu
+// Main Menu
+prog_char mainmenu_0_label[] PROGMEM = "Feeding";
+prog_char mainmenu_1_label[] PROGMEM = "Water Change";
+prog_char mainmenu_2_label[] PROGMEM = "ATO Clear";
+prog_char mainmenu_3_label[] PROGMEM = "Overheat Clear";
+prog_char mainmenu_4_label[] PROGMEM = "PH Calibration";
+#ifdef DateTimeSetup
+prog_char mainmenu_5_label[] PROGMEM = "Date / Time";
+#endif  // DateTimeSetup
+#ifdef VersionMenu
+prog_char mainmenu_6_label[] PROGMEM = "Version";
+#endif  // VersionMenu
+PROGMEM const char *mainmenu_items[] = {
+                    mainmenu_0_label,
+                    mainmenu_1_label,
+                    mainmenu_2_label,
+                    mainmenu_3_label,
+                    mainmenu_4_label,
+#ifdef DateTimeSetup
+                    mainmenu_5_label,
+#endif  // DateTimeSetup
+#ifdef VersionMenu
+                    mainmenu_6_label
+#endif  // VersionMenu
+                    };
+enum MainMenuItem {
+    MainMenu_FeedingMode,
+    MainMenu_WaterChangeMode,
+    MainMenu_ATOClear,
+    MainMenu_OverheatClear,
+    MainMenu_PHCalibration,
+#ifdef DateTimeSetup
+    MainMenu_DateTime,
+#endif  // DateTimeSetup
+#ifdef VersionMenu
+    MainMenu_Version
+#endif  // VersionMenu
+};
+
+#else  // SIMPLE_MENU
+// This is the standard menu
 
 // Main Menu
 prog_char mainmenu_0_label[] PROGMEM = "Feeding";
@@ -250,6 +296,8 @@ enum TimeoutsMenuItem {
 #endif  // SetupExtras
 };
 #endif // if defined SetupExtras || defined ATOSetup
+
+#endif // SIMPLE_MENU
 
 
 ReefAngelClass::ReefAngelClass()
@@ -946,11 +994,79 @@ void ReefAngelClass::WebBanner()
 }
 #endif  // wifi
 
+void ReefAngelClass::FeedingModeStart()
+{
+	// turn off ports
+#ifdef SaveRelayState
+	// TODO Test SaveRelayState
+	byte CurrentRelayState = Relay.RelayData;
+#endif  // SaveRelayState
+	Relay.RelayMaskOff = ~FeedingModePorts;
+#ifdef RelayExp
+	byte i;
+	for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+	{
+		Relay.RelayMaskOffE[i] = ~FeedingModePortsE[i];
+	}
+#endif  // RelayExp
+	Relay.Write();
+	LCD.DrawText(ModeScreenColor, DefaultBGColor, 30, 10, "Feeding Mode");
+	Timer[0].Start();  //Start Feeding Mode timer
+#ifdef DisplayImages
+	LCD.DrawEEPromImage(40,50, 40, 30, I2CEEPROM2, I2CEEPROM2_Feeding);
+#endif  // DisplayImages
+}
+
+void ReefAngelClass::WaterChangeModeStart()
+{
+	// turn off ports
+#ifdef SaveRelayState
+	// TODO Test SaveRelayState
+	byte CurrentRelayState = Relay.RelayData;
+#endif  // SaveRelayState
+	Relay.RelayMaskOff = ~WaterChangePorts;
+#ifdef RelayExp
+	byte i;
+	for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+	{
+		Relay.RelayMaskOffE[i] = ~WaterChangePortsE[i];
+	}
+#endif  // RelayExp
+	Relay.Write();
+	// Display the water change mode
+	LCD.DrawText(ModeScreenColor, DefaultBGColor, 20, 10, "Water Change Mode");
+#ifdef DisplayImages
+	LCD.DrawEEPromImage(51,55, 40, 30, I2CEEPROM2, I2CEEPROM2_Water_Change);
+#endif  // DisplayImages
+}
+
+void ReefAngelClass::ATOClear()
+{
+	LED.Off();
+	LowATO.StopTopping();
+	HighATO.StopTopping();
+}
+
+void ReefAngelClass::OverheatClear()
+{
+	LED.Off();
+	Relay.RelayMaskOff = B11111111;
+#ifdef RelayExp
+	for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+	{
+		Relay.RelayMaskOffE[i] = B11111111;
+	}
+#endif  // RelayExp
+	Relay.Write();
+}
+
 void ReefAngelClass::InitMenus()
 {
     // loads all the menus
     menusptr[MainMenu] = pgm_read_word(&(mainmenu_items[0]));
     menuqtysptr[MainMenu] = SIZE(mainmenu_items);
+
+#ifndef SIMPLE_MENU
     menusptr[SetupMenu] = pgm_read_word(&(setupmenu_items[0]));
     menuqtysptr[SetupMenu] = SIZE(setupmenu_items);
 #ifndef RemoveAllLights
@@ -963,6 +1079,7 @@ void ReefAngelClass::InitMenus()
     menusptr[TimeoutsMenu] = pgm_read_word(&(timeoutsmenu_items[0]));
     menuqtysptr[TimeoutsMenu] = SIZE(timeoutsmenu_items);
 #endif  // if defined SetupExtras || defined ATOSetup
+#endif  // SIMPLE_MENU
 
     // initialize menus
     PreviousMenu = DEFAULT_MENU;
@@ -1347,6 +1464,8 @@ void ReefAngelClass::DisplayMenuHeading()
                 strcpy(buffer, "Main:");
             }
             break;
+
+#ifndef SIMPLE_MENU
         case SetupMenu:
             {
                 strcpy(buffer, "Setup:");
@@ -1371,6 +1490,7 @@ void ReefAngelClass::DisplayMenuHeading()
             }
             break;
 #endif  // if defined SetupExtras || defined ATOSetup
+#endif  // SIMPLE_MENU
     }  // switch MenuNum
 
     // clear the line that has the menu heading on it
@@ -1401,6 +1521,8 @@ void ReefAngelClass::ProcessButtonPress()
             ProcessButtonPressMain();
             break;
         }
+
+#ifndef SIMPLE_MENU
         case SetupMenu:
         {
             ProcessButtonPressSetup();
@@ -1425,6 +1547,8 @@ void ReefAngelClass::ProcessButtonPress()
             break;
         }
 #endif  // if defined SetupExtras || defined ATOSetup
+#endif  // SIMPLE_MENU
+
         case EXCEED_TIMEOUT_MENU:
         {
             // we bypass all the other menus when the timeout has exceeded
@@ -1459,55 +1583,51 @@ void ReefAngelClass::ProcessButtonPressMain()
     {
         case MainMenu_FeedingMode:
         {
-            // turn off ports
-#ifdef SaveRelayState
-            // TODO Test SaveRelayState
-            byte CurrentRelayState = Relay.RelayData;
-#endif  // SaveRelayState
-            Relay.RelayMaskOff = ~FeedingModePorts;
-#ifdef RelayExp
-			byte i;
-			for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
-			{
-				Relay.RelayMaskOffE[i] = ~FeedingModePortsE[i];
-			}
-#endif  // RelayExp
-            Relay.Write();
-            // run feeding mode
-            showmenu = false;
-			LCD.DrawText(ModeScreenColor, DefaultBGColor, 30, 10, "Feeding Mode");
-			Timer[0].Start();  //Start Feeding Mode timer
-#ifdef DisplayImages
-			LCD.DrawEEPromImage(40,50, 40, 30, I2CEEPROM2, I2CEEPROM2_Feeding);
-#endif  // DisplayImages
+        	// run feeding mode
+        	FeedingModeStart();
+        	showmenu = false;
 			DisplayedMenu = FEEDING_MODE;
             break;
         }
         case MainMenu_WaterChangeMode:
         {
-            // turn off ports
-#ifdef SaveRelayState
-            // TODO Test SaveRelayState
-            byte CurrentRelayState = Relay.RelayData;
-#endif  // SaveRelayState
-            Relay.RelayMaskOff = ~WaterChangePorts;
-#ifdef RelayExp
-			byte i;
-			for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
-			{
-				Relay.RelayMaskOffE[i] = ~WaterChangePortsE[i];
-			}
-#endif  // RelayExp
-            Relay.Write();
-            showmenu = false;
-            // Display the water change mode
-			LCD.DrawText(ModeScreenColor, DefaultBGColor, 20, 10, "Water Change Mode");
-#ifdef DisplayImages
-			LCD.DrawEEPromImage(51,55, 40, 30, I2CEEPROM2, I2CEEPROM2_Water_Change);
-#endif  // DisplayImages
+        	WaterChangeModeStart();
+        	showmenu = false;
 			DisplayedMenu = WATERCHANGE_MODE;
             break;
         }
+
+
+#ifdef SIMPLE_MENU
+		// Simplified menu
+		case MainMenu_ATOClear:
+		{
+			ATOClear();
+			DisplayMenuEntry("Clear ATO Timeout");
+			showmenu = false;
+			break;
+		}
+		case MainMenu_OverheatClear:
+		{
+			OverheatClear();
+			DisplayMenuEntry("Clear Overheat");
+			showmenu = false;
+			break;
+		}
+		case MainMenu_PHCalibration:
+		{
+			SetupCalibratePH();
+			break;
+		}
+		case MainMenu_DateTime:
+		{
+			SetupDateTime();
+			break;
+		}
+
+#else  // SIMPLE_MENU
+
+		// Standard menus
 #ifndef RemoveAllLights
         case MainMenu_Lights:
         {
@@ -1540,6 +1660,9 @@ void ReefAngelClass::ProcessButtonPressMain()
             DisplayedMenu = SetupMenu;
             break;
         }
+#endif  // SIMPLE_MENU
+
+
 #ifdef VersionMenu
         case MainMenu_Version:
         {
@@ -1568,6 +1691,7 @@ void ReefAngelClass::ProcessButtonPressMain()
     }
 }
 
+#ifndef SIMPLE_MENU
 void ReefAngelClass::ProcessButtonPressSetup()
 {
     showmenu = true;
@@ -1787,15 +1911,7 @@ void ReefAngelClass::ProcessButtonPressTemps()
 #endif  // OverheatSetup
         case TempsMenu_OverheatClr:
         {
-            LED.Off();
-            Relay.RelayMaskOff = B11111111;
-#ifdef RelayExp
-			for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
-			{
-				Relay.RelayMaskOffE[i] = B11111111;
-			}
-#endif  // RelayExp
-            Relay.Write();
+        	OverheatClear();
             DisplayMenuEntry("Clear Overheat");
             showmenu = false;
             break;
@@ -1853,10 +1969,7 @@ void ReefAngelClass::ProcessButtonPressTimeouts()
 #endif  // SingleATOSetup
         case TimeoutsMenu_ATOClear:
         {
-            // Need delay for clearing & returning screen
-            LED.Off();
-            LowATO.StopTopping();
-            HighATO.StopTopping();
+        	ATOClear();
             DisplayMenuEntry("Clear ATO Timeout");
             showmenu = false;
             break;
@@ -2332,6 +2445,8 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
         }
     }
 }
+#endif  // SIMPLE_MENU
+
 
 void ReefAngelClass::SetupCalibratePH()
 {
@@ -2739,6 +2854,7 @@ void ReefAngelClass::SetupDateTime()
 }
 #endif  // DateTimeSetup
 
+#ifndef SIMPE_MENU
 #ifdef DosingPumpSetup
 void ReefAngelClass::SetupDosingPump()
 {
@@ -3039,6 +3155,7 @@ void ReefAngelClass::SetupDosingPump()
     }
 }
 #endif  // DosingPumpSetup
+#endif  // SIMPLE_MENU
 
 
 ReefAngelClass ReefAngel = ReefAngelClass() ;
