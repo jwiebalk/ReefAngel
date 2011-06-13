@@ -289,7 +289,7 @@ the Internal Memory values for them you must enable the features:
 
 Approximately 4566 bytes removed when using the Simplified Menu
 */
-#define SIMPLE_MENU
+//#define SIMPLE_MENU
 
 /*
 This option allows for the user to handle the menu in their PDE file
