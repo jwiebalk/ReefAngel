@@ -265,6 +265,13 @@ void processHTTP()
 			case REQ_M_BYTE:
 			case REQ_M_INT:
 			{
+				int s = 118;
+				P(WebBodyMsg) = SERVER_HEADER_XML;
+				printP(WebBodyMsg);
+				Serial.print(s);
+				P(WebBodyMsg1) = SERVER_HEADER3;
+				printP(WebBodyMsg1);
+
 				// webmemoryloc is location
 				// weboption is value
 				if ( bHasSecondValue && (webmemoryloc >= 0) )
