@@ -137,6 +137,7 @@ void pushbuffer(byte inStr)
             if (strncmp("GET /r", m_pushback, 6)==0) reqtype = -REQ_RELAY;
             if (strncmp("GET /mb", m_pushback, 7)==0) { reqtype = -REQ_M_BYTE; webmemoryloc = -1; bHasSecondValue = false; bHasComma = false;}
             if (strncmp("GET /mi", m_pushback, 7)==0) { reqtype = -REQ_M_INT; webmemoryloc = -1; bHasSecondValue = false; bHasComma = false;}
+            if (strncmp("GET /ma", m_pushback, 6)==0) reqtype = -REQ_M_ALL;
 		}
 	}
 }
@@ -298,21 +299,52 @@ void processHTTP()
 						ReefAngel.Relay.On(p);
 					}
 #endif  // WavemakerSetup
-					Serial.print("<M>OK</M>");
+					PROGMEMprint(XML_M_OPEN);
+					PROGMEMprint(XML_OK);
+					PROGMEMprint(XML_M_CLOSE);
 				}
 				else if ( !bHasSecondValue && (webmemoryloc >= 0) && !bHasComma )
 				{
 					// no second value and no comma, so we read the value from memory
-					Serial.print("<M>");
+					PROGMEMprint(XML_M_OPEN);
 					if ( reqtype == REQ_M_BYTE )
 						Serial.print(InternalMemory.read(webmemoryloc),DEC);
 					else
 						Serial.print(InternalMemory.read_int(webmemoryloc),DEC);
-					Serial.print("</M>");
+					PROGMEMprint(XML_M_CLOSE);
 				}
-				else Serial.print("<M>ERR</M>");
+				else
+				{
+					PROGMEMprint(XML_M_OPEN);
+					PROGMEMprint(XML_ERR);
+					PROGMEMprint(XML_M_CLOSE);
+				}
 				break;
 			}  // REQ_M_BYTE || REQ_M_INT
+			case REQ_M_ALL:
+			{
+				int s = 112;  // start with the base size of the headers
+				/*
+				Send all the data to the client requesting it.  The values will be sent as follows:
+					- wrapped in <M></M> XML tags
+					- individual memory values wrapped in their location XML tags
+						Memory 800, value 20 - <800>20</800>
+
+				An example would be:
+					<M>
+						<800>20</800>
+						<801>0</801>
+						<802>16</802>
+						...
+					</M>
+				*/
+				P(WebBodyMsg) = SERVER_HEADER_XML;
+				printP(WebBodyMsg);
+				//Serial.print(s);
+				P(WebBodyMsg1) = SERVER_HEADER3;
+				printP(WebBodyMsg1);
+				break;
+			}  // REQ_M_ALL
 			default:
 				break;
 		}  // switch reqtype

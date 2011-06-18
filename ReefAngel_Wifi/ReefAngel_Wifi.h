@@ -40,7 +40,13 @@ const prog_char XML_ATOLOW[] PROGMEM = "<ATOLOW>";
 const prog_char XML_ATOHIGH[] PROGMEM = "</ATOLOW><ATOHIGH>";
 const prog_char XML_END[] PROGMEM = "</ATOHIGH></RA>";
 
+
 #ifdef wifi
+const prog_char XML_M_OPEN[] PROGMEM = "<M>";
+const prog_char XML_M_CLOSE[] PROGMEM = "</M>";
+const prog_char XML_OK[] PROGMEM = "OK";
+const prog_char XML_ERR[] PROGMEM = "ERR";
+
 #define SERVER_DENY "HTTP/1.1 401 Access Denied" CRLF "WWW-Authenticate: Basic realm=Reef Angel Controller" SERVER_HEADER2 "0" SERVER_HEADER3
 #define SERVER_HEADER1 "HTTP/1.1 200 OK" CRLF "Server: ReefAngel" CRLF "Cache-Control: no-store, no-cache, must-revalidate" CRLF "Pragma: no-cache" CRLF "Connection: close" CRLF "Content-Type: text/"
 #define SERVER_HEADER2 CRLF "Content-Length: "
@@ -60,6 +66,7 @@ const prog_char XML_END[] PROGMEM = "</ATOHIGH></RA>";
 #define REQ_RELAY	3
 #define REQ_M_BYTE	4  // Memory read/write byte
 #define REQ_M_INT	5  // Memory read/write int
+#define REQ_M_ALL	6  // All memory values
 
 #define P(name)   static const prog_char name[] PROGMEM
 const prog_char SERVER_RA[] PROGMEM = "<script language='javascript' src='http://www.reefangel.com/wifi/ra1.js'></script>";
