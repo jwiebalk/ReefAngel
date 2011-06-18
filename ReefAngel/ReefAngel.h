@@ -99,6 +99,7 @@ public:
 	void Init();
 	void Refresh();
 	void SetTemperatureUnit(byte unit);
+	void ConvertTempUnit();
 	void DelayedOn(byte OnRelay, byte MinuteDelay);
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);

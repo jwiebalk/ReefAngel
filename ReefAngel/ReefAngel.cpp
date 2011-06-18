@@ -443,8 +443,95 @@ void ReefAngelClass::Refresh()
 void ReefAngelClass::SetTemperatureUnit(byte unit)
 {
     // 0 (or DEGREE_F) for farenheit
-    // 1 (or DEGREE_C) for celcius
+    // 1 (or DEGREE_C) for celsius
     TempSensor.unit = unit;
+}
+
+void ReefAngelClass::ConvertTempUnit()
+{
+    // check to see if the internal memory values are set correctly
+    // if they are not, convert them from F to C or vice versa
+    int x;
+    if ( TempSensor.unit )
+    {
+    	// C
+    	// if the values are larger than the highest temp, then we know we have F stored
+    	bool fConvert = false;
+    	x = InternalMemory.HeaterTempOn_read();
+    	if ( x > DEGREE_C_HIGH_TEMP )
+    	{
+    		fConvert = true;
+    		x = CONVERT_TO_C(x);
+    		InternalMemory.HeaterTempOn_write(x);
+    	}
+    	x = InternalMemory.HeaterTempOff_read();
+    	if ( x > DEGREE_C_HIGH_TEMP )
+    	{
+    		fConvert = true;
+    		x = CONVERT_TO_C(x);
+    		InternalMemory.HeaterTempOff_write(x);
+    	}
+    	x = InternalMemory.ChillerTempOn_read();
+    	if ( x > DEGREE_C_HIGH_TEMP )
+    	{
+    		fConvert = true;
+    		x = CONVERT_TO_C(x);
+    		InternalMemory.ChillerTempOn_write(x);
+    	}
+    	x = InternalMemory.ChillerTempOff_read();
+    	if ( x > DEGREE_C_HIGH_TEMP )
+    	{
+    		fConvert = true;
+    		x = CONVERT_TO_C(x);
+    		InternalMemory.ChillerTempOff_write(x);
+    	}
+    	x = InternalMemory.OverheatTemp_read();
+    	if ( (x > DEGREE_C_OVERHEAT_HIGH_TEMP) || fConvert )
+    	{
+    		x = CONVERT_TO_C(x);
+    		InternalMemory.OverheatTemp_write(x);
+    	}
+    }
+    else
+    {
+    	// F
+    	// if the values are smaller than lowest temp, then we know we have C stored
+    	bool fConvert = false;
+    	x = InternalMemory.HeaterTempOn_read();
+    	if ( x < DEGREE_F_LOW_TEMP )
+    	{
+    		fConvert = true;
+    		x = CONVERT_TO_F(x);
+    		InternalMemory.HeaterTempOn_write(x);
+    	}
+    	x = InternalMemory.HeaterTempOff_read();
+    	if ( x < DEGREE_F_LOW_TEMP )
+    	{
+    		fConvert = true;
+    		x = CONVERT_TO_F(x);
+    		InternalMemory.HeaterTempOff_write(x);
+    	}
+    	x = InternalMemory.ChillerTempOn_read();
+    	if ( x < DEGREE_F_LOW_TEMP )
+    	{
+    		fConvert = true;
+    		x = CONVERT_TO_F(x);
+    		InternalMemory.ChillerTempOn_write(x);
+    	}
+    	x = InternalMemory.ChillerTempOff_read();
+    	if ( x < DEGREE_F_LOW_TEMP )
+    	{
+    		fConvert = true;
+    		x = CONVERT_TO_F(x);
+    		InternalMemory.ChillerTempOff_write(x);
+    	}
+    	x = InternalMemory.OverheatTemp_read();
+    	if ( (x < DEGREE_F_OVERHEAT_LOW_TEMP) || fConvert )
+    	{
+    		x = CONVERT_TO_F(x);
+    		InternalMemory.OverheatTemp_write(x);
+    	}
+    }
 }
 
 void ReefAngelClass::DelayedOn(byte OnRelay, byte MinuteDelay)
@@ -1879,7 +1966,21 @@ void ReefAngelClass::ProcessButtonPressTemps()
         {
             int v = InternalMemory.HeaterTempOn_read();
             int y = InternalMemory.HeaterTempOff_read();
-            if ( SetupOption(v, y, 700, 900, 3, "F", ".", "Setup Heater", "On @", "Off @") )
+            int min, max;
+            char *s = "0";
+            if ( TempSensor.unit )
+            {
+            	min = DEGREE_C_LOW_TEMP;
+            	max = DEGREE_C_HIGH_TEMP;
+            	s = "C";
+            }
+            else
+            {
+            	min = DEGREE_F_LOW_TEMP;
+            	max = DEGREE_F_HIGH_TEMP;
+            	s = "F";
+            }
+            if ( SetupOption(v, y, min, max, 3, s, ".", "Setup Heater", "On @", "Off @") )
             {
                 InternalMemory.HeaterTempOn_write(v);
                 InternalMemory.HeaterTempOff_write(y);
@@ -1890,7 +1991,21 @@ void ReefAngelClass::ProcessButtonPressTemps()
         {
             int v = InternalMemory.ChillerTempOn_read();
             int y = InternalMemory.ChillerTempOff_read();
-            if ( SetupOption(v, y, 700, 900, 3, "F", ".", "Setup Chiller", "On @", "Off @") )
+            int min, max;
+            char *s = "0";
+            if ( TempSensor.unit )
+            {
+            	min = DEGREE_C_LOW_TEMP;
+            	max = DEGREE_C_HIGH_TEMP;
+            	s = "C";
+            }
+            else
+            {
+            	min = DEGREE_F_LOW_TEMP;
+            	max = DEGREE_F_HIGH_TEMP;
+            	s = "F";
+            }
+            if ( SetupOption(v, y, min, max, 3, s, ".", "Setup Chiller", "On @", "Off @") )
             {
                 InternalMemory.ChillerTempOn_write(v);
                 InternalMemory.ChillerTempOff_write(y);
@@ -1902,7 +2017,24 @@ void ReefAngelClass::ProcessButtonPressTemps()
         {
             int v = InternalMemory.OverheatTemp_read();
             int y = -1;
-            if ( SetupOption(v, y, 800, 2000, 4, "F", ".", "Setup Overheat", "", "") )
+            int min, max;
+            char *s = "0";
+            byte d;
+            if ( TempSensor.unit )
+            {
+            	min = DEGREE_C_OVERHEAT_LOW_TEMP;
+            	max = DEGREE_C_OVERHEAT_HIGH_TEMP;
+            	s = "C";
+            	d = 3;
+            }
+            else
+            {
+            	min = DEGREE_F_OVERHEAT_LOW_TEMP;
+            	max = DEGREE_F_OVERHEAT_HIGH_TEMP;
+            	s = "F";
+            	d = 4;
+            }
+            if ( SetupOption(v, y, min, max, d, s, ".", "Setup Overheat", "", "") )
             {
                 InternalMemory.OverheatTemp_write(v);
             }

@@ -216,6 +216,17 @@ When adding more variables, use the previous value plus 1 or 2
 #define KeyPressRate		250
 #define DEGREE_F            0
 #define DEGREE_C            1
+#define DEGREE_F_LOW_TEMP			700
+#define DEGREE_F_HIGH_TEMP			900
+#define DEGREE_F_OVERHEAT_LOW_TEMP	800
+#define DEGREE_F_OVERHEAT_HIGH_TEMP	2000
+#define DEGREE_C_LOW_TEMP			211
+#define DEGREE_C_HIGH_TEMP			323
+#define DEGREE_C_OVERHEAT_LOW_TEMP	266
+#define DEGREE_C_OVERHEAT_HIGH_TEMP	933
+#define CONVERT_TO_C(x)	((x) - 320)/1.8
+#define CONVERT_TO_F(x)	((x) * 1.8) + 320
+
 #define MAX_TEMP_SWING      50  // Maximum value of temp change that can occur in 1 second, 100 = 10.0 F Degrees, 50 = 5.0 F Degrees
 // WEB_BANNER_QTY - Quantity of Parameters when sending the web banner, default is 12 but changes as we have more relays installed
 #ifdef RelayExp
