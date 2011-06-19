@@ -31,6 +31,11 @@ typedef struct  {
   int PH;
 } ParamsStruct;
 
+enum FontHeight {
+	Font8x8,
+	Font8x16,
+	Font12x16,
+};
 
 class ReefAngel_NokiaLCD
 {
@@ -44,6 +49,15 @@ public:
 	void BacklightOn();
 	void BacklightOff();
 	void Clear(byte color, byte x1, byte y1, byte x2, byte y2);
+#if defined FONT_8x8 || defined FONT_8x16
+	void DrawLargeText(byte fcolor, byte bcolor, byte x, byte y, char* text, byte height = Font8x8);
+#endif  // FONT_8x8 || FONT_8x16
+#ifdef FONT_12x16
+	void DrawHugeText(byte fcolor, byte bcolor, byte x, byte y, char* text);
+#endif  // FONT_12x16
+#ifdef NUMBERS_16x16
+	void DrawHugeNumbers(byte fcolor, byte bcolor, byte x, byte y, char *text);
+#endif  // NUMBERS_16x16
 	void DrawText(byte fcolor, byte bcolor, byte x, byte y, char *text);
 	void DrawText(byte fcolor, byte bcolor, byte x, byte y, int text);
 	void DrawText(byte fcolor, byte bcolor, byte x, byte y, byte text);
@@ -71,7 +85,13 @@ private:
 	void SendCMD(byte data);
 	void SendData(byte data);
 	void ShiftBits(byte b);
-	void DrawTextLine(byte fcolor, byte bcolor,byte x, byte y,char c);
+	void DrawTextLine(byte fcolor, byte bcolor, byte x, byte y, char c);
+#if defined FONT_8x8 || defined FONT_8x16 || defined FONT_12x16
+	void DrawLargeTextLine(byte fcolor, byte bcolor, byte x, byte y, uint16_t c, byte height);
+#endif  // FONT_8x8 || FONT_8x16 || FONT_12X16
+#ifdef NUMBERS_16x16
+	void DrawHugeNumbersLine(byte fcolor, byte bcolor, byte x, byte y, uint16_t c);
+#endif  // NUMBERS_16x16
 
 public:
 	void DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte decimal);

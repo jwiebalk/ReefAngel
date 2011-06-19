@@ -297,4 +297,45 @@ This option allows for the user to handle the menu in their PDE file
 See the comments about SIMPLE_MENU for what features will work and what will not.
 */
 //#define CUSTOM_MENU
+
+
+/*
+Alternate Fonts
+
+To use the alternate fonts, you must uncomment the appropriate define statement to make the font available.
+Once the font is available, it is not automatically used everywhere.  It's not used with the default main screen
+and default menus.  You must enable the CUSTOM_MAIN so you can make use of the font when drawing your own main
+screen.
+
+There are full fonts for the sizes:  5x8 (built in), 8x8, 8x16, 12x16
+There are numbers only for sizes:  16x16
+
+How to use:
+
+Font 8x8:
+ReefAngel.NokiaLCD.DrawLargeText(..., Font8x8);
+
+Font 8x16:
+ReefAngel.NokiaLCD.DrawLargeText(..., Font8x16);
+
+Font 12x16:
+ReefAngel.NokiaLCD.DrawHugeText(...);
+
+Numbers 16x16:
+ReefAngel.NokiaLCD.DrawHugeNumbers(...);
+
+The ... means that the default parameters for the functions should be used.  It is just a place holder.
+The DrawHugeNumbers needs to have the numbers drawn in a string, so it cannot take numeric values,
+they must be converted prior to calling the function.
+
+Enabling fonts requires more memory usage.  The more fonts you enable, the more memory is used.  It is advisable
+to only enable the fonts that you plan on using.  Try to not use several at once to keep memory usage down.
+
+ENABLE AT YOUR OWN RISK
+*/
+//#define FONT_8x8
+//#define FONT_8x16
+//#define FONT_12x16
+//#define NUMBERS_16x16
+
 #endif  // __REEFANGEL_FEATURES_H__
