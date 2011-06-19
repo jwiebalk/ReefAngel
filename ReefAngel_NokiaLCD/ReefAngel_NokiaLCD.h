@@ -44,6 +44,12 @@ public:
 	void BacklightOn();
 	void BacklightOff();
 	void Clear(byte color, byte x1, byte y1, byte x2, byte y2);
+#if defined FONT_8x8 || defined FONT_8x16
+	void DrawLargeText(byte fcolor, byte bcolor, byte x, byte y, char* text, byte height);
+#endif  // FONT_8x8 || FONT_8x16
+#ifdef FONT_12x16
+	void DrawHugeText(byte fcolor, byte bcolor, byte x, byte y, char* text);
+#endif  // FONT_12x16
 #ifdef NUMBERS_16x16
 	void DrawHugeNumbers(byte fcolor, byte bcolor, byte x, byte y, char *text);
 #endif  // NUMBERS_16x16
@@ -75,6 +81,12 @@ private:
 	void SendData(byte data);
 	void ShiftBits(byte b);
 	void DrawTextLine(byte fcolor, byte bcolor, byte x, byte y, char c);
+#if defined FONT_8x8 || defined FONT_8x16
+	void DrawLargeTextLine(byte fcolor, byte bcolor, byte x, byte y, char c, byte height);
+#endif  // FONT_8x8 || FONT_8x16
+#ifdef FONT_12x16
+	void DrawHugeTextLine(byte fcolor, byte bcolor, byte x, byte y, uint16_t c);
+#endif  // FONT_12x16
 #ifdef NUMBERS_16x16
 	void DrawHugeNumbersLine(byte fcolor, byte bcolor, byte x, byte y, uint16_t c);
 #endif  // NUMBERS_16x16
