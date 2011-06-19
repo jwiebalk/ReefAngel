@@ -517,7 +517,8 @@ const prog_uint16_t font_12x16[] PROGMEM = {
 const prog_uint16_t num_16x16[] PROGMEM = {
 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xE000, 0xE000, 0xE000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, // .
 0xC000, 0xC000, 0x3000, 0x3000, 0x0C00, 0x0C00, 0x0300, 0x0300, 0x00C0, 0x00C0, 0x0030, 0x0030, 0x000C, 0x000C, 0x0003, 0x0003, // /
-0x0000, 0x1FF8, 0x3FFC, 0x6006, 0xC003, 0xC003, 0xC003, 0xC3C3, 0xC3C3, 0xC003, 0xC003, 0xC003, 0x6006, 0x3FFC, 0x1FF8, 0x0000, // 0
+0x0000, 0x1FF8, 0x3FFC, 0x7006, 0xD803, 0xCC03, 0xC603, 0xC303, 0xC183, 0xC0C3, 0xC063, 0xC033, 0x601E, 0x3FFC, 0x1FF8, 0x0000, // 0 - with slash
+//0x0000, 0x1FF8, 0x3FFC, 0x6006, 0xC003, 0xC003, 0xC003, 0xC3C3, 0xC3C3, 0xC003, 0xC003, 0xC003, 0x6006, 0x3FFC, 0x1FF8, 0x0000, // 0 - with dot
 0x0000, 0x0000, 0x0000, 0xC030, 0xC030, 0xC038, 0xC03C, 0xFFFF, 0xFFFF, 0xC000, 0xC000, 0xC000, 0xC000, 0x0000, 0x0000, 0x0000, // 1
 0x0000, 0xF008, 0xFC0C, 0xDE0E, 0xC707, 0xC303, 0xC183, 0xC183, 0xC183, 0xC1C3, 0xC0C3, 0xC0C7, 0xE0FE, 0xE07C, 0xE038, 0x0000, // 2
 0x0000, 0x1008, 0x300C, 0x700E, 0xE007, 0xC183, 0xC183, 0xC183, 0xC183, 0xC183, 0xC183, 0xE3C7, 0x77EE, 0x3E7C, 0x1C38, 0x0000, // 3
@@ -712,21 +713,33 @@ void ReefAngel_NokiaLCD::BacklightOff()
     BL0
 }
 
-#if defined FONT_8x8 || defined FONT_8x16
-void ReefAngel_NokiaLCD::DrawLargeTextLine(byte fcolor, byte bcolor, byte x, byte y, char c, byte height)
+#if defined FONT_8x8 || defined FONT_8x16 || defined FONT_12x16
+void ReefAngel_NokiaLCD::DrawLargeTextLine(byte fcolor, byte bcolor, byte x, byte y, uint16_t c, byte height /*= Font8x8*/)
 {
 	int i;
 	byte inc;
 	byte xoffset;
-	if ( height == 16 )
+	switch ( height )
 	{
-		inc = 15;
-		xoffset = 8;
-	}
-	else
-	{
-		inc = 7;
-		xoffset = 10;
+		default:
+		case Font8x8:
+		{
+			inc = 7;
+			xoffset = 10;
+		}
+		break;
+		case Font8x16:
+		{
+			inc = 15;
+			xoffset = 8;
+		}
+		break;
+		case Font12x16:
+		{
+			inc = 15;
+			xoffset = 15;
+		}
+		break;
 	}
 	SetBox(x,y,x+xoffset,y);
 	SendCMD(RAMWR);
@@ -738,30 +751,42 @@ void ReefAngel_NokiaLCD::DrawLargeTextLine(byte fcolor, byte bcolor, byte x, byt
 			SendData(~bcolor);
 	}
 }
+#endif  // #if defined FONT_8x8 || defined FONT_8x16 || defined FONT_12x16
 
+#if defined FONT_8x8 || defined FONT_8x16
 void ReefAngel_NokiaLCD::DrawLargeText(byte fcolor, byte bcolor, byte x, byte y, char* text, byte height)
 {
-	char c;
+	uint16_t c;
 	int t;
 	const prog_uchar *f = NULL;
 	byte w;
 	byte y_w;
-	byte x_w;
 	byte x_offset = 1;
-	if ( height == 16 )
+	if ( height == Font8x16 )
 	{
+#ifdef FONT_8x16
 		w = 16;
-		x_w = 8;
 		y_w = 16;
 		x_offset = 0;
 		f = font_8x16;
+#else  // FONT_8x16
+		w = 8;
+		y_w = 8;
+		f = font_8x8;
+#endif  // FONT_8x16
 	}
 	else
 	{
+#ifdef FONT_8x8
 		w = 8;
-		x_w = 8;
 		y_w = 8;
 		f = font_8x8;
+#else  // FONT_8x8
+		w = 16;
+		y_w = 16;
+		x_offset = 0;
+		f = font_8x16;
+#endif  // FONT_8x8
 	}
 	while(*text != 0)
 	{
@@ -775,26 +800,13 @@ void ReefAngel_NokiaLCD::DrawLargeText(byte fcolor, byte bcolor, byte x, byte y,
 		}
 		text++;
 		y-=y_w;
-		x+=x_w;
+		//x+=x_w;
+		x+=8;
 	}
 }
 #endif  // FONT_8x8 || FONT_8x16
 
 #ifdef FONT_12x16
-void ReefAngel_NokiaLCD::DrawHugeTextLine(byte fcolor, byte bcolor, byte x, byte y, uint16_t c)
-{
-	int i;
-	SetBox(x,y,x+15,y);
-	SendCMD(RAMWR);
-	for(i=15;i>=0;i--)
-	{
-		if (1<<i & c)
-			SendData(~fcolor);
-		else
-			SendData(~bcolor);
-	}
-}
-
 void ReefAngel_NokiaLCD::DrawHugeText(byte fcolor, byte bcolor, byte x, byte y, char* text)
 {
 	uint16_t c;
@@ -811,7 +823,7 @@ void ReefAngel_NokiaLCD::DrawHugeText(byte fcolor, byte bcolor, byte x, byte y, 
 		for(int j = t; j < t+w; j++)
 		{
 			c = pgm_read_word_near(f + j);
-			DrawHugeTextLine(fcolor, bcolor, x-5, y++, c);
+			DrawLargeTextLine(fcolor, bcolor, x-5, y++, c, Font12x16);
 		}
 		text++;
 		y-=y_w;
@@ -984,9 +996,9 @@ void ReefAngel_NokiaLCD::DrawOutletBox(byte x, byte y,byte RelayData)
             bcolor = OutletOnBGColor;
             fcolor = OutletOnFGColor;
         }
-        Clear(bcolor,x+1+(a*13),y+1,x+14+(a*13),y+11);
+        Clear(bcolor,x+(a*13),y+1,x+13+(a*13),y+11);
         itoa(a+1,temp,10);
-        DrawText(fcolor,bcolor,x+5+(a*13),y+3,temp);
+        DrawText(fcolor,bcolor,x+4+(a*13),y+3,temp);
     }
 }
 
