@@ -67,6 +67,7 @@ const prog_char XML_ERR[] PROGMEM = "ERR";
 #define REQ_M_BYTE	4  // Memory read/write byte
 #define REQ_M_INT	5  // Memory read/write int
 #define REQ_M_ALL	6  // All memory values
+#define REQ_VERSION	7  // Library version
 
 #define P(name)   static const prog_char name[] PROGMEM
 const prog_char SERVER_RA[] PROGMEM = "<script language='javascript' src='http://www.reefangel.com/wifi/ra1.js'></script>";

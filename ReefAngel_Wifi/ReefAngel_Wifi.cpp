@@ -138,6 +138,7 @@ void pushbuffer(byte inStr)
             if (strncmp("GET /mb", m_pushback, 7)==0) { reqtype = -REQ_M_BYTE; webmemoryloc = -1; bHasSecondValue = false; bHasComma = false;}
             if (strncmp("GET /mi", m_pushback, 7)==0) { reqtype = -REQ_M_INT; webmemoryloc = -1; bHasSecondValue = false; bHasComma = false;}
             if (strncmp("GET /ma", m_pushback, 6)==0) reqtype = -REQ_M_ALL;
+            if (strncmp("GET /v", m_pushback, 6)==0) reqtype = -REQ_VERSION;
 		}
 	}
 }
@@ -345,6 +346,18 @@ void processHTTP()
 				printP(WebBodyMsg1);
 				break;
 			}  // REQ_M_ALL
+			case REQ_VERSION:
+			{
+				int s = 117;
+				s += strlen(ReefAngel_Version);
+				P(WebBodyMsg) = SERVER_HEADER_XML;
+				printP(WebBodyMsg);
+				Serial.print(s);
+				P(WebBodyMsg1) = SERVER_HEADER3;
+				printP(WebBodyMsg1);
+				Serial.print("<V>"ReefAngel_Version"</V>");
+				break;
+			}  // REQ_VERSION
 			default:
 				break;
 		}  // switch reqtype
