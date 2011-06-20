@@ -334,7 +334,7 @@ void processHTTP()
 			}  // REQ_M_BYTE || REQ_M_INT
 			case REQ_M_ALL:
 			{
-				int s = 119;  // start with the base size of the headers plus the mem tags
+				int s = 123;  // start with the base size of the headers plus the mem tags
 				/*
 				Send all the data to the client requesting it.  The values will be sent as follows:
 					- wrapped in <M></M> XML tags
@@ -351,15 +351,25 @@ void processHTTP()
 				*/
 				uint8_t offsets[] = {1,1,1,1,1,1,1,1,2,2,1,1,2,2,2,1,1,2,2,2,2,1,2,2,1,1,1,1,1,1,1,1,2,2};
 				uint8_t num = sizeof(offsets)/sizeof(uint8_t);
-				// add in the memory location sizes, 11 bytes if the memory location is 3 digits
-				s += num*11;
+				// add in the memory location sizes, 13 bytes if the memory location is 4 digits
+				s += num*13;
+				uint16_t count = VarsStart;
+				uint8_t x;
+				for ( x = 0; x < num; x++ )
+				{
+					if ( offsets[x] == 1 )
+						s += intlength(InternalMemory.read(count));
+					else
+						s += intlength(InternalMemory.read_int(count));
+					count += offsets[x];
+				}  // for x
+
 				P(WebBodyMsg) = SERVER_HEADER_XML;
 				printP(WebBodyMsg);
 				Serial.print(s, DEC);
 				P(WebBodyMsg1) = SERVER_HEADER3;
 				printP(WebBodyMsg1);
 				PROGMEMprint(XML_MEM_OPEN);
-				uint16_t count = VarsStart;
 				/*
 				Loop through all the memory locations starting at VarsStart
 				Check the offset for each location to tell us how many bytes to read and how much to increment
@@ -368,7 +378,7 @@ void processHTTP()
 				Then we increment the memory position by the offset.
 				We could be thrown off if somebody accidentally put a value larger than 2 in the offset array
 				*/
-				for ( uint8_t x = 0; x < num; x++ )
+				for ( x = 0, count = VarsStart; x < num; x++ )
 				{
 					PROGMEMprint(XML_M_OPEN);
 					Serial.print(count,DEC);
