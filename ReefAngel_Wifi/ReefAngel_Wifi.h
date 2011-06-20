@@ -39,11 +39,14 @@ const prog_char XML_RE_OFF[] PROGMEM = "OFF";
 const prog_char XML_ATOLOW[] PROGMEM = "<ATOLOW>";
 const prog_char XML_ATOHIGH[] PROGMEM = "</ATOLOW><ATOHIGH>";
 const prog_char XML_END[] PROGMEM = "</ATOHIGH></RA>";
+const prog_char XML_CLOSE_TAG[] PROGMEM = ">";
 
 
 #ifdef wifi
-const prog_char XML_M_OPEN[] PROGMEM = "<M>";
-const prog_char XML_M_CLOSE[] PROGMEM = "</M>";
+const prog_char XML_M_OPEN[] PROGMEM = "<M";
+const prog_char XML_M_CLOSE[] PROGMEM = "</M";
+const prog_char XML_MEM_OPEN[] PROGMEM = "<MEM>";
+const prog_char XML_MEM_CLOSE[] PROGMEM = "</MEM>";
 const prog_char XML_OK[] PROGMEM = "OK";
 const prog_char XML_ERR[] PROGMEM = "ERR";
 

@@ -133,12 +133,12 @@ void pushbuffer(byte inStr)
 		else
 		{
             if (strncmp("GET / ", m_pushback, 6)==0) reqtype = REQ_ROOT;
-            if (strncmp("GET /wifi", m_pushback, 9)==0) reqtype = REQ_WIFI;
-            if (strncmp("GET /r", m_pushback, 6)==0) reqtype = -REQ_RELAY;
-            if (strncmp("GET /mb", m_pushback, 7)==0) { reqtype = -REQ_M_BYTE; webmemoryloc = -1; bHasSecondValue = false; bHasComma = false;}
-            if (strncmp("GET /mi", m_pushback, 7)==0) { reqtype = -REQ_M_INT; webmemoryloc = -1; bHasSecondValue = false; bHasComma = false;}
-            if (strncmp("GET /ma", m_pushback, 6)==0) reqtype = -REQ_M_ALL;
-            if (strncmp("GET /v", m_pushback, 6)==0) reqtype = -REQ_VERSION;
+            else if (strncmp("GET /wifi", m_pushback, 9)==0) reqtype = REQ_WIFI;
+            else if (strncmp("GET /r", m_pushback, 6)==0) reqtype = -REQ_RELAY;
+            else if (strncmp("GET /mb", m_pushback, 7)==0) { reqtype = -REQ_M_BYTE; webmemoryloc = -1; bHasSecondValue = false; bHasComma = false;}
+            else if (strncmp("GET /mi", m_pushback, 7)==0) { reqtype = -REQ_M_INT; webmemoryloc = -1; bHasSecondValue = false; bHasComma = false;}
+            else if (strncmp("GET /ma", m_pushback, 7)==0) reqtype = -REQ_M_ALL;
+            else if (strncmp("GET /v", m_pushback, 6)==0) reqtype = -REQ_VERSION;
 		}
 	}
 }
@@ -258,7 +258,7 @@ void processHTTP()
 				s += 2;  // one digit for each ATO
 				P(WebBodyMsg) = SERVER_HEADER_XML;
 				printP(WebBodyMsg);
-				Serial.print(s);
+				Serial.print(s, DEC);
 				P(WebBodyMsg1) = SERVER_HEADER3;
 				printP(WebBodyMsg1);
 				ReefAngel.PCLogging();  // print the XML data
@@ -270,7 +270,7 @@ void processHTTP()
 				int s = 118;
 				P(WebBodyMsg) = SERVER_HEADER_XML;
 				printP(WebBodyMsg);
-				Serial.print(s);
+				Serial.print(s, DEC);
 				P(WebBodyMsg1) = SERVER_HEADER3;
 				printP(WebBodyMsg1);
 
@@ -301,24 +301,34 @@ void processHTTP()
 					}
 #endif  // WavemakerSetup
 					PROGMEMprint(XML_M_OPEN);
+					Serial.print(webmemoryloc, DEC);
+					PROGMEMprint(XML_CLOSE_TAG);
 					PROGMEMprint(XML_OK);
 					PROGMEMprint(XML_M_CLOSE);
+					Serial.print(webmemoryloc, DEC);
+					PROGMEMprint(XML_CLOSE_TAG);
 				}
 				else if ( !bHasSecondValue && (webmemoryloc >= 0) && !bHasComma )
 				{
 					// no second value and no comma, so we read the value from memory
 					PROGMEMprint(XML_M_OPEN);
+					Serial.print(webmemoryloc, DEC);
+					PROGMEMprint(XML_CLOSE_TAG);
 					if ( reqtype == REQ_M_BYTE )
 						Serial.print(InternalMemory.read(webmemoryloc),DEC);
 					else
 						Serial.print(InternalMemory.read_int(webmemoryloc),DEC);
 					PROGMEMprint(XML_M_CLOSE);
+					Serial.print(webmemoryloc, DEC);
+					PROGMEMprint(XML_CLOSE_TAG);
 				}
 				else
 				{
 					PROGMEMprint(XML_M_OPEN);
+					PROGMEMprint(XML_CLOSE_TAG);
 					PROGMEMprint(XML_ERR);
 					PROGMEMprint(XML_M_CLOSE);
+					PROGMEMprint(XML_CLOSE_TAG);
 				}
 				break;
 			}  // REQ_M_BYTE || REQ_M_INT
@@ -332,12 +342,12 @@ void processHTTP()
 						Memory 800, value 20 - <800>20</800>
 
 				An example would be:
-					<M>
-						<800>20</800>
-						<801>0</801>
-						<802>16</802>
+					<MEM>
+						<M800>20</M800>
+						<M801>0</M801>
+						<M802>16</M802>
 						...
-					</M>
+					</MEM>
 				*/
 				uint8_t offsets[] = {1,1,1,1,1,1,1,1,2,2,1,1,2,2,2,1,1,2,2,2,2,1,2,2,1,1,1,1,1,1,1,1,2,2};
 				uint8_t num = sizeof(offsets)/sizeof(uint8_t);
@@ -345,10 +355,10 @@ void processHTTP()
 				s += num*11;
 				P(WebBodyMsg) = SERVER_HEADER_XML;
 				printP(WebBodyMsg);
-				Serial.print(s);
+				Serial.print(s, DEC);
 				P(WebBodyMsg1) = SERVER_HEADER3;
 				printP(WebBodyMsg1);
-				PROGMEMprint(XML_M_OPEN);
+				PROGMEMprint(XML_MEM_OPEN);
 				uint16_t count = VarsStart;
 				/*
 				Loop through all the memory locations starting at VarsStart
@@ -360,19 +370,19 @@ void processHTTP()
 				*/
 				for ( uint8_t x = 0; x < num; x++ )
 				{
-					Serial.print("<");
+					PROGMEMprint(XML_M_OPEN);
 					Serial.print(count,DEC);
-					Serial.print(">");
+					PROGMEMprint(XML_CLOSE_TAG);
 					if ( offsets[x] == 1 )
 						Serial.print(InternalMemory.read(count),DEC);
 					else
 						Serial.print(InternalMemory.read_int(count),DEC);
-					Serial.print("</");
+					PROGMEMprint(XML_M_CLOSE);
 					Serial.print(count,DEC);
-					Serial.print(">");
+					PROGMEMprint(XML_CLOSE_TAG);
 					count += offsets[x];
 				}  // for x
-				PROGMEMprint(XML_M_CLOSE);
+				PROGMEMprint(XML_MEM_CLOSE);
 				break;
 			}  // REQ_M_ALL
 			case REQ_VERSION:
@@ -381,7 +391,7 @@ void processHTTP()
 				s += strlen(ReefAngel_Version);
 				P(WebBodyMsg) = SERVER_HEADER_XML;
 				printP(WebBodyMsg);
-				Serial.print(s);
+				Serial.print(s, DEC);
 				P(WebBodyMsg1) = SERVER_HEADER3;
 				printP(WebBodyMsg1);
 				Serial.print("<V>"ReefAngel_Version"</V>");
