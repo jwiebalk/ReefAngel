@@ -57,6 +57,7 @@ const prog_char XML_ERR[] PROGMEM = "ERR";
 #define SERVER_HEADER_HTML SERVER_HEADER1 "html" SERVER_HEADER2
 #define SERVER_HEADER_XML SERVER_HEADER1 "xml" SERVER_HEADER2
 #define SERVER_DEFAULT "<h1>Reef Angel Controller Web Server</h1>"
+#define SERVER_UKNOWN "<h1>Unknown Request</h1>"
 #define SERVER_RELAY ""
 #define CRLF "\r\n"
 #define CR "\r"

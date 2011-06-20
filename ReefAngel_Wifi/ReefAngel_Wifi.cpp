@@ -337,9 +337,9 @@ void processHTTP()
 				int s = 123;  // start with the base size of the headers plus the mem tags
 				/*
 				Send all the data to the client requesting it.  The values will be sent as follows:
-					- wrapped in <M></M> XML tags
+					- wrapped in <MEM></MEM> XML tags
 					- individual memory values wrapped in their location XML tags
-						Memory 800, value 20 - <800>20</800>
+						Memory 800, value 20 - <M800>20</M800>
 
 				An example would be:
 					<MEM>
@@ -408,7 +408,11 @@ void processHTTP()
 				break;
 			}  // REQ_VERSION
 			default:
+			{
+				P(WebBodyMsg) = SERVER_UKNOWN;
+				WebResponse(WebBodyMsg, sizeof(WebBodyMsg) - 1);
 				break;
+			}
 		}  // switch reqtype
     }
     else
