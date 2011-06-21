@@ -139,6 +139,8 @@ void pushbuffer(byte inStr)
             else if (strncmp("GET /mi", m_pushback, 7)==0) { reqtype = -REQ_M_INT; webmemoryloc = -1; bHasSecondValue = false; bHasComma = false;}
             else if (strncmp("GET /ma", m_pushback, 7)==0) reqtype = -REQ_M_ALL;
             else if (strncmp("GET /v", m_pushback, 6)==0) reqtype = -REQ_VERSION;
+            else if (strncmp("GET /d", m_pushback, 6)==0) reqtype = -REQ_DATE;
+            else reqtype = -REQ_UNKNOWN;
 		}
 	}
 }
@@ -175,12 +177,15 @@ void processHTTP()
 			}  // REQ_ROOT
 			case REQ_WIFI:
 			{
+/*
 				P(WebBodyMsg) = SERVER_HEADER_HTML;
 				printP(WebBodyMsg);
 				Serial.print(sizeof(SERVER_RA) - 1,DEC);
 				P(WebBodyMsg1) = SERVER_HEADER3;
 				printP(WebBodyMsg1);
 				PROGMEMprint(SERVER_RA);
+*/
+				WebResponse(SERVER_RA, sizeof(SERVER_RA) - 1);
 				break;
 			}  // REQ_WIFI
 			case REQ_RELAY:
@@ -407,7 +412,12 @@ void processHTTP()
 				Serial.print("<V>"ReefAngel_Version"</V>");
 				break;
 			}  // REQ_VERSION
+			case REQ_DATE:
+			{
+				break;
+			}  // REQ_DATE
 			default:
+			case REQ_UNKNOWN:
 			{
 				P(WebBodyMsg) = SERVER_UKNOWN;
 				WebResponse(WebBodyMsg, sizeof(WebBodyMsg) - 1);
