@@ -190,6 +190,19 @@ Approximately 720 bytes to have this feature
 #define DisplayLEDPWM
 
 /*
+PWM Expansion Device
+
+This next line will allow the enabling of the PWM Expansion Device.  It will add a menu entry that displays
+"PWM ->".  It will give the preset defaults for the expansion device.
+The menu entries will be:
+
+Slow Cloud
+Fast Cloud
+T-storm 1
+T-storm 2
+*/
+
+/*
 This next line will allow you to use the ATO switches independently from each other.  You can specify
 separate ports to control, separate timeouts and separate hourly intervals.
 If you have this defined, you cannot use both switches together like originally intended.
