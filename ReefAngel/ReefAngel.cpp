@@ -27,6 +27,7 @@
 
 byte ButtonPress = 0;
 
+
 SIGNAL(PCINT0_vect) {
 	if (millis()-ButtonDebounce>600)
 	{
@@ -36,10 +37,33 @@ SIGNAL(PCINT0_vect) {
 
 }
 
+// Menu Headings
+const prog_char Menu_0_label[] PROGMEM = "Main:";
+const prog_char Menu_1_label[] PROGMEM = "PWM:";
+const prog_char Menu_2_label[] PROGMEM = "Setup:";
+const prog_char Menu_3_label[] PROGMEM = "Lights:";
+const prog_char Menu_4_label[] PROGMEM = "Temp:";
+const prog_char Menu_5_label[] PROGMEM = "Timeouts:";
+PROGMEM const char *menu_items[] = {
+	Menu_0_label,
+	Menu_1_label,
+	Menu_2_label,
+	Menu_3_label,
+	Menu_4_label,
+	Menu_5_label,
+};
+
+// Return menu entries
+const prog_char Return_0_label[] PROGMEM = "<- Prev Menu";
+const prog_char Return_1_label[] PROGMEM = "Exit";
+//const prog_char Return_2_label[] PROGMEM = "Press to exit...";
+PROGMEM const char *return_items[] = { Return_0_label, Return_1_label/*, Return_2_label*/ };
+
 // NOTE for nested menus
 // NOTE Menu labels can be a max of 20 characters
 // Associate a menu name to a numeric value
 // the total number must match the max number of menus
+
 enum Menus {
     MainMenu,
 #ifndef SIMPLE_MENU
@@ -52,24 +76,26 @@ enum Menus {
 #endif  // RemoveAllLights
     TempsMenu,
 #if defined SetupExtras || defined ATOSetup
-    TimeoutsMenu
+    TimeoutsMenu,
 #endif  // if defined SetupExtras || defined ATOSetup
+//	PreviousMenu,
 #endif  // SIMPLE_MENU
+//	ExitMenu,
 };
 
 #ifdef SIMPLE_MENU
 // This is the simplified menu
 // Main Menu
-prog_char mainmenu_0_label[] PROGMEM = "Feeding";
-prog_char mainmenu_1_label[] PROGMEM = "Water Change";
-prog_char mainmenu_2_label[] PROGMEM = "ATO Clear";
-prog_char mainmenu_3_label[] PROGMEM = "Overheat Clear";
-prog_char mainmenu_4_label[] PROGMEM = "PH Calibration";
+const prog_char mainmenu_0_label[] PROGMEM = "Feeding";
+const prog_char mainmenu_1_label[] PROGMEM = "Water Change";
+const prog_char mainmenu_2_label[] PROGMEM = "ATO Clear";
+const prog_char mainmenu_3_label[] PROGMEM = "Overheat Clear";
+const prog_char mainmenu_4_label[] PROGMEM = "PH Calibration";
 #ifdef DateTimeSetup
-prog_char mainmenu_5_label[] PROGMEM = "Date / Time";
+const prog_char mainmenu_5_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
 #ifdef VersionMenu
-prog_char mainmenu_6_label[] PROGMEM = "Version";
+const prog_char mainmenu_6_label[] PROGMEM = "Version";
 #endif  // VersionMenu
 PROGMEM const char *mainmenu_items[] = {
                     mainmenu_0_label,
@@ -102,21 +128,21 @@ enum MainMenuItem {
 // This is the standard menu
 
 // Main Menu
-prog_char mainmenu_0_label[] PROGMEM = "Feeding";
-prog_char mainmenu_1_label[] PROGMEM = "Water Change";
+const prog_char mainmenu_0_label[] PROGMEM = "Feeding";
+const prog_char mainmenu_1_label[] PROGMEM = "Water Change";
 #ifdef PWMExpansionRelay
-prog_char mainmenu_2_label[] PROGMEM = "PWM ->";
+const prog_char mainmenu_2_label[] PROGMEM = "PWM ->";
 #endif  // PWMExpansionRelay
 #ifndef RemoveAllLights
-prog_char mainmenu_3_label[] PROGMEM = "Lights ->";
+const prog_char mainmenu_3_label[] PROGMEM = "Lights ->";
 #endif  // RemoveAllLights
-prog_char mainmenu_4_label[] PROGMEM = "Temps ->";
+const prog_char mainmenu_4_label[] PROGMEM = "Temps ->";
 #if defined SetupExtras || defined ATOSetup
-prog_char mainmenu_5_label[] PROGMEM = "Timeouts ->";
+const prog_char mainmenu_5_label[] PROGMEM = "Timeouts ->";
 #endif  // if defined SetupExtras || defined ATOSetup
-prog_char mainmenu_6_label[] PROGMEM = "Setup ->";
+const prog_char mainmenu_6_label[] PROGMEM = "Setup ->";
 #ifdef VersionMenu
-prog_char mainmenu_7_label[] PROGMEM = "Version";
+const prog_char mainmenu_7_label[] PROGMEM = "Version";
 #endif  // VersionMenu
 PROGMEM const char *mainmenu_items[] = {
                     mainmenu_0_label,
@@ -158,17 +184,17 @@ enum MainMenuItem {
 
 // Setup MenuWavemakerSetup
 #ifdef WavemakerSetup
-prog_char setupmenu_0_label[] PROGMEM = "Wavemaker";
+const prog_char setupmenu_0_label[] PROGMEM = "Wavemaker";
 #endif  // WavemakerSetup
 #ifdef DosingPumpSetup
-prog_char setupmenu_1_label[] PROGMEM = "Single Dose";
+const prog_char setupmenu_1_label[] PROGMEM = "Single Dose";
 #endif  // DosingPumpSetup
 #ifdef DosingPumpIntervalSetup
-prog_char setupmenu_2_label[] PROGMEM = "Multi Dose";
+const prog_char setupmenu_2_label[] PROGMEM = "Multi Dose";
 #endif  // DosingPumpIntervalSetup
-prog_char setupmenu_3_label[] PROGMEM = "Calibrate pH";
+const prog_char setupmenu_3_label[] PROGMEM = "Calibrate pH";
 #ifdef DateTimeSetup
-prog_char setupmenu_4_label[] PROGMEM = "Date / Time";
+const prog_char setupmenu_4_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
 PROGMEM const char *setupmenu_items[] = {
 #ifdef WavemakerSetup
@@ -203,14 +229,14 @@ enum SetupMenuItem {
 
 #ifdef PWMExpansionRelay
 // Menu for the PWM Expansion Relay
-prog_char pwmmenu_0_label[] PROGMEM = "Slow Cloud";
-prog_char pwmmenu_1_label[] PROGMEM = "Fast Cloud";
-prog_char pwmmenu_2_label[] PROGMEM = "T-storm 1";
-prog_char pwmmenu_3_label[] PROGMEM = "T-storm 2";
-prog_char pwmmenu_4_label[] PROGMEM = "0 %";
-prog_char pwmmenu_5_label[] PROGMEM = "50 %";
-prog_char pwmmenu_6_label[] PROGMEM = "100 %";
-prog_char pwmmenu_7_label[] PROGMEM = "Custom";
+const prog_char pwmmenu_0_label[] PROGMEM = "Slow Cloud";
+const prog_char pwmmenu_1_label[] PROGMEM = "Fast Cloud";
+const prog_char pwmmenu_2_label[] PROGMEM = "T-storm 1";
+const prog_char pwmmenu_3_label[] PROGMEM = "T-storm 2";
+const prog_char pwmmenu_4_label[] PROGMEM = "0 %";
+const prog_char pwmmenu_5_label[] PROGMEM = "50 %";
+const prog_char pwmmenu_6_label[] PROGMEM = "100 %";
+const prog_char pwmmenu_7_label[] PROGMEM = "Custom";
 
 PROGMEM const char *pwmmenu_items[] = {
 	pwmmenu_0_label, pwmmenu_1_label, pwmmenu_2_label, pwmmenu_3_label,
@@ -231,17 +257,17 @@ enum PWMMenuItem {
 
 #ifndef RemoveAllLights
 // Lights Menu
-prog_char lightsmenu_0_label[] PROGMEM = "Lights On";
-prog_char lightsmenu_1_label[] PROGMEM = "Lights Off";
+const prog_char lightsmenu_0_label[] PROGMEM = "Lights On";
+const prog_char lightsmenu_1_label[] PROGMEM = "Lights Off";
 #ifdef MetalHalideSetup
-prog_char lightsmenu_2_label[] PROGMEM = "Metal Halides";
-prog_char lightsmenu_3_label[] PROGMEM = "MH On Delay";
+const prog_char lightsmenu_2_label[] PROGMEM = "Metal Halides";
+const prog_char lightsmenu_3_label[] PROGMEM = "MH On Delay";
 #endif  // MetalHalideSetup
 #ifdef StandardLightSetup
-prog_char lightsmenu_4_label[] PROGMEM = "Standard Lights";
+const prog_char lightsmenu_4_label[] PROGMEM = "Standard Lights";
 #endif  // StandardLightSetup
 #ifdef DisplayLEDPWM
-prog_char lightsmenu_5_label[] PROGMEM = "LED PWM";
+const prog_char lightsmenu_5_label[] PROGMEM = "LED PWM";
 #endif  // DisplayLEDPWM
 PROGMEM const char *lightsmenu_items[] = {
                             lightsmenu_0_label, lightsmenu_1_label,
@@ -273,12 +299,12 @@ enum LightsMenuItem {
 #endif  // RemoveAllLights
 
 // Temps Menu
-prog_char tempsmenu_0_label[] PROGMEM = "Heater";
-prog_char tempsmenu_1_label[] PROGMEM = "Chiller";
+const prog_char tempsmenu_0_label[] PROGMEM = "Heater";
+const prog_char tempsmenu_1_label[] PROGMEM = "Chiller";
 #ifdef OverheatSetup
-prog_char tempsmenu_2_label[] PROGMEM = "Overheat Set";
+const prog_char tempsmenu_2_label[] PROGMEM = "Overheat Set";
 #endif  // OverheatSetup
-prog_char tempsmenu_3_label[] PROGMEM = "Overheat Clear";
+const prog_char tempsmenu_3_label[] PROGMEM = "Overheat Clear";
 PROGMEM const char *tempsmenu_items[] = {
                         tempsmenu_0_label,
                         tempsmenu_1_label,
@@ -298,15 +324,15 @@ enum TempsMenuItem {
 // Timeouts Menu
 #if defined SetupExtras || defined ATOSetup
 #ifdef ATOSetup
-prog_char timeoutsmenu_0_label[] PROGMEM = "ATO Set";
+const prog_char timeoutsmenu_0_label[] PROGMEM = "ATO Set";
 #ifdef SingleATOSetup
-prog_char timeoutsmenu_1_label[] PROGMEM = "ATO Interval";
+const prog_char timeoutsmenu_1_label[] PROGMEM = "ATO Interval";
 #endif  // SingleATOSetup
-prog_char timeoutsmenu_2_label[] PROGMEM = "ATO Clear";
+const prog_char timeoutsmenu_2_label[] PROGMEM = "ATO Clear";
 #endif  // ATOSetup
 #ifdef SetupExtras
-prog_char timeoutsmenu_3_label[] PROGMEM = "Feeding";
-prog_char timeoutsmenu_4_label[] PROGMEM = "LCD";
+const prog_char timeoutsmenu_3_label[] PROGMEM = "Feeding";
+const prog_char timeoutsmenu_4_label[] PROGMEM = "LCD";
 #endif  // SetupExtras
 PROGMEM const char *timeoutsmenu_items[] = {
 #ifdef ATOSetup
@@ -1569,14 +1595,12 @@ void ReefAngelClass::DisplayMenu()
         else
         {
             // the last item in the list is either Exit or Prev Menu
+            int ptr2 = pgm_read_word(&(return_items[0]));
             if ( DisplayedMenu == MainMenu )
             {
-                strcpy(buffer, "Exit");
+                ptr2 += strlen(Return_0_label) + 1;
             }
-            else
-            {
-                strcpy(buffer, "<- Prev Menu");
-            }
+            strcpy_P(buffer, (char *)ptr2);
         }
         ptr += strlen(buffer);
 
@@ -1603,6 +1627,7 @@ void ReefAngelClass::DisplayMenuHeading()
         return;
 
     char buffer[10];
+    int ptr = pgm_read_word(&(menu_items[0]));
 
     switch ( DisplayedMenu )
     {
@@ -1614,7 +1639,7 @@ void ReefAngelClass::DisplayMenuHeading()
 //            break;
         case MainMenu:
             {
-                strcpy(buffer, "Main:");
+                strcpy_P(buffer, (char*)ptr);
             }
             break;
 
@@ -1622,31 +1647,36 @@ void ReefAngelClass::DisplayMenuHeading()
 #ifdef PWMExpansionRelay
 		case PWMMenu:
 			{
-				strcpy(buffer, "PWM:");
+				ptr += strlen(Menu_0_label) + 1;
+				strcpy_P(buffer, (char*)ptr);
 			}
 			break;
 #endif  // PWMExpansionRelay
         case SetupMenu:
             {
-                strcpy(buffer, "Setup:");
+                ptr += strlen(Menu_0_label) + strlen(Menu_1_label) + 2;
+                strcpy_P(buffer, (char*)ptr);
             }
             break;
 #ifndef RemoveAllLights
         case LightsMenu:
             {
-                strcpy(buffer, "Lights:");
+                ptr += strlen(Menu_0_label) + strlen(Menu_1_label) + strlen(Menu_2_label) + 3;
+                strcpy_P(buffer, (char*)ptr);
             }
             break;
 #endif  // RemoveAllLights
         case TempsMenu:
             {
-                strcpy(buffer, "Temp:");
+                ptr += strlen(Menu_0_label) + strlen(Menu_1_label) + strlen(Menu_2_label) + strlen(Menu_3_label) + 4;
+                strcpy_P(buffer, (char*)ptr);
             }
             break;
 #if defined SetupExtras || defined ATOSetup
         case TimeoutsMenu:
             {
-                strcpy(buffer, "Timeouts:");
+                ptr += strlen(Menu_0_label) + strlen(Menu_1_label) + strlen(Menu_2_label) + strlen(Menu_3_label) + strlen(Menu_4_label) + 5;
+                strcpy_P(buffer, (char*)ptr);
             }
             break;
 #endif  // if defined SetupExtras || defined ATOSetup
@@ -1663,6 +1693,13 @@ void ReefAngelClass::DisplayMenuEntry(char *text)
 {
     ClearScreen(DefaultBGColor);
     LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, text);
+    /*
+    char buffer[18];
+	int ptr = pgm_read_word(&(return_items[0]));
+	ptr += strlen(Return_0_label) + strlen(Return_1_label) + 2;
+	strcpy_P(buffer, (char *)ptr);
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, buffer);
+    */
     LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, "Press to exit...");
 }
 
