@@ -328,18 +328,27 @@ and default menus.  You must enable the CUSTOM_MAIN so you can make use of the f
 screen.
 
 There are full fonts for the sizes:  5x8 (built in), 8x8, 8x16, 12x16
-There are numbers only for sizes:  16x16
+There are numbers only for sizes:  8x8, 8x16, 12x16, 16x16
 
 How to use:
 
 Font 8x8:
 ReefAngel.NokiaLCD.DrawLargeText(..., Font8x8);
 
+Numbers 8x8:
+ReefAngel.NokiaLCD.DrawLargeText(..., Num8x8);
+
 Font 8x16:
 ReefAngel.NokiaLCD.DrawLargeText(..., Font8x16);
 
+Numbers 8x16:
+ReefAngel.NokiaLCD.DrawLargeText(..., Num8x16);
+
 Font 12x16:
-ReefAngel.NokiaLCD.DrawHugeText(...);
+ReefAngel.NokiaLCD.DrawHugeText(..., Font12x16);
+
+Numbers 12x16:
+ReefAngel.NokiaLCD.DrawHugeText(..., Num12x16);
 
 Numbers 16x16:
 ReefAngel.NokiaLCD.DrawHugeNumbers(...);
@@ -356,6 +365,9 @@ ENABLE AT YOUR OWN RISK
 //#define FONT_8x8
 //#define FONT_8x16
 //#define FONT_12x16
+//#define NUMBERS_8x8
+//#define NUMBERS_8x16
+//#define NUMBERS_12x16
 //#define NUMBERS_16x16
 
 #endif  // __REEFANGEL_FEATURES_H__
