@@ -129,9 +129,13 @@ public:
 	void DisplayVersion();
 #endif  // VersionMenu
 	void ClearScreen(byte Color);
-#ifdef DisplayLEDPWM
+#if defined DisplayLEDPWM && ! defined RemoveAllLights
 	void MoonlightPWM(byte RelayID, bool ShowPWM);
-#endif  // DisplayLEDPWM
+#endif  // DisplayLEDPWM && ! defined RemoveAllLights
+#ifdef PWMExpansionRelay
+	void PWMExpansion(byte cmd, byte data);
+	void PWMSetPercent(byte p);
+#endif  // PWMExpansionRelay
 
 	// Logging Functions - WebBanner and PCLogging
 	void PCLogging();
@@ -155,6 +159,9 @@ public:
     void ProcessButtonPressMain();
 
 #ifndef SIMPLE_MENU
+#ifdef PWMExpansionRelay
+	void ProcessButtonPressPWM();
+#endif  // PWMExpansionRelay
     void ProcessButtonPressSetup();
 #ifndef RemoveAllLights
     void ProcessButtonPressLights();
