@@ -1390,11 +1390,7 @@ void ReefAngelClass::ShowInterface()
 				}
 
 				// if temp2 exceeds overheat temp
-#ifdef OverheatSetup
 				if ( Params.Temp2 >= InternalMemory.OverheatTemp_read() )
-#else  // OverheatSetup
-				if ( Params.Temp2 >= 1500 )  // 150.0 F is the default
-#endif // OverheatSetup
 				{
 					LED.On();
 					// invert the ports that are activated
