@@ -406,13 +406,8 @@ void ReefAngelClass::Init()
 		taddr = 0;
 	}
 
-#ifdef SetupExtras
 	Timer[0].SetInterval(InternalMemory.FeedingTimer_read());  // Default Feeding timer
 	Timer[3].SetInterval(InternalMemory.LCDTimer_read());  // LCD Sleep Mode timer
-#else
-	Timer[0].SetInterval(900);  // Default Feeding timer
-	Timer[3].SetInterval(600);  // LCD Sleep Mode timer
-#endif  // SetupExtras
 	Timer[3].Start();  // start timer
 	Timer[5].SetInterval(720);  // Store Params
 	Timer[5].ForceTrigger();
