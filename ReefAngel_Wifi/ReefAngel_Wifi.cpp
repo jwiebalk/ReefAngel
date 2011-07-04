@@ -242,7 +242,7 @@ void processHTTP()
 				}
 				ReefAngel.Relay.Write();
 				char temp[6];
-				int s=112;
+				int s=142;
 
 				s += intlength(ReefAngel.Params.Temp1);
 				s += intlength(ReefAngel.Params.Temp2);
@@ -251,6 +251,8 @@ void processHTTP()
 				s += intlength(ReefAngel.Relay.RelayData);
 				s += intlength(ReefAngel.Relay.RelayMaskOn);
 				s += intlength(ReefAngel.Relay.RelayMaskOff);
+				s += intlength(ReefAngel.PWM.GetDaylightValue());
+				s += intlength(ReefAngel.PWM.GetActinicValue());
 #ifdef RelayExp
 				s += 296;
 				for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
