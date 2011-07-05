@@ -294,11 +294,11 @@ void processHTTP()
 					// check if we have to reload any timers
 					if ( webmemoryloc == Mem_I_FeedingTimer )
 					{
-						ReefAngel.Timer[0].SetInterval(weboption);
+						ReefAngel.Timer[FEEDING_TIMER].SetInterval(weboption);
 					}
 					else if ( webmemoryloc == Mem_I_LCDTimer )
 					{
-						ReefAngel.Timer[3].SetInterval(weboption);
+						ReefAngel.Timer[LCD_TIMER].SetInterval(weboption);
 					}
 #ifdef WavemakerSetup
 					else if ( (webmemoryloc == Mem_I_WM1Timer) || (webmemoryloc == Mem_I_WM2Timer) )

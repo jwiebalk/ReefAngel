@@ -406,11 +406,11 @@ void ReefAngelClass::Init()
 		taddr = 0;
 	}
 
-	Timer[0].SetInterval(InternalMemory.FeedingTimer_read());  // Default Feeding timer
-	Timer[3].SetInterval(InternalMemory.LCDTimer_read());  // LCD Sleep Mode timer
-	Timer[3].Start();  // start timer
-	Timer[5].SetInterval(720);  // Store Params
-	Timer[5].ForceTrigger();
+	Timer[FEEDING_TIMER].SetInterval(InternalMemory.FeedingTimer_read());  // Default Feeding timer
+	Timer[LCD_TIMER].SetInterval(InternalMemory.LCDTimer_read());  // LCD Sleep Mode timer
+	Timer[LCD_TIMER].Start();  // start timer
+	Timer[STORE_PARAMS_TIMER].SetInterval(720);  // Store Params
+	Timer[STORE_PARAMS_TIMER].ForceTrigger();
 
 
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
@@ -1185,7 +1185,7 @@ void ReefAngelClass::FeedingModeStart()
 #endif  // RelayExp
 	Relay.Write();
 	LCD.DrawText(ModeScreenColor, DefaultBGColor, 30, 10, "Feeding Mode");
-	Timer[0].Start();  //Start Feeding Mode timer
+	Timer[FEEDING_TIMER].Start();  //Start Feeding Mode timer
 #ifdef DisplayImages
 	LCD.DrawEEPromImage(40,50, 40, 30, I2CEEPROM2, I2CEEPROM2_Feeding);
 #endif  // DisplayImages
@@ -1285,7 +1285,7 @@ void ReefAngelClass::ShowInterface()
 			case DEFAULT_MENU:
 			{
 				// process screensaver timeout
-				if ( Timer[3].IsTriggered() )
+				if ( Timer[LCD_TIMER].IsTriggered() )
 				{
 					// Screensaver timeout expired
 					LCD.BacklightOff();
@@ -1296,10 +1296,10 @@ void ReefAngelClass::ShowInterface()
 					// turn the backlight on
 					LCD.BacklightOn();
 
-					// TODO check Timer[3] code
-					if ( Timer[3].Trigger == 0 )
+					// TODO check Timer[LCD_TIMER] code
+					if ( Timer[LCD_TIMER].Trigger == 0 )
 					{
-						Timer[3].Start();
+						Timer[LCD_TIMER].Start();
 						return;
 					}
 
@@ -1320,7 +1320,7 @@ void ReefAngelClass::ShowInterface()
 				{
 					// Turn backlight on
 					LCD.BacklightOn();
-					Timer[3].Start();
+					Timer[LCD_TIMER].Start();
 				}
 
 				pingSerial();
@@ -1349,14 +1349,14 @@ void ReefAngelClass::ShowInterface()
 				// This can be the timers for wavemakers or any overheat temperatures
 
 				// process timers
-				if ( Timer[5].IsTriggered() )
+				if ( Timer[STORE_PARAMS_TIMER].IsTriggered() )
 				{
 					int CurTemp;
 
 					// Values are stored in the I2CEEPROM1
 					taddr++;
 					if ( taddr >= 120 ) taddr = 0;
-					Timer[5].Start();
+					Timer[STORE_PARAMS_TIMER].Start();
 					CurTemp = map(Params.Temp1, T1LOW, T1HIGH, 0, 50); // apply the calibration to the sensor reading
 					CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
 					//LCD.Clear(DefaultBGColor,0,0,1,1);
@@ -1410,8 +1410,8 @@ void ReefAngelClass::ShowInterface()
 			{
 				int t;
 				bool bDone = false;
-				t = Timer[0].Trigger - now();
-				if ( (t >= 0) && ! Timer[0].IsTriggered() )
+				t = Timer[FEEDING_TIMER].Trigger - now();
+				if ( (t >= 0) && ! Timer[FEEDING_TIMER].IsTriggered() )
 				{
 					LCD.Clear(DefaultBGColor,60+(intlength(t)*5),100,100,108);
 					LCD.DrawText(DefaultFGColor,DefaultBGColor,60,100,t);
@@ -1432,7 +1432,7 @@ void ReefAngelClass::ShowInterface()
 				{
 					// we're finished, so let's clear the screen and return
 					ClearScreen(DefaultBGColor);
-					Timer[3].Start();  // start LCD shutoff timer
+					Timer[LCD_TIMER].Start();  // start LCD shutoff timer
 
 					// Restore the ports
 #ifdef SaveRelayState
@@ -1470,7 +1470,7 @@ void ReefAngelClass::ShowInterface()
 				{
 					// we're finished, so let's clear the screen and return
 					ClearScreen(DefaultBGColor);
-					Timer[3].Start();  // start LCD shutoff timer
+					Timer[LCD_TIMER].Start();  // start LCD shutoff timer
 
 #ifdef SaveRelayState
 					Relay.RelayData = CurrentRelayState;
@@ -1508,8 +1508,8 @@ void ReefAngelClass::ShowInterface()
 					// button is pressed, so we gotta exit out, show the menu & redraw it too
 					redrawmenu = true;
 					showmenu = true;
-					Timer[0].ForceTrigger();
-					Timer[3].Start();
+					Timer[FEEDING_TIMER].ForceTrigger();
+					Timer[LCD_TIMER].Start();
 				}
 				break;
 			}
@@ -2300,7 +2300,7 @@ void ReefAngelClass::ProcessButtonPressTimeouts()
             {
                 InternalMemory.FeedingTimer_write(v);
                 // update the feeding timer value
-                Timer[0].SetInterval(v);
+                Timer[FEEDING_TIMER].SetInterval(v);
             }
             break;
         }
@@ -2312,8 +2312,8 @@ void ReefAngelClass::ProcessButtonPressTimeouts()
             {
                 InternalMemory.LCDTimer_write(v);
                 // update the timer value
-                Timer[3].SetInterval(v);
-                Timer[3].Start();
+                Timer[LCD_TIMER].SetInterval(v);
+                Timer[LCD_TIMER].Start();
             }
             break;
         }

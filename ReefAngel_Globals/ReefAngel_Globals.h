@@ -156,6 +156,11 @@
 #define I2CEEPROM2_Feeding           9919  //3000-4999
 #define I2CEEPROM2_Water_Change      11919  //15300-18104
 
+// Timer Indices
+#define FEEDING_TIMER			0
+#define LCD_TIMER				3
+#define STORE_PARAMS_TIMER		5
+
 /*
 EEPROM locations
 
