@@ -1818,11 +1818,13 @@ void ReefAngelClass::ProcessButtonPressMain()
 			SetupCalibratePH();
 			break;
 		}
+#ifdef DateTimeSetup
 		case MainMenu_DateTime:
 		{
 			SetupDateTime();
 			break;
 		}
+#endif  // DateTimeSetup
 
 #else  // SIMPLE_MENU
 

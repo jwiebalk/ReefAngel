@@ -84,24 +84,45 @@ void pushbuffer(byte inStr)
 		        	if ( isdigit(m_pushback[m_pushbackindex-2]) )
 		        	{
 		        		// check for the comma to determine how we proceed
-		        		if ( bHasComma )
+		        		if ( bCommaCount )
 		        		{
 		        			bHasSecondValue = true;
 		        		}
 		        		else
 		        		{
 		        			bHasSecondValue = false;
-		        			webmemoryloc = weboption;
+		        			weboption2 = weboption;
 		        		}
 		        	}
+		        }
+		        if ( reqtype == REQ_DATE )
+		        {
+		        	// last char must be a digit
+					if ( isdigit(m_pushback[m_pushbackindex-2]) )
+					{
+						// comma count must be 2 otherwise it's an error
+						// if not, set weboption to -1 to signify an error
+						if ( bCommaCount != 2 )
+						{
+							weboption = -1;
+						}
+					}
+					else
+					{
+						weboption = -1;
+					}
 		        }
 		    }
 		    else if (inStr == ',')
 		    {
-		    	// when we hit a comma, copy the first value (weboption) to memory location
+		    	// when we hit a comma, copy the first value (weboption) to weboption2
 		    	// then skip over the comma and put the value to be written into weboption
-		    	bHasComma = true;
-		    	webmemoryloc = weboption;
+		    	// second comma copies the value into weboption3
+				bCommaCount++;
+				if ( bCommaCount == 1 )
+					weboption2 = weboption;
+				else if ( bCommaCount == 2 )
+					weboption3 = weboption;
 		    	// reset weboption to 0
 		    	weboption = 0;
 		    }
@@ -117,7 +138,7 @@ void pushbuffer(byte inStr)
 		    // right now, we can embed non digits in the parameters and as long as the last char is a digit,
 		    // it is ok and the non digits are just skipped over
 		    // we may want to signal an error or break out of processing the string to indicate there is an error
-		    // maybe set webmemoryloc and weboption to -1 or 0
+		    // maybe set weboption2 and weboption to -1 or 0
 		    // could also flush the buffer and set reqtype to a REQ_ERROR or something
 		    // need to give this more thought
 		    //
@@ -135,11 +156,11 @@ void pushbuffer(byte inStr)
             if (strncmp("GET / ", m_pushback, 6)==0) reqtype = REQ_ROOT;
             else if (strncmp("GET /wifi", m_pushback, 9)==0) reqtype = REQ_WIFI;
             else if (strncmp("GET /r", m_pushback, 6)==0) reqtype = -REQ_RELAY;
-            else if (strncmp("GET /mb", m_pushback, 7)==0) { reqtype = -REQ_M_BYTE; webmemoryloc = -1; bHasSecondValue = false; bHasComma = false;}
-            else if (strncmp("GET /mi", m_pushback, 7)==0) { reqtype = -REQ_M_INT; webmemoryloc = -1; bHasSecondValue = false; bHasComma = false;}
+            else if (strncmp("GET /mb", m_pushback, 7)==0) { reqtype = -REQ_M_BYTE; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
+            else if (strncmp("GET /mi", m_pushback, 7)==0) { reqtype = -REQ_M_INT; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
             else if (strncmp("GET /ma", m_pushback, 7)==0) reqtype = -REQ_M_ALL;
             else if (strncmp("GET /v", m_pushback, 6)==0) reqtype = -REQ_VERSION;
-            else if (strncmp("GET /d", m_pushback, 6)==0) reqtype = -REQ_DATE;
+            else if (strncmp("GET /d", m_pushback, 6)==0) { reqtype = -REQ_DATE; weboption2 = -1; weboption3 = -1; bCommaCount = 0; }
             else reqtype = -REQ_UNKNOWN;
 		}
 	}
@@ -281,32 +302,32 @@ void processHTTP()
 				P(WebBodyMsg1) = SERVER_HEADER3;
 				printP(WebBodyMsg1);
 
-				// webmemoryloc is location
+				// weboption2 is location
 				// weboption is value
-				if ( bHasSecondValue && (webmemoryloc >= 0) )
+				if ( bHasSecondValue && (weboption2 >= 0) )
 				{
 					// if we have a second value, we write the value to memory
 					if ( reqtype == REQ_M_BYTE )
-						InternalMemory.write(webmemoryloc, weboption);
+						InternalMemory.write(weboption2, weboption);
 					else
-						InternalMemory.write_int(webmemoryloc, weboption);
+						InternalMemory.write_int(weboption2, weboption);
 
 					// check if we have to reload any timers
-					if ( webmemoryloc == Mem_I_FeedingTimer )
+					if ( weboption2 == Mem_I_FeedingTimer )
 					{
 						ReefAngel.Timer[FEEDING_TIMER].SetInterval(weboption);
 					}
-					else if ( webmemoryloc == Mem_I_LCDTimer )
+					else if ( weboption2 == Mem_I_LCDTimer )
 					{
 						ReefAngel.Timer[LCD_TIMER].SetInterval(weboption);
 					}
 #ifdef WavemakerSetup
-					else if ( (webmemoryloc == Mem_I_WM1Timer) || (webmemoryloc == Mem_I_WM2Timer) )
+					else if ( (weboption2 == Mem_I_WM1Timer) || (weboption2 == Mem_I_WM2Timer) )
 					{
 						// Restart wavemaker timers once they are set
 						byte i = 1;
 						byte p = ReefAngel.WM1Port;
-						if ( webmemoryloc == Mem_I_WM2Timer )
+						if ( weboption2 == Mem_I_WM2Timer )
 						{
 							i = 2;
 							p = ReefAngel.WM2Port;
@@ -319,25 +340,25 @@ void processHTTP()
 #endif  // WavemakerSetup
 
 					PROGMEMprint(XML_M_OPEN);
-					Serial.print(webmemoryloc, DEC);
+					Serial.print(weboption2, DEC);
 					PROGMEMprint(XML_CLOSE_TAG);
 					PROGMEMprint(XML_OK);
 					PROGMEMprint(XML_M_CLOSE);
-					Serial.print(webmemoryloc, DEC);
+					Serial.print(weboption2, DEC);
 					PROGMEMprint(XML_CLOSE_TAG);
 				}
-				else if ( !bHasSecondValue && (webmemoryloc >= 0) && !bHasComma )
+				else if ( !bHasSecondValue && (weboption2 >= 0) && (bCommaCount==0) )
 				{
 					// no second value and no comma, so we read the value from memory
 					PROGMEMprint(XML_M_OPEN);
-					Serial.print(webmemoryloc, DEC);
+					Serial.print(weboption2, DEC);
 					PROGMEMprint(XML_CLOSE_TAG);
 					if ( reqtype == REQ_M_BYTE )
-						Serial.print(InternalMemory.read(webmemoryloc),DEC);
+						Serial.print(InternalMemory.read(weboption2),DEC);
 					else
-						Serial.print(InternalMemory.read_int(webmemoryloc),DEC);
+						Serial.print(InternalMemory.read_int(weboption2),DEC);
 					PROGMEMprint(XML_M_CLOSE);
-					Serial.print(webmemoryloc, DEC);
+					Serial.print(weboption2, DEC);
 					PROGMEMprint(XML_CLOSE_TAG);
 				}
 				else
@@ -415,7 +436,8 @@ void processHTTP()
 			}  // REQ_M_ALL
 			case REQ_VERSION:
 			{
-				int s = 117;
+				//int s = 117;
+				int s = 7;
 				s += strlen(ReefAngel_Version);
 				P(WebBodyMsg) = SERVER_HEADER_XML;
 				printP(WebBodyMsg);
@@ -427,6 +449,55 @@ void processHTTP()
 			}  // REQ_VERSION
 			case REQ_DATE:
 			{
+				uint8_t s = 10;
+				uint8_t hr, min, mon, day;
+				if ( weboption > -1 )
+				{
+					/*
+					Numbers must be formatted as follows, add leading space if a single digit
+					weboption contains YY (years since 2000)
+					weboption2 contains HHMM
+					weboption3 contains MMDD
+					*/
+					hr = weboption2 / 100;
+					min = weboption2 % 100;
+					mon = weboption3 / 100;
+					day = weboption3 % 100;
+
+					/*
+					Simple sanity checks.  Ensure that the values are within "normal" ranges.
+					This will obviously fail if somebody tries to set the 30th day of February or
+					with the months that only have 30 days.  We will rely on the client sending the request
+					to ensure the date is in proper range.  We will just check for the simple checks.
+					*/
+					if ( ( hr > 23 || hr < 0 ) ||
+						 ( min > 59 || min < 0 ) ||
+						 ( mon > 12 || mon < 1 ) ||
+						 ( day > 31 || day < 1 ) )
+					{
+						weboption = -1;
+					}
+					else
+					{
+						s--;
+					}
+				}
+				P(WebBodyMsg) = SERVER_HEADER_XML;
+				printP(WebBodyMsg);
+				Serial.print(s, DEC);
+				P(WebBodyMsg1) = SERVER_HEADER3;
+				printP(WebBodyMsg1);
+				PROGMEMprint(XML_DATE_OPEN);
+				if ( weboption == -1 )
+				{
+					PROGMEMprint(XML_ERR);
+				}
+				else
+				{
+					PROGMEMprint(XML_OK);
+					setTime(hr, min, 0, day, mon, weboption);
+				}
+				PROGMEMprint(XML_DATE_CLOSE);
 				break;
 			}  // REQ_DATE
 			default:

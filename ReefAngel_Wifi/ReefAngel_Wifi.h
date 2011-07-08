@@ -49,6 +49,8 @@ const prog_char XML_M_OPEN[] PROGMEM = "<M";
 const prog_char XML_M_CLOSE[] PROGMEM = "</M";
 const prog_char XML_MEM_OPEN[] PROGMEM = "<MEM>";
 const prog_char XML_MEM_CLOSE[] PROGMEM = "</MEM>";
+const prog_char XML_DATE_OPEN[] PROGMEM = "<D>";
+const prog_char XML_DATE_CLOSE[] PROGMEM = "</D>";
 const prog_char XML_OK[] PROGMEM = "OK";
 const prog_char XML_ERR[] PROGMEM = "ERR";
 
@@ -219,9 +221,11 @@ static boolean bIncoming=false;
 static boolean auth=false;
 static char authStr[32];
 static int weboption=0;
-static int webmemoryloc=-1;
+static int weboption2=-1;
+static int weboption3=-1;
 static byte bHasSecondValue = false;
-static byte bHasComma = false;
+//static byte bHasComma = false;
+static byte bCommaCount = 0;
 
 
 void WebResponse (const prog_char *response, long strsize);
