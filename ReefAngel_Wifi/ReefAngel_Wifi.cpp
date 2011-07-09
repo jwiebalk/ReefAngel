@@ -207,14 +207,6 @@ void processHTTP()
 			}  // REQ_ROOT
 			case REQ_WIFI:
 			{
-/*
-				P(WebBodyMsg) = SERVER_HEADER_HTML;
-				printP(WebBodyMsg);
-				Serial.print(sizeof(SERVER_RA) - 1,DEC);
-				P(WebBodyMsg1) = SERVER_HEADER3;
-				printP(WebBodyMsg1);
-				PROGMEMprint(SERVER_RA);
-*/
 				WebResponse(SERVER_RA, sizeof(SERVER_RA) - 1);
 				break;
 			}  // REQ_WIFI
