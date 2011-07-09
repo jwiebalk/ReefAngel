@@ -330,6 +330,16 @@ void processHTTP()
 					{
 						ReefAngel.Timer[LCD_TIMER].SetInterval(weboption);
 					}
+#ifdef DisplayLEDPWM
+					else if ( weboption2 == Mem_B_LEDPWMActinic )
+					{
+						ReefAngel.PWM.SetActinic(weboption);
+					}
+					else if ( weboption2 == Mem_B_LEDPWMDaylight )
+					{
+						ReefAngel.PWM.SetDaylight(weboption);
+					}
+#endif  // DisplayLEDPWM
 #ifdef WavemakerSetup
 					else if ( (weboption2 == Mem_I_WM1Timer) || (weboption2 == Mem_I_WM2Timer) )
 					{
