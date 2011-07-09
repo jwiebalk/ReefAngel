@@ -109,7 +109,16 @@ void pushbuffer(byte inStr)
 					}
 					else
 					{
-						weboption = -1;
+						// last digit not a char and no commas means we need to
+						// send the current date/time of the controller
+						if ( bCommaCount == 0 )
+						{
+							weboption = -2;
+						}
+						else
+						{
+							weboption = -1;
+						}
 					}
 		        }
 		    }
@@ -436,7 +445,6 @@ void processHTTP()
 			}  // REQ_M_ALL
 			case REQ_VERSION:
 			{
-				//int s = 117;
 				int s = 7;
 				s += strlen(ReefAngel_Version);
 				P(WebBodyMsg) = SERVER_HEADER_XML;
@@ -450,7 +458,7 @@ void processHTTP()
 			case REQ_DATE:
 			{
 				uint8_t s = 10;
-				uint8_t hr, min, mon, day;
+				uint8_t hr, min, mon, mday;
 				if ( weboption > -1 )
 				{
 					/*
@@ -462,7 +470,7 @@ void processHTTP()
 					hr = weboption2 / 100;
 					min = weboption2 % 100;
 					mon = weboption3 / 100;
-					day = weboption3 % 100;
+					mday = weboption3 % 100;
 
 					/*
 					Simple sanity checks.  Ensure that the values are within "normal" ranges.
@@ -473,7 +481,7 @@ void processHTTP()
 					if ( ( hr > 23 || hr < 0 ) ||
 						 ( min > 59 || min < 0 ) ||
 						 ( mon > 12 || mon < 1 ) ||
-						 ( day > 31 || day < 1 ) )
+						 ( mday > 31 || mday < 1 ) )
 					{
 						weboption = -1;
 					}
@@ -481,6 +489,12 @@ void processHTTP()
 					{
 						s--;
 					}
+				} else if ( weboption == -2 )
+				{
+					// sending controller date/time
+					// 51 = rest of xml tags
+					// 10 = data being sent (already have 3 extra in s)
+					s += 58;
 				}
 				P(WebBodyMsg) = SERVER_HEADER_XML;
 				printP(WebBodyMsg);
@@ -492,10 +506,29 @@ void processHTTP()
 				{
 					PROGMEMprint(XML_ERR);
 				}
+				else if ( weboption == -2 )
+				{
+					time_t n = now();
+					Serial.print("<HR>");
+					Serial.print(hour(n), DEC);
+					Serial.print("</HR>");
+					Serial.print("<MIN>");
+					Serial.print(minute(n), DEC);
+					Serial.print("</MIN>");
+					Serial.print("<MON>");
+					Serial.print(month(n), DEC);
+					Serial.print("</MON>");
+					Serial.print("<DAY>");
+					Serial.print(day(n), DEC);
+					Serial.print("</DAY>");
+					Serial.print("<YR>");
+					Serial.print(year(n), DEC);
+					Serial.print("</YR>");
+				}
 				else
 				{
 					PROGMEMprint(XML_OK);
-					setTime(hr, min, 0, day, mon, weboption);
+					setTime(hr, min, 0, mday, mon, weboption);
 				}
 				PROGMEMprint(XML_DATE_CLOSE);
 				break;
