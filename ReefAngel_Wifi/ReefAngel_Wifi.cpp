@@ -503,8 +503,9 @@ void processHTTP()
 				{
 					// sending controller date/time
 					// 51 = rest of xml tags
-					// 10 = data being sent (already have 3 extra in s)
-					s += 58;
+					// 12 = data being sent (already have 3 extra in s)
+					//  7  = base xml tags (open & close d)
+					s += 60;
 				}
 				P(WebBodyMsg) = SERVER_HEADER_XML;
 				printP(WebBodyMsg);
