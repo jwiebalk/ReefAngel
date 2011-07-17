@@ -458,11 +458,19 @@ void ReefAngelClass::Init()
 
     // Initialize the Nested Menus
     InitMenus();
+
+#if defined WDT || defined WDT_FORCE
+	// enable watchdog timer for 1 second.  consider allowing this option to be configured.
+	if ( wdtenabled ) wdt_enable(WDTO_1S);
+#endif  // defined WDT || defined WDT_FORCE
 }
 
 void ReefAngelClass::Refresh()
 {
     pingSerial();
+#if defined WDT || defined WDT_FORCE
+	wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	now();
 #ifdef DirectTempSensor
@@ -695,6 +703,7 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte 
 {
 	/*
 	If the switch is active, the float is opposite of the 2 wires,
+		Check if we are not currently topping, if we are not check if we can run
 		If we have an hour interval, check if we can run
 		If we can run, activate the pump because we need water
 	Otherwise the switch is not active, we need to see if we are currently topping
@@ -727,7 +736,7 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte 
     t *= 1000;
     if ( ato->IsActive() )
     {
-        if ( bCanRun )
+        if ( (! ato->IsTopping()) && bCanRun )
         {
             ato->Timer = millis();
             ato->StartTopping();
@@ -745,7 +754,7 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte 
 		}
     }
 
-    if ( (millis() - ato->Timer > t) && ato->IsTopping() )
+    if ( ((millis() - ato->Timer) > t) && ato->IsTopping() )
     {
         LED.On();
         Relay.Off(ATORelay);
@@ -1274,12 +1283,18 @@ void ReefAngelClass::ShowInterface()
     // are we displaying the menu or not??
     if ( showmenu )
     {
+#if defined WDT || defined WDT_FORCE
+		wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
         DisplayMenuHeading();
         DisplayMenu();
     }
     else
     {
-        // not displaying the menu, so we're gonna show the default screen
+        // not displaying the menu, so we're gonna show the appropriate screen
+#if defined WDT || defined WDT_FORCE
+		wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
         switch ( DisplayedMenu )
         {
 			case DEFAULT_MENU:
@@ -1312,6 +1327,9 @@ void ReefAngelClass::ShowInterface()
 					showmenu = true;
 					redrawmenu = true;
 					menutimeout = now();
+#if defined WDT || defined WDT_FORCE
+					wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
 					// get out of this function and display the menu
 					return;
 				}
@@ -1515,6 +1533,9 @@ void ReefAngelClass::ShowInterface()
 			}
         }  // switch DisplayedMenu
     }  // if showmenu
+#if defined WDT || defined WDT_FORCE
+	wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
 }
 
 void ReefAngelClass::DisplayMenu()
@@ -1522,6 +1543,10 @@ void ReefAngelClass::DisplayMenu()
     // redrawmenu should only get set from within this function when we move the joystick or press the button
     byte qty = menuqtysptr[DisplayedMenu];
     int ptr = menusptr[DisplayedMenu];
+
+#if defined WDT || defined WDT_FORCE
+	wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
 
     if ( Joystick.IsUp() )
     {
@@ -1568,6 +1593,9 @@ void ReefAngelClass::DisplayMenu()
         // button gets pressed, so we need to handle the button press
         ProcessButtonPress();
         redrawmenu = true;
+#if defined WDT || defined WDT_FORCE
+		wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
         // Don't finish processing the rest of the menu
         return;
     }
@@ -2360,6 +2388,9 @@ bool ReefAngelClass::SetupOption(int &v, int &y, int rangemin, int rangemax, byt
     }
     do
     {
+#if defined WDT || defined WDT_FORCE
+		wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
         if ( bRedraw )
         {
             switch ( sel )
@@ -2543,6 +2574,9 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
     LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL+offset_hr+13, MENU_START_ROW*6, ":");
     do
     {
+#if defined WDT || defined WDT_FORCE
+		wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
         if ( bRedraw )
         {
             switch ( sel )
@@ -2782,6 +2816,9 @@ void ReefAngelClass::SetupCalibratePH()
     LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*7, "PH 10.0");
     do
     {
+#if defined WDT || defined WDT_FORCE
+		wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
         iP = analogRead(PHPin);
         LCD.DrawCalibrate(iP, MENU_START_COL + offset, MENU_START_ROW*5);
         if ( iP < iTPHMin )
@@ -2871,6 +2908,9 @@ void ReefAngelClass::SetupDateTime()
 
     do
     {
+#if defined WDT || defined WDT_FORCE
+		wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
         if ( bRedraw )
         {
             switch ( sel )
@@ -3210,6 +3250,9 @@ void ReefAngelClass::SetupDosingPump()
     LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*9, "Run Time:");
     do
     {
+#if defined WDT || defined WDT_FORCE
+		wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
         if ( bRedraw )
         {
             switch ( sel )

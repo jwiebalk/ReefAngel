@@ -173,6 +173,11 @@ Currently untested.
 /*
 If you have the wifi module for your controller and wish to use it, you must uncomment this next line
 to utilize the built-in webserver for the controller.
+
+If enabled, you may want to consider enabling SIMPLE_MENU and disabling DateTimeSetup to save space.
+This is advisable since all settings can be updated via the wifi interface.
+
+Approximately 5000+ bytes to have this feature. This size can vary.
 */
 //#define wifi
 
@@ -315,6 +320,8 @@ Approximately 4566 bytes removed when using the Simplified Menu
 This option allows for the user to handle the menu in their PDE file
 
 See the comments about SIMPLE_MENU for what features will work and what will not.
+
+As of 07/17/2011 - This feature does nothing.  This is for future releases.
 */
 //#define CUSTOM_MENU
 
@@ -369,5 +376,29 @@ ENABLE AT YOUR OWN RISK
 //#define NUMBERS_8x16
 //#define NUMBERS_12x16
 //#define NUMBERS_16x16
+
+/*
+Watchdog Timers
+
+With the optiboot bootloader, enabling the watchdog timer is possible.  You must have version 4 of the
+optiboot booloader installed on the controller for this to work.  Once enabled, the watchdog timer must
+be reset/tickled/touched periodically or else the controller will reboot.
+
+If enabled, there is a check on controller initialization that verifies the proper bootloader is installed
+before enabling the watchdog timer.
+This option is called WDT.  This option also overrides WDT_FORCE (mentioned below).
+
+There is also another option for people who have the optiboot bootloader prior to version 4.  There is only
+a couple people who fall into this category.  This option should not be enabled unless instructed to do so.
+Enabling this option otherwise could potentially cause problems with your controller.
+This option is called WDT_FORCE.
+
+Approximately 54 bytes to have Watchdog Enabled (WDT).
+*/
+// Watchdog Timer
+//#define WDT
+// Force Watchdog Timer - DO NOT ENABLE UNLESS TOLD TO DO SO
+//#define WDT_FORCE
+
 
 #endif  // __REEFANGEL_FEATURES_H__
