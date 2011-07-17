@@ -975,6 +975,9 @@ void ReefAngelClass::DisplayVersion()
     // to be able to write functions to retrieve actual information
     LCD.DrawText(ModeScreenColor,DefaultBGColor,10,30,"Wifi");
 #endif  // wifi
+#if defined WDT || defined WDT_FORCE
+	LCD.DrawText(ModeScreenColor,DefaultBGColor,40,30,"WDT");
+#endif
 #ifdef RelayExp
 	LCD.DrawText(ModeScreenColor,DefaultBGColor,10,40,InstalledRelayExpansionModules);
 #endif  // RelayExp
