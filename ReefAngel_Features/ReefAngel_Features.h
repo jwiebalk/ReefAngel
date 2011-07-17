@@ -393,7 +393,7 @@ a couple people who fall into this category.  This option should not be enabled 
 Enabling this option otherwise could potentially cause problems with your controller.
 This option is called WDT_FORCE.
 
-Approximately 54 bytes to have Watchdog Enabled (WDT).
+Approximately 82 bytes to have Watchdog Enabled (WDT).
 */
 // Watchdog Timer
 //#define WDT
