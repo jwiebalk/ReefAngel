@@ -38,6 +38,18 @@
 #include <ReefAngel_Memory.h>
 #include <avr/pgmspace.h>
 
+// Watchdog Timers
+#if defined WDT || defined WDT_FORCE
+#include <avr/wdt.h>
+#endif  // defined WDT || defined WDT_FORCE
+
+// WDT overrides WDT_FORCE
+#if defined WDT
+	#define wdtenabled pgm_read_word(0x7ffe)==0x400
+#elif defined WDT_FORCE
+	#define wdtenabled 1
+#endif  // WDT
+
 
 static unsigned long ButtonDebounce;
 static unsigned long RAStart;
