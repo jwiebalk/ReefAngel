@@ -1176,7 +1176,7 @@ void ReefAngelClass::WebBanner()
 		P(badmsg)=BAD;
 		printP(badmsg);
 	}
-	Serial.println(" HTTP/1.1\n\n");
+	Serial.println("\n\n");
 }
 #endif  // wifi
 
