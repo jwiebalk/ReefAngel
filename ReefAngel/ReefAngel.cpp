@@ -1098,10 +1098,14 @@ void ReefAngelClass::PCLogging()
 	Serial.print(LowATO.IsActive());
 	PROGMEMprint(XML_ATOHIGH);
 	Serial.print(HighATO.IsActive());
+	PROGMEMprint(XML_ATOHIGH_END);
+#ifdef DisplayLEDPWM
 	PROGMEMprint(XML_PWMA);
 	Serial.print(PWM.GetActinicValue(), DEC);
 	PROGMEMprint(XML_PWMD);
 	Serial.print(PWM.GetDaylightValue(), DEC);
+	PROGMEMprint(XML_PWMD_END);
+#endif  // DisplayLEDPWM
 	PROGMEMprint(XML_END);
 }
 

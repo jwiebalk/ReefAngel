@@ -273,8 +273,10 @@ void processHTTP()
 				s += intlength(ReefAngel.Relay.RelayData);
 				s += intlength(ReefAngel.Relay.RelayMaskOn);
 				s += intlength(ReefAngel.Relay.RelayMaskOff);
+#ifdef DisplayLEDPWM
 				s += intlength(ReefAngel.PWM.GetDaylightValue());
 				s += intlength(ReefAngel.PWM.GetActinicValue());
+#endif  // DisplayLEDPWM
 #ifdef RelayExp
 				s += 296;
 				for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )

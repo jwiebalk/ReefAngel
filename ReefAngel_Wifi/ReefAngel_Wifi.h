@@ -38,9 +38,13 @@ const prog_char XML_RE_ON[] PROGMEM = "ON";
 const prog_char XML_RE_OFF[] PROGMEM = "OFF";
 const prog_char XML_ATOLOW[] PROGMEM = "<ATOLOW>";
 const prog_char XML_ATOHIGH[] PROGMEM = "</ATOLOW><ATOHIGH>";
-const prog_char XML_PWMA[] PROGMEM = "</ATOHIGH><PWMA>";
+const prog_char XML_ATOHIGH_END[] PROGMEM = "</ATOHIGH>";
+#ifdef DisplayLEDPWM
+const prog_char XML_PWMA[] PROGMEM = "<PWMA>";
 const prog_char XML_PWMD[] PROGMEM = "</PWMA><PWMD>";
-const prog_char XML_END[] PROGMEM = "</PWMD></RA>";
+const prog_char XML_PWMD_END[] PROGMEM = "</PWMD>";
+#endif  // DisplayLEDPWM
+const prog_char XML_END[] PROGMEM = "</RA>";
 const prog_char XML_CLOSE_TAG[] PROGMEM = ">";
 
 
