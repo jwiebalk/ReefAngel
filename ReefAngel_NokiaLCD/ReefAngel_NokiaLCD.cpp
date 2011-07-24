@@ -1095,14 +1095,21 @@ void ReefAngel_NokiaLCD::DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y
     char text[7];
     char temptxt[3];
     if (Temp==0xFFFF) Temp=0;
-    itoa(Temp/decimal,text,10);
-    if (decimal>1)
-    {
-        itoa(Temp%decimal,temptxt,10);
-        strcat(text , ".");
-        if (Temp%decimal<10 && decimal==100) strcat(text , "0");
-        strcat(text , temptxt);
-    }
+	if (Temp==0)
+	{
+		strcpy(text,"Error");
+	}
+	else
+	{
+		itoa(Temp/decimal,text,10);
+		if (decimal>1)
+		{
+			itoa(Temp%decimal,temptxt,10);
+			strcat(text , ".");
+			if (Temp%decimal<10 && decimal==100) strcat(text , "0");
+			strcat(text , temptxt);
+		}
+	}
     Clear(DefaultBGColor,x,y,x+30,y+8);
     DrawText(fcolor,DefaultBGColor,x,y,text);
 }
