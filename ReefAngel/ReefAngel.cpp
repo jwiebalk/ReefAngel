@@ -492,15 +492,15 @@ void ReefAngelClass::Refresh()
     int y;
     y = x - Params.Temp1;
     // check to make sure the temp readings aren't beyond max allowed
-    if ( abs(y) < MAX_TEMP_SWING || Params.Temp1 == 0) Params.Temp1 = x;
+    if ( abs(y) < MAX_TEMP_SWING || Params.Temp1 == 0 || ~x) Params.Temp1 = x;
     x = TempSensor.ReadTemperature(TempSensor.addrT2);
     LCD.Clear(DefaultBGColor,0,0,1,1);
     y = x - Params.Temp2;
-    if ( abs(y) < MAX_TEMP_SWING || Params.Temp2 == 0) Params.Temp2 = x;
+    if ( abs(y) < MAX_TEMP_SWING || Params.Temp2 == 0 || ~x) Params.Temp2 = x;
     x = TempSensor.ReadTemperature(TempSensor.addrT3);
     LCD.Clear(DefaultBGColor,0,0,1,1);
     y = x - Params.Temp3;
-    if ( abs(y) < MAX_TEMP_SWING || Params.Temp3 == 0) Params.Temp3 = x;
+    if ( abs(y) < MAX_TEMP_SWING || Params.Temp3 == 0 || ~x) Params.Temp3 = x;
 	Params.PH=analogRead(PHPin);
     LCD.Clear(DefaultBGColor,0,0,1,1);
 	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
