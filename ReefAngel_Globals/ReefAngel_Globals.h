@@ -497,6 +497,7 @@ int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute);
 bool IsLeapYear(int year);
 byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, byte oldValue);
 byte MoonPhase();
+void ConvertNumToString(char* string, int num, byte decimal);
 
 // for virtual functions
 extern "C" void __cxa_pure_virtual(void);

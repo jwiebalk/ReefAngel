@@ -1092,23 +1092,15 @@ void ReefAngel_NokiaLCD::DrawOutletBox(byte x, byte y,byte RelayData)
 
 void ReefAngel_NokiaLCD::DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte decimal)
 {
-    char text[7];
-    char temptxt[3];
-    if (Temp==0xFFFF) Temp=0;
-	if (Temp==0)
+	char text[7];
+	if ( Temp == 0xFFFF ) Temp = 0;
+	if ( Temp == 0 )
 	{
-		strcpy(text,"Error");
+		strcpy(text, "Error");
 	}
 	else
 	{
-		itoa(Temp/decimal,text,10);
-		if (decimal>1)
-		{
-			itoa(Temp%decimal,temptxt,10);
-			strcat(text , ".");
-			if (Temp%decimal<10 && decimal==100) strcat(text , "0");
-			strcat(text , temptxt);
-		}
+		ConvertNumToString(text, Temp, decimal);
 	}
     Clear(DefaultBGColor,x,y,x+30,y+8);
     DrawText(fcolor,DefaultBGColor,x,y,text);

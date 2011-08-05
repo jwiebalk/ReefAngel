@@ -100,6 +100,21 @@ byte MoonPhase()
 	return (PWMvalue*100)/255;
 }
 
+void ConvertNumToString(char* string, int num, byte decimal)
+{
+    char temptxt[3];
+    int Temp = num;
+    if (Temp==0xFFFF) Temp=0;
+	itoa(Temp/decimal,string,10);
+	if (decimal>1)
+	{
+		itoa(Temp%decimal,temptxt,10);
+		strcat(string , ".");
+		if (Temp%decimal<10 && decimal==100) strcat(string , "0");
+		strcat(string , temptxt);
+	}
+}
+
 // for pure virtual functions
 void __cxa_pure_virtual(void){};
 // other fixes
