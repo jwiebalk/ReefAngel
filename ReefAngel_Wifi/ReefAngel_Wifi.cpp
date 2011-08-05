@@ -548,7 +548,7 @@ void processHTTP()
 				// infinite loop.  So, we will mark it as an unknown request but we will not respond to the requests
 				P(WebBodyMsg) = SERVER_UKNOWN;
 				WebResponse(WebBodyMsg, sizeof(WebBodyMsg) - 1);
-				/*
+				*/
 				break;
 			}
 		}  // switch reqtype
