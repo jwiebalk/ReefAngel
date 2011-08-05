@@ -496,6 +496,7 @@ byte intlength(int intin);
 int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute);
 bool IsLeapYear(int year);
 byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, byte oldValue);
+byte MoonPhase();
 
 // for virtual functions
 extern "C" void __cxa_pure_virtual(void);
