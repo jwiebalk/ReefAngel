@@ -541,8 +541,14 @@ void processHTTP()
 			default:
 			case REQ_UNKNOWN:
 			{
+				/*
+				// When using the WebBanner and sending to reefangel.com, ra.com replies back to us that the command was successful
+				// If we process that command (which we will), we end up not recognizing it and send off an uknown request response
+				// back to the server.  Then the server will send another response back to us and we end up getting in an almost
+				// infinite loop.  So, we will mark it as an unknown request but we will not respond to the requests
 				P(WebBodyMsg) = SERVER_UKNOWN;
 				WebResponse(WebBodyMsg, sizeof(WebBodyMsg) - 1);
+				/*
 				break;
 			}
 		}  // switch reqtype
