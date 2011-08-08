@@ -81,6 +81,7 @@ const prog_char XML_ERR[] PROGMEM = "ERR";
 #define REQ_M_ALL		6  		// All memory values
 #define REQ_VERSION		7  		// Library version
 #define REQ_DATE		8  		// Date and time
+#define REQ_HTTP		127		// HTTP get request from  external server
 #define REQ_UNKNOWN		128	 	// Unknown request
 
 #define P(name)   static const prog_char name[] PROGMEM

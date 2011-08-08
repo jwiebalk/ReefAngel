@@ -170,6 +170,7 @@ void pushbuffer(byte inStr)
             else if (strncmp("GET /ma", m_pushback, 7)==0) reqtype = -REQ_M_ALL;
             else if (strncmp("GET /v", m_pushback, 6)==0) reqtype = -REQ_VERSION;
             else if (strncmp("GET /d", m_pushback, 6)==0) { reqtype = -REQ_DATE; weboption2 = -1; weboption3 = -1; bCommaCount = 0; }
+            else if (strncmp("HTTP/1.", m_pushback, 7)==0) reqtype = -REQ_HTTP;
             else reqtype = -REQ_UNKNOWN;
 		}
 	}
@@ -538,17 +539,19 @@ void processHTTP()
 				PROGMEMprint(XML_DATE_CLOSE);
 				break;
 			}  // REQ_DATE
-			default:
-			case REQ_UNKNOWN:
+			case REQ_HTTP:
 			{
-				/*
 				// When using the WebBanner and sending to reefangel.com, ra.com replies back to us that the command was successful
 				// If we process that command (which we will), we end up not recognizing it and send off an uknown request response
 				// back to the server.  Then the server will send another response back to us and we end up getting in an almost
-				// infinite loop.  So, we will mark it as an unknown request but we will not respond to the requests
+				// infinite loop.  We will mark it as an HTTP request and ignore it
+				break;
+			}
+			default:
+			case REQ_UNKNOWN:
+			{
 				P(WebBodyMsg) = SERVER_UKNOWN;
 				WebResponse(WebBodyMsg, sizeof(WebBodyMsg) - 1);
-				*/
 				break;
 			}
 		}  // switch reqtype
