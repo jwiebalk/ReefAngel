@@ -46,10 +46,10 @@ on the ReefAngel Google Groups page is a Color Chart image that will show you th
 #define ModeScreenColor     COLOR_BLUE  // color of the text on Feeding Mode, Water Change Mode and Version screens
 #define DateTextColor       COLOR_RED  // color of the date on home screen
 #define OutletBorderColor   0x54  // Border around the outlet box on home screen
-#define OutletOnBGColor     0x0D  // Outlet box background color when outlet is on (homescreen)
+#define OutletOnBGColor     COLOR_GREEN  // Outlet box background color when outlet is on (homescreen)
 #define OutletOnFGColor     COLOR_WHITE  // Outlet box text (number) color when outlet is on (homescreen)
-#define OutletOffBGColor    COLOR_WHITE  // Outlet box background color when outlet is off (homescreen)
-#define OutletOffFGColor    COLOR_BLACK  // Outlet box text (number) color when outlet is off (homescreen)
+#define OutletOffBGColor    COLOR_RED  // Outlet box background color when outlet is off (homescreen)
+#define OutletOffFGColor    COLOR_WHITE  // Outlet box text (number) color when outlet is off (homescreen)
 #define BtnBorderColor      COLOR_BLACK  // OK & Cancel button border color (setup screens)
 #define BtnActiveColor      COLOR_GRAY  // OK & Cancel button ACTIVE (selected) background color (seup screens)
 #define BtnInactiveColor    COLOR_LIGHTGRAY  // OK & Cancel button INACTIVE (not selected) background color (setup screens)
