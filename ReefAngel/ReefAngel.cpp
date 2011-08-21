@@ -391,6 +391,7 @@ void ReefAngelClass::Init()
 	LastStart = RAStart;  // Set the time normal mode is started
 	LCD.BacklightOn();
 	Relay.AllOff();
+	OverheatTempProbe = &Params.Temp2;
 	/*
 	TODO Check this code, is it needed?
     PHMin=EEPROM.read(PH_Min)*256 + EEPROM.read(PH_Min+1);
@@ -1390,8 +1391,8 @@ void ReefAngelClass::ShowInterface()
 #endif  // CUSTOM_MAIN
 				}
 
-				// if temp2 exceeds overheat temp
-				if ( Params.Temp2 >= InternalMemory.OverheatTemp_read() )
+				// if overheat probe exceeds the temp
+				if ( *OverheatTempProbe >= InternalMemory.OverheatTemp_read() )
 				{
 					LED.On();
 					// invert the ports that are activated
