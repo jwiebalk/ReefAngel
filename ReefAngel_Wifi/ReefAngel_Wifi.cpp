@@ -550,8 +550,8 @@ void processHTTP()
 			default:
 			case REQ_UNKNOWN:
 			{
-				P(WebBodyMsg) = SERVER_UKNOWN;
-				WebResponse(WebBodyMsg, sizeof(WebBodyMsg) - 1);
+				//P(WebBodyMsg) = SERVER_UKNOWN;
+				//WebResponse(WebBodyMsg, sizeof(WebBodyMsg) - 1);
 				break;
 			}
 		}  // switch reqtype
