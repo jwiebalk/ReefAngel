@@ -266,31 +266,31 @@ When adding more variables, use the previous value plus 1 or 2
 // Standard Menu Checks
 #if defined SetupExtras || defined ATOSetup
 	#ifndef RemoveAllLights
-		#ifdef PWMExpansionRelay
+		#ifdef PWMExpansion
 			#define Total_Menus			6
-		#else  // PWMExpansionRelay
+		#else  // PWMExpansion
 			#define Total_Menus         5    // total number of menus
-		#endif  // PWMExpansionRelay
+		#endif  // PWMExpansion
 	#else  // RemoveAllLights
-		#ifdef PWMExpansionRelay
+		#ifdef PWMExpansion
 			#define Total_Menus			5
-		#else  // PWMExpansionRelay
+		#else  // PWMExpansion
 			#define Total_Menus         4
-		#endif  // PWMExpansionRelay
+		#endif  // PWMExpansion
 	#endif  // RemoveAllLights
 #else  // if defined SetupExtras || defined ATOSetup
 	#ifndef RemoveAllLights
-		#ifdef PWMExpansionRelay
+		#ifdef PWMExpansion
 			#define Total_Menus			5
-		#else  // PWMExpansionRelay
+		#else  // PWMExpansion
 			#define Total_Menus         4    // total number of menus
-		#endif  // PWMExpansionRelay
+		#endif  // PWMExpansion
 	#else // RemoveAllLights
-		#ifdef PWMExpansionRelay
+		#ifdef PWMExpansion
 			#define Total_Menus			4
-		#else  // PWMExpansionRelay
+		#else  // PWMExpansion
 			#define Total_Menus         3
-		#endif  // PWMExpansionRelay
+		#endif  // PWMExpansion
 	#endif  // RemoveAllLights
 #endif  // if defined SetupExtras || defined ATOSetup
 #endif  // SIMPLE_MENU

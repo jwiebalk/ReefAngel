@@ -67,9 +67,9 @@ PROGMEM const char *return_items[] = { Return_0_label, Return_1_label/*, Return_
 enum Menus {
     MainMenu,
 #ifndef SIMPLE_MENU
-#ifdef PWMExpansionRelay
+#ifdef PWMExpansion
 	PWMMenu,
-#endif  // PWMExpansionRelay
+#endif  // PWMExpansion
     SetupMenu,
 #ifndef RemoveAllLights
     LightsMenu,
@@ -130,9 +130,9 @@ enum MainMenuItem {
 // Main Menu
 const prog_char mainmenu_0_label[] PROGMEM = "Feeding";
 const prog_char mainmenu_1_label[] PROGMEM = "Water Change";
-#ifdef PWMExpansionRelay
+#ifdef PWMExpansion
 const prog_char mainmenu_2_label[] PROGMEM = "PWM ->";
-#endif  // PWMExpansionRelay
+#endif  // PWMExpansion
 #ifndef RemoveAllLights
 const prog_char mainmenu_3_label[] PROGMEM = "Lights ->";
 #endif  // RemoveAllLights
@@ -147,9 +147,9 @@ const prog_char mainmenu_7_label[] PROGMEM = "Version";
 PROGMEM const char *mainmenu_items[] = {
                     mainmenu_0_label,
                     mainmenu_1_label,
-#ifdef PWMExpansionRelay
+#ifdef PWMExpansion
 					mainmenu_2_label,
-#endif  // PWMExpansionRelay
+#endif  // PWMExpansion
 #ifndef RemoveAllLights
                     mainmenu_3_label,
 #endif  // RemoveAllLights
@@ -165,9 +165,9 @@ PROGMEM const char *mainmenu_items[] = {
 enum MainMenuItem {
     MainMenu_FeedingMode,
     MainMenu_WaterChangeMode,
-#ifdef PWMExpansionRelay
+#ifdef PWMExpansion
 	MainMenu_PWM,
-#endif  // PWMExpansionRelay
+#endif  // PWMExpansion
 #ifndef RemoveAllLights
     MainMenu_Lights,
 #endif  // RemoveAllLights
@@ -227,7 +227,7 @@ enum SetupMenuItem {
 #endif  // DateTimeSetup
 };
 
-#ifdef PWMExpansionRelay
+#ifdef PWMExpansion
 // Menu for the PWM Expansion Relay
 const prog_char pwmmenu_0_label[] PROGMEM = "Slow Cloud";
 const prog_char pwmmenu_1_label[] PROGMEM = "Fast Cloud";
@@ -253,7 +253,7 @@ enum PWMMenuItem {
 	PWMMenu_100,
 	PWMMenu_Custom
 };
-#endif  // PWMExpansionRelay
+#endif  // PWMExpansion
 
 #ifndef RemoveAllLights
 // Lights Menu
@@ -1018,7 +1018,7 @@ void ReefAngelClass::MoonlightPWM(byte RelayID, bool ShowPWM)
 }
 #endif  // DisplayLEDPWM && ! defined RemoveAllLights
 
-#ifdef PWMExpansionRelay
+#ifdef PWMExpansion
 void ReefAngelClass::PWMExpansion(byte cmd, byte data)
 {
 	Wire.beginTransmission(8);  // transmit to device #2, consider having this user defined possibly
@@ -1038,7 +1038,7 @@ void ReefAngelClass::PWMSetPercent(byte p)
 		PWMExpansion(a, 255/p);
 	}
 }
-#endif  // PWMExpansionRelay
+#endif  // PWMExpansion
 
 void ReefAngelClass::PCLogging()
 {
@@ -1257,10 +1257,10 @@ void ReefAngelClass::InitMenus()
     menuqtysptr[MainMenu] = SIZE(mainmenu_items);
 
 #ifndef SIMPLE_MENU
-#ifdef PWMExpansionRelay
+#ifdef PWMExpansion
 	menusptr[PWMMenu] = pgm_read_word(&(pwmmenu_items[0]));
 	menuqtysptr[PWMMenu] = SIZE(pwmmenu_items);
-#endif  // PWMExpansionRelay
+#endif  // PWMExpansion
     menusptr[SetupMenu] = pgm_read_word(&(setupmenu_items[0]));
     menuqtysptr[SetupMenu] = SIZE(setupmenu_items);
 #ifndef RemoveAllLights
@@ -1674,14 +1674,14 @@ void ReefAngelClass::DisplayMenuHeading()
             break;
 
 #ifndef SIMPLE_MENU
-#ifdef PWMExpansionRelay
+#ifdef PWMExpansion
 		case PWMMenu:
 			{
 				ptr += strlen(Menu_0_label) + 1;
 				strcpy_P(buffer, (char*)ptr);
 			}
 			break;
-#endif  // PWMExpansionRelay
+#endif  // PWMExpansion
         case SetupMenu:
             {
                 ptr += strlen(Menu_0_label) + strlen(Menu_1_label) + 2;
@@ -1750,13 +1750,13 @@ void ReefAngelClass::ProcessButtonPress()
         }
 
 #ifndef SIMPLE_MENU
-#ifdef PWMExpansionRelay
+#ifdef PWMExpansion
 		case PWMMenu:
 		{
 			ProcessButtonPressPWM();
 			break;
 		}
-#endif  // PWMExpansionRelay
+#endif  // PWMExpansion
         case SetupMenu:
         {
             ProcessButtonPressSetup();
@@ -1864,7 +1864,7 @@ void ReefAngelClass::ProcessButtonPressMain()
 #else  // SIMPLE_MENU
 
 		// Standard menus
-#ifdef PWMExpansionRelay
+#ifdef PWMExpansion
 		case MainMenu_PWM:
 		{
 			SelectedMenuItem = DEFAULT_MENU_ITEM;
@@ -1872,7 +1872,7 @@ void ReefAngelClass::ProcessButtonPressMain()
 			DisplayedMenu = PWMMenu;
 			break;
 		}
-#endif  // PWMExpansionRelay
+#endif  // PWMExpansion
 #ifndef RemoveAllLights
         case MainMenu_Lights:
         {
@@ -1937,7 +1937,7 @@ void ReefAngelClass::ProcessButtonPressMain()
 }
 
 #ifndef SIMPLE_MENU
-#ifdef PWMExpansionRelay
+#ifdef PWMExpansion
 void ReefAngelClass::ProcessButtonPressPWM()
 {
 	showmenu = true;
@@ -1998,7 +1998,7 @@ void ReefAngelClass::ProcessButtonPressPWM()
 		}
 	}  // switch
 }
-#endif  // PWMExpansionRelay
+#endif  // PWMExpansion
 
 void ReefAngelClass::ProcessButtonPressSetup()
 {

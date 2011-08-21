@@ -144,10 +144,10 @@ public:
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	void MoonlightPWM(byte RelayID, bool ShowPWM);
 #endif  // DisplayLEDPWM && ! defined RemoveAllLights
-#ifdef PWMExpansionRelay
+#ifdef PWMExpansion
 	void PWMExpansion(byte cmd, byte data);
 	void PWMSetPercent(byte p);
-#endif  // PWMExpansionRelay
+#endif  // PWMExpansion
 
 	// Logging Functions - WebBanner and PCLogging
 	void PCLogging();
@@ -171,9 +171,9 @@ public:
     void ProcessButtonPressMain();
 
 #ifndef SIMPLE_MENU
-#ifdef PWMExpansionRelay
+#ifdef PWMExpansion
 	void ProcessButtonPressPWM();
-#endif  // PWMExpansionRelay
+#endif  // PWMExpansion
     void ProcessButtonPressSetup();
 #ifndef RemoveAllLights
     void ProcessButtonPressLights();
