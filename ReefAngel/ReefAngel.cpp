@@ -1165,7 +1165,7 @@ void ReefAngelClass::FeedingModeStart()
 	// turn off ports
 #ifdef SaveRelayState
 	// TODO Test SaveRelayState
-	byte CurrentRelayState = Relay.RelayData;
+	CurrentRelayState = Relay.RelayData;
 #endif  // SaveRelayState
 	Relay.RelayMaskOff = ~FeedingModePorts;
 #ifdef RelayExp
@@ -1188,7 +1188,7 @@ void ReefAngelClass::WaterChangeModeStart()
 	// turn off ports
 #ifdef SaveRelayState
 	// TODO Test SaveRelayState
-	byte CurrentRelayState = Relay.RelayData;
+	CurrentRelayState = Relay.RelayData;
 #endif  // SaveRelayState
 	Relay.RelayMaskOff = ~WaterChangePorts;
 #ifdef RelayExp
@@ -1435,7 +1435,6 @@ void ReefAngelClass::ShowInterface()
 					ClearScreen(DefaultBGColor);
 					Timer[LCD_TIMER].Start();  // start LCD shutoff timer
 
-					// Restore the ports
 #ifdef SaveRelayState
 					Relay.RelayData = CurrentRelayState;
 #endif  // SaveRelayState

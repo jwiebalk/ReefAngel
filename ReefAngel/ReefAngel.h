@@ -217,6 +217,10 @@ private:
 	byte webbannerqty;
 #endif  // wifi
 
+#ifdef SaveRelayState
+	byte CurrentRelayState;
+#endif  // SaveRelayState
+
 };
 
 #ifdef CUSTOM_MAIN
