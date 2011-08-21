@@ -23,6 +23,12 @@
 #include <ReefAngel_Globals.h>
 #include <Wire.h>
 
+uint32_t LastStart;
+byte DelayedOnPorts;
+#ifdef RelayExp
+byte DelayedOnPortsE[MAX_RELAY_EXPANSION_MODULES];
+#endif  // RelayExp
+
 ReefAngel_RelayClass::ReefAngel_RelayClass()
 {
 	RelayData = 0;
@@ -48,6 +54,30 @@ void ReefAngel_RelayClass::On(byte ID)
 		bitSet(RelayDataE[EID-1],(ID%10)-1);
 	}
 #endif  // RelayExp
+}
+
+void ReefAngel_RelayClass::DelayedOn(byte ID, byte MinuteDelay)
+{
+	/*
+	We need to see if the MinuteDelay since LastStart has elapsed before we can turn on our port
+
+	Set the DelayedOnPorts flag indicating that it's a delayed on port
+	*/
+    if ( ID < 9 ) bitSet(DelayedOnPorts, ID-1);
+#ifdef RelayExp
+	if ( (ID > 10) && (ID < 89) )
+	{
+		byte EID = byte(ID/10);
+		bitSet(DelayedOnPortsE[EID-1],(ID%10)-1);
+	}
+#endif  // RelayExp
+
+	uint16_t x = MinuteDelay;
+	x *= SECS_PER_MIN;
+	if ( now()-LastStart > x )
+	{
+		On(ID);
+	}
 }
 
 void ReefAngel_RelayClass::Off(byte ID)

@@ -29,6 +29,7 @@ class ReefAngel_RelayClass
 public:
 	ReefAngel_RelayClass();
 	void On(byte ID);
+	void DelayedOn(byte ID, byte MinuteDelay);
 	void Off(byte ID);
 	void AllOn();
 	void AllOff();

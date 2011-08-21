@@ -602,30 +602,6 @@ void ReefAngelClass::ConvertTempUnit()
     }
 }
 
-void ReefAngelClass::DelayedOn(byte OnRelay, byte MinuteDelay)
-{
-	/*
-	We need to see if the MinuteDelay since LastStart has elapsed before we can turn on our port
-
-	Set the DelayedOnPorts flag indicating that it's a delayed on port
-	*/
-    if ( OnRelay < 9 ) bitSet(DelayedOnPorts, OnRelay-1);
-#ifdef RelayExp
-	if ( (OnRelay > 10) && (OnRelay < 89) )
-	{
-		byte EID = byte(OnRelay/10);
-		bitSet(DelayedOnPortsE[EID-1],(OnRelay%10)-1);
-	}
-#endif  // RelayExp
-
-	uint16_t x = MinuteDelay;
-	x *= SECS_PER_MIN;
-	if ( now()-LastStart > x )
-	{
-		Relay.On(OnRelay);
-	}
-}
-
 void ReefAngelClass::StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute)
 {
 	if (NumMins(OffHour,OffMinute) > NumMins(OnHour,OnMinute))
