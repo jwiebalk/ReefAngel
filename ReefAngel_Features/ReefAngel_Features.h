@@ -400,5 +400,31 @@ Approximately 82 bytes to have Watchdog Enabled (WDT).
 // Force Watchdog Timer - DO NOT ENABLE UNLESS TOLD TO DO SO
 //#define WDT_FORCE
 
+/*
+Enable Exceeded flags
+
+The red LED on the controller gets turned on when either the Overheat temp is reached OR if the ATO timeout is exceeded.
+You do not know which event is the the one that caused the LED to turn on.  When you clear either event the LED is turned
+off and you do not the other event was triggered.
+
+Enabling this feature will keep track of which event caused the LED to be turned on.  The event gets stored in the internal
+memory.  To know what event triggered the LED, you have to add in a display on your CUSTOM_MAIN screen to perform a check
+or query the controller in the specified memory spaces to check.  When you clear the event (either ATO or Overheat), the event
+is cleared from memory.  The time the event occurs is not logged only that the event did occur.
+
+The memory locations are as follows:
+
+ATO_Exceed_Flag
+ATO_Single_Exceed_Flag
+Overheat_Exceed_Flag
+
+The ATO Clear will clear both the Standard ATO and Single ATO events.  Currently, there is no distinction between ATO High and
+Low events.  This may be added in the future though.
+
+This should only be enabled if you are running a custom main screen because you have to code it manually to display.
+
+Approximately 68 bytes to enable the storing of the exceeded flags (not counting displaying them on the screen)
+*/
+//#define ENABLE_EXCEED_FLAGS
 
 #endif  // __REEFANGEL_FEATURES_H__

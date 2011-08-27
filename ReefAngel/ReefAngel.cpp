@@ -672,6 +672,9 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 	if ( (millis()-LowATO.Timer > TempTimeout) && LowATO.IsTopping() )
 	{
 		LED.On();
+#ifdef ENABLE_EXCEED_FLAGS
+		InternalMemory.write(ATO_Exceed_Flag, 1);
+#endif  // ENABLE_EXCEED_FLAGS
 		Relay.Off(ATORelay);
 	}
 }
@@ -734,6 +737,9 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte 
     if ( ((millis() - ato->Timer) > t) && ato->IsTopping() )
     {
         LED.On();
+#ifdef ENABLE_EXCEED_FLAGS
+        InternalMemory.write(ATO_Single_Exceed_Flag, 1);
+#endif  // ENABLE_EXCEED_FLAGS
         Relay.Off(ATORelay);
     }
 }
@@ -1210,6 +1216,10 @@ void ReefAngelClass::WaterChangeModeStart()
 void ReefAngelClass::ATOClear()
 {
 	LED.Off();
+#ifdef ENABLE_EXCEED_FLAGS
+	InternalMemory.write(ATO_Single_Exceed_Flag, 0);
+	InternalMemory.write(ATO_Exceed_Flag, 0);
+#endif  // ENABLE_EXCEED_FLAGS
 	LowATO.StopTopping();
 	HighATO.StopTopping();
 }
@@ -1217,6 +1227,9 @@ void ReefAngelClass::ATOClear()
 void ReefAngelClass::OverheatClear()
 {
 	LED.Off();
+#ifdef ENABLE_EXCEED_FLAGS
+	InternalMemory.write(Overheat_Exceed_Flag, 0);
+#endif  // ENABLE_EXCEED_FLAGS
 	Relay.RelayMaskOff = B11111111;
 #ifdef RelayExp
 	for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
@@ -1395,6 +1408,9 @@ void ReefAngelClass::ShowInterface()
 				if ( *OverheatTempProbe >= InternalMemory.OverheatTemp_read() )
 				{
 					LED.On();
+#ifdef ENABLE_EXCEED_FLAGS
+					InternalMemory.write(Overheat_Exceed_Flag, 1);
+#endif  // ENABLE_EXCEED_FLAGS
 					// invert the ports that are activated
 					Relay.RelayMaskOff = ~OverheatShutoffPorts;
 #ifdef RelayExp

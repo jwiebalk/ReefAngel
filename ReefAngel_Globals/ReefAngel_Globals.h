@@ -176,6 +176,9 @@ Int variables need 2 blocks
 When adding more variables, use the previous value plus 1 or 2
   depending on the previous values storage requirement
 */
+#define ATO_Single_Exceed_Flag	  747
+#define ATO_Exceed_Flag			  748
+#define Overheat_Exceed_Flag	  749
 #define VarsStart                 800
 #define Mem_B_MHOnHour            VarsStart
 #define Mem_B_MHOnMinute          VarsStart+1
