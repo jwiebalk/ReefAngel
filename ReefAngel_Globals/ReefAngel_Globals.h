@@ -179,6 +179,19 @@ When adding more variables, use the previous value plus 1 or 2
 #define ATO_Single_Exceed_Flag	  747
 #define ATO_Exceed_Flag			  748
 #define Overheat_Exceed_Flag	  749
+
+#define ATOEventSize			  8
+#define ATOEventOffStart		  4
+#define ATOEventStart			  750
+#define ATOEvent1_On			  ATOEventStart
+#define ATOEvent1_Off			  ATOEventStart+4
+#define ATOEvent2_On			  ATOEventStart+8
+#define ATOEvent2_Off			  ATOEventStart+12
+#define ATOEvent3_On			  ATOEventStart+16
+#define ATOEvent3_Off			  ATOEventStart+20
+#define ATOEvent4_On			  ATOEventStart+24
+#define ATOEvent4_Off			  ATOEventStart+28
+
 #define VarsStart                 800
 #define Mem_B_MHOnHour            VarsStart
 #define Mem_B_MHOnMinute          VarsStart+1

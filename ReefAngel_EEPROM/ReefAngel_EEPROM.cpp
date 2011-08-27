@@ -390,4 +390,14 @@ void ReefAngel_EEPROMClass::write_int(int address, const int value)
     eeprom_write_word((uint16_t *) address, (uint16_t) value);
 }
 
+uint32_t ReefAngel_EEPROMClass::read_dword(int address)
+{
+	return eeprom_read_dword((const uint32_t *)address);
+}
+
+void ReefAngel_EEPROMClass::write_dword(int address, const uint32_t value)
+{
+	eeprom_write_dword((uint32_t *) address, (uint32_t) value);
+}
+
 ReefAngel_EEPROMClass InternalMemory;

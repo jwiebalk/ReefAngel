@@ -105,6 +105,8 @@ class ReefAngel_EEPROMClass {
         void write(uint8_t, const uint8_t);
         int read_int(int);
         void write_int(int, const int);
+        uint32_t read_dword(int);
+        void write_dword(int, const uint32_t);
 };
 
 extern ReefAngel_EEPROMClass InternalMemory;
