@@ -535,6 +535,8 @@ void processHTTP()
 				{
 					PROGMEMprint(XML_OK);
 					setTime(hr, min, 0, mday, mon, weboption);
+					now();
+					RTC.set(now());
 				}
 				PROGMEMprint(XML_DATE_CLOSE);
 				break;
