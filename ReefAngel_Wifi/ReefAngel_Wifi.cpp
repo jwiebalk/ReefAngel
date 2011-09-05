@@ -265,8 +265,8 @@ void processHTTP()
 				}
 				ReefAngel.Relay.Write();
 				char temp[6];
-				int s=142;
-
+				int s=112;
+				//<RA><T1></T1><T2></T2><T3></T3><PH></PH><R></R><RON></RON><ROFF></ROFF><ATOLOW></ATOLOW><ATOHIGH></ATOHIGH></RA>
 				s += intlength(ReefAngel.Params.Temp1);
 				s += intlength(ReefAngel.Params.Temp2);
 				s += intlength(ReefAngel.Params.Temp3);
@@ -275,11 +275,14 @@ void processHTTP()
 				s += intlength(ReefAngel.Relay.RelayMaskOn);
 				s += intlength(ReefAngel.Relay.RelayMaskOff);
 #ifdef DisplayLEDPWM
+				s += 26;
+				//<PWMA></PWMA><PWMD></PWMD>
 				s += intlength(ReefAngel.PWM.GetDaylightValue());
 				s += intlength(ReefAngel.PWM.GetActinicValue());
 #endif  // DisplayLEDPWM
 #ifdef RelayExp
 				s += 296;
+				//<R0></R0><RON0></RON0><ROFF0></ROFF0><R1></R1><RON1></RON1><ROFF1></ROFF1><R2></R2><RON2></RON2><ROFF2></ROFF2><R3></R3><RON3></RON3><ROFF3></ROFF3><R4></R4><RON4></RON4><ROFF4></ROFF4><R5></R5><RON5></RON5><ROFF5></ROFF5><R6></R6><RON6></RON6><ROFF6></ROFF6><R7></R7><RON7></RON7><ROFF7></ROFF7>
 				for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
 				{
 					s += intlength(ReefAngel.Relay.RelayDataE[EID]);
