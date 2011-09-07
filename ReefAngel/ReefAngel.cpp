@@ -39,18 +39,34 @@ SIGNAL(PCINT0_vect) {
 
 // Menu Headings
 const prog_char Menu_0_label[] PROGMEM = "Main:";
+#ifndef SIMPLE_MENU
+#ifdef PWMExpansion
 const prog_char Menu_1_label[] PROGMEM = "PWM:";
+#endif  // PWMExpansion
 const prog_char Menu_2_label[] PROGMEM = "Setup:";
+#ifndef RemoveAllLights
 const prog_char Menu_3_label[] PROGMEM = "Lights:";
+#endif  // RemoveAllLights
 const prog_char Menu_4_label[] PROGMEM = "Temp:";
+#if defined SetupExtras || defined ATOSetup
 const prog_char Menu_5_label[] PROGMEM = "Timeouts:";
-PROGMEM const char *menu_items[] = {
+#endif  // defined SetupExtras || defined ATOSetup
+#endif  // SIMPLE_MENU
+PROGMEM const char *menulabel_items[] = {
 	Menu_0_label,
+#ifndef SIMPLE_MENU
+#ifdef PWMExpansion
 	Menu_1_label,
+#endif  // PWMExpansion
 	Menu_2_label,
+#ifndef RemoveAllLights
 	Menu_3_label,
+#endif  // RemoveAllLights
 	Menu_4_label,
+#if defined SetupExtras || defined ATOSetup
 	Menu_5_label,
+#endif  // defined SetupExtras || defined ATOSetup
+#endif  // SIMPLE_MENU
 };
 
 // Return menu entries
@@ -83,6 +99,35 @@ enum Menus {
 //	ExitMenu,
 };
 
+#ifdef CUSTOM_MENU
+enum CustomMenuItem {
+	CustomMenu_1,
+#if CUSTOM_MENU_ENTRIES >= 2
+	CustomMenu_2,
+#endif  // CUSTOM_MENU_ENTRIES >= 2
+#if CUSTOM_MENU_ENTRIES >= 3
+	CustomMenu_3,
+#endif  // CUSTOM_MENU_ENTRIES >= 3
+#if CUSTOM_MENU_ENTRIES >= 4
+	CustomMenu_4,
+#endif  // CUSTOM_MENU_ENTRIES >= 4
+#if CUSTOM_MENU_ENTRIES >= 5
+	CustomMenu_5,
+#endif  // CUSTOM_MENU_ENTRIES >= 5
+#if CUSTOM_MENU_ENTRIES >= 6
+	CustomMenu_6,
+#endif  // CUSTOM_MENU_ENTRIES >= 6
+#if CUSTOM_MENU_ENTRIES >= 7
+	CustomMenu_7,
+#endif  // CUSTOM_MENU_ENTRIES >= 7
+#if CUSTOM_MENU_ENTRIES >= 8
+	CustomMenu_8,
+#endif  // CUSTOM_MENU_ENTRIES >= 8
+#if CUSTOM_MENU_ENTRIES >= 9
+	CustomMenu_9,
+#endif  // CUSTOM_MENU_ENTRIES >= 9
+};
+#else  // CUSTOM_MENU
 #ifdef SIMPLE_MENU
 // This is the simplified menu
 // Main Menu
@@ -362,7 +407,8 @@ enum TimeoutsMenuItem {
 };
 #endif // if defined SetupExtras || defined ATOSetup
 
-#endif // SIMPLE_MENU
+#endif  // SIMPLE_MENU
+#endif  // CUSTOM_MENU
 
 
 ReefAngelClass::ReefAngelClass()
@@ -457,8 +503,10 @@ void ReefAngelClass::Init()
     LightsOnPorts = B00000110;
 #endif  // RemoveAllLights
 
+#ifndef CUSTOM_MENU
     // Initialize the Nested Menus
     InitMenus();
+#endif  // CUSTOM_MENU
 
 #if defined WDT || defined WDT_FORCE
 	// enable watchdog timer for 1 second.  consider allowing this option to be configured.
@@ -1240,6 +1288,20 @@ void ReefAngelClass::OverheatClear()
 	Relay.Write();
 }
 
+#ifdef CUSTOM_MENU
+void ReefAngelClass::InitMenu(int ptr, byte qty)
+{
+    // loads all the menus
+    menusptr[MainMenu] = ptr;
+    menuqtysptr[MainMenu] = qty;
+    // initialize menus
+    PreviousMenu = DEFAULT_MENU;
+    DisplayedMenu = DEFAULT_MENU;  // default menu to display
+    SelectedMenuItem = DEFAULT_MENU_ITEM;  // default item to have selected
+    redrawmenu = true;
+    showmenu = false;  // initially we are showing the main graphic and no menu
+}
+#else
 void ReefAngelClass::InitMenus()
 {
     // loads all the menus
@@ -1272,6 +1334,7 @@ void ReefAngelClass::InitMenus()
     redrawmenu = true;
     showmenu = false;  // initially we are showing the main graphic and no menu
 }
+#endif  // CUSTOM_MENU
 
 void ReefAngelClass::ShowInterface()
 {
@@ -1649,7 +1712,7 @@ void ReefAngelClass::DisplayMenuHeading()
         return;
 
     char buffer[10];
-    int ptr = pgm_read_word(&(menu_items[0]));
+    int ptr = pgm_read_word(&(menulabel_items[0]));
 
     switch ( DisplayedMenu )
     {
@@ -1664,8 +1727,7 @@ void ReefAngelClass::DisplayMenuHeading()
                 strcpy_P(buffer, (char*)ptr);
             }
             break;
-
-#ifndef SIMPLE_MENU
+#if !defined SIMPLE_MENU && !defined CUSTOM_MENU
 #ifdef PWMExpansion
 		case PWMMenu:
 			{
@@ -1702,7 +1764,7 @@ void ReefAngelClass::DisplayMenuHeading()
             }
             break;
 #endif  // if defined SetupExtras || defined ATOSetup
-#endif  // SIMPLE_MENU
+#endif  // !defined SIMPLE_MENU && !defined CUSTOM_MENU
     }  // switch MenuNum
 
     // clear the line that has the menu heading on it
@@ -1737,6 +1799,11 @@ void ReefAngelClass::ProcessButtonPress()
 //        }
         case MainMenu:
         {
+#ifdef CUSTOM_MENU
+			ProcessButtonPressCustom();
+            break;
+        }
+#else
             ProcessButtonPressMain();
             break;
         }
@@ -1774,6 +1841,7 @@ void ReefAngelClass::ProcessButtonPress()
         }
 #endif  // if defined SetupExtras || defined ATOSetup
 #endif  // SIMPLE_MENU
+#endif  // CUSTOM_MENU
 
         case EXCEED_TIMEOUT_MENU:
         {
@@ -1801,6 +1869,92 @@ void ReefAngelClass::ProcessButtonPress()
     }
 }
 
+#ifdef CUSTOM_MENU
+void ReefAngelClass::ProcessButtonPressCustom()
+{
+	showmenu = false;
+    ClearScreen(DefaultBGColor);
+    switch ( SelectedMenuItem )
+    {
+        case CustomMenu_1:
+        {
+        	MenuEntry1();
+            break;
+        }
+#if CUSTOM_MENU_ENTRIES >= 2
+        case CustomMenu_2:
+        {
+        	MenuEntry2();
+            break;
+        }
+#endif  // CUSTOM_MENU_ENTRIES >= 2
+#if CUSTOM_MENU_ENTRIES >= 3
+        case CustomMenu_3:
+        {
+        	MenuEntry3();
+            break;
+        }
+#endif  // CUSTOM_MENU_ENTRIES >= 3
+#if CUSTOM_MENU_ENTRIES >= 4
+        case CustomMenu_4:
+        {
+        	MenuEntry4();
+            break;
+        }
+#endif  // CUSTOM_MENU_ENTRIES >= 4
+#if CUSTOM_MENU_ENTRIES >= 5
+        case CustomMenu_5:
+        {
+        	MenuEntry5();
+            break;
+        }
+#endif  // CUSTOM_MENU_ENTRIES >= 5
+#if CUSTOM_MENU_ENTRIES >= 6
+        case CustomMenu_6:
+        {
+        	MenuEntry6();
+            break;
+        }
+#endif  // CUSTOM_MENU_ENTRIES >= 6
+#if CUSTOM_MENU_ENTRIES >= 7
+        case CustomMenu_7:
+        {
+        	MenuEntry7();
+            break;
+        }
+#endif  // CUSTOM_MENU_ENTRIES >= 7
+#if CUSTOM_MENU_ENTRIES >= 8
+        case CustomMenu_8:
+        {
+        	MenuEntry8();
+            break;
+        }
+#endif  // CUSTOM_MENU_ENTRIES >= 8
+#if CUSTOM_MENU_ENTRIES >= 9
+        case CustomMenu_9:
+        {
+        	MenuEntry9();
+        	break;
+        }
+#endif  // CUSTOM_MENU_ENTRIES >= 9
+        default:
+        {
+            // This will be the EXIT choice
+            SelectedMenuItem = DEFAULT_MENU_ITEM;
+            // switch to the previous menu
+            DisplayedMenu = DEFAULT_MENU;
+            // When we exit the main menu, we will redraw the graph
+#ifdef CUSTOM_MAIN
+			DrawCustomGraph();
+#else
+			LCD.DrawGraph(5, 5);  // Redraw graphic of params
+#endif  // CUSTOM_MAIN
+            break;
+        }
+    }
+}
+
+#else  // CUSTOM_MENU
 void ReefAngelClass::ProcessButtonPressMain()
 {
     showmenu = true;
@@ -2797,6 +2951,7 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
     }
 }
 #endif  // SIMPLE_MENU
+#endif  // CUSTOM_MENU
 
 
 void ReefAngelClass::SetupCalibratePH()
@@ -3211,7 +3366,7 @@ void ReefAngelClass::SetupDateTime()
 }
 #endif  // DateTimeSetup
 
-#ifndef SIMPE_MENU
+#if !defined SIMPLE_MENU && !defined CUSTOM_MENU
 #ifdef DosingPumpSetup
 void ReefAngelClass::SetupDosingPump()
 {
@@ -3515,7 +3670,7 @@ void ReefAngelClass::SetupDosingPump()
     }
 }
 #endif  // DosingPumpSetup
-#endif  // SIMPLE_MENU
+#endif  // !defined SIMPLE_MENU && !defined CUSTOM_MENU
 
 
 ReefAngelClass ReefAngel = ReefAngelClass() ;

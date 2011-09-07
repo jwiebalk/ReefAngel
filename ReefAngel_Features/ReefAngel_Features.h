@@ -319,11 +319,82 @@ Approximately 4566 bytes removed when using the Simplified Menu
 /*
 This option allows for the user to handle the menu in their PDE file
 
-See the comments about SIMPLE_MENU for what features will work and what will not.
+This option OVERRIDES SIMPLE_MENU
 
-As of 07/17/2011 - This feature does nothing.  This is for future releases.
+To use, you must enable CUSTOM_MENU AND define how many entries you want in your menu.
+To define how many entries, you must change the number after CUSTOM_MENU_ENTRIES below.
+
+When you enable this, you have to add several items to your PDE file.  You will be creating your menu
+at the top of the file just like in the Standard Libraries.  You will also need to create the menu entry
+functions associated with all of your menu entries.
+
+To create the menu entries, use this code:
+
+#include <avr/pgmspace.h>
+prog_char menu0_label[] PROGMEM = "Item 1";
+prog_char menu1_label[] PROGMEM = "One Fish";
+prog_char menu2_label[] PROGMEM = "Two Fish";
+prog_char menu3_label[] PROGMEM = "Red Fish";
+prog_char menu4_label[] PROGMEM = "Blue Fish";
+prog_char menu5_label[] PROGMEM = "Another entry";
+prog_char menu6_label[] PROGMEM = "Reef Angel";
+prog_char menu7_label[] PROGMEM = "Client Suite";
+prog_char menu8_label[] PROGMEM = "RA Gen";
+PROGMEM const char *menu_items[] = {
+menu0_label, menu1_label, menu2_label,
+menu3_label, menu4_label, menu5_label,
+menu6_label, menu7_label, menu8_label
+};
+
+Only include the number of menu items that you are going to use.  If you add more than needed, it can cause problems.
+So just copy and paste, remove the labels (starting from 8 and going down) until you get the total number you need.
+Then change the string to be something you want.  There is a max of 20 characters per item.
+
+Next, we must create the menu entry functions for use.  Use this code:
+
+void MenuEntry1()
+{
+  ReefAngel.DisplayMenuEntry("Item 1");
+}
+void MenuEntry2()
+{
+  ReefAngel.DisplayMenuEntry("Item 2");
+}
+void MenuEntry3()
+{
+  ReefAngel.DisplayMenuEntry("Item 3");
+}
+void MenuEntry4()
+{
+  ReefAngel.DisplayMenuEntry("Item 4");
+}
+void MenuEntry5()
+{
+  ReefAngel.DisplayMenuEntry("Item 5");
+}
+void MenuEntry6()
+{
+  ReefAngel.DisplayMenuEntry("Item 6");
+}
+void MenuEntry7()
+{
+  ReefAngel.DisplayMenuEntry("Item 7");
+}
+void MenuEntry8()
+{
+  ReefAngel.DisplayMenuEntry("Item 8");
+}
+void MenuEntry9()
+{
+  ReefAngel.DisplayMenuEntry("Item 9");
+}
+
+Remove the functions that you do not need.  The above code just displays the text in the string on the display.
+You can remove that line and put whatever you want in the function.
 */
-//#define CUSTOM_MENU
+#define CUSTOM_MENU
+// max of 9 entries
+#define CUSTOM_MENU_ENTRIES		6
 
 
 /*

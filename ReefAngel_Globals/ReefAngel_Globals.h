@@ -273,10 +273,18 @@ When adding more variables, use the previous value plus 1 or 2
 #endif  // RelayExp
 
 // Menu Defines
-#ifdef SIMPLE_MENU
+#if defined SIMPLE_MENU || defined CUSTOM_MENU
 // This overrides everything else with the menus
 // If it's enabled there is only 1 menu
 #define Total_Menus			1
+
+#ifdef CUSTOM_MENU
+// ensure proper number of menu entries are defined, force at least 1 entry
+#if !defined CUSTOM_MENU_ENTRIES || defined CUSTOM_MENU_ENTRIES == 0
+#undef CUSTOM_MENU_ENTRIES
+#define CUSTOM_MENU_ENTRIES	1
+#endif  // CUSTOM_MENU_ENTRIES
+#endif  // CUSTOM_MENU
 
 #else  // SIMPLE_MENU
 // Standard Menu Checks
@@ -309,7 +317,7 @@ When adding more variables, use the previous value plus 1 or 2
 		#endif  // PWMExpansion
 	#endif  // RemoveAllLights
 #endif  // if defined SetupExtras || defined ATOSetup
-#endif  // SIMPLE_MENU
+#endif  // SIMPLE_MENU || CUSTOM_MENU
 
 
 #define MENU_TIMEOUT        10   // timeout for menu to return to main screen
