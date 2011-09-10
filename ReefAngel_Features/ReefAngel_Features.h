@@ -432,6 +432,8 @@ ATO Event Logging
 
 Experimental Feature - enabling will log the ATO events to the internal memory for later querying from another application
 such as Client Suite.  This will help catch the ATO events that occur between the logging intervals.
+Only useful to enable if you have WIFI enabled as well.
+
 */
 //#define ENABLE_ATO_LOGGING
 

@@ -25,6 +25,7 @@
 #include <ReefAngel_Globals.h>
 #include <avr/pgmspace.h>
 
+#ifdef wifi
 const prog_char XML_T1[] PROGMEM = "<RA><T1>";
 const prog_char XML_T2[] PROGMEM = "</T1><T2>";
 const prog_char XML_T3[] PROGMEM = "</T2><T3>";
@@ -54,7 +55,6 @@ const prog_char XML_END[] PROGMEM = "</RA>";
 const prog_char XML_CLOSE_TAG[] PROGMEM = ">";
 
 
-#ifdef wifi
 const prog_char XML_M_OPEN[] PROGMEM = "<M";
 const prog_char XML_M_CLOSE[] PROGMEM = "</M";
 const prog_char XML_MEM_OPEN[] PROGMEM = "<MEM>";
