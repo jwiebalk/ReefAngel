@@ -20,9 +20,41 @@
   */
 
 #include "ReefAngel_ATO.h"
+#include "ReefAngel_EEPROM.h"
 
 ReefAngel_ATOClass::ReefAngel_ATOClass()
 {
     topping = false;
     Timer = 0;
 }
+
+#ifdef ENABLE_ATO_LOGGING
+byte AtoEventCount = 0;
+
+void ReefAngel_ATOClass::StartTopping(bool fHighAto /*= false*/)
+{
+	topping = true;
+	int loc = (AtoEventCount * ATOEventSize) + ATOEventStart;
+	if ( fHighAto )
+	{
+		loc += (ATOEventSize * MAX_ATO_LOG_EVENTS);
+	}
+	InternalMemory.write_dword(loc, now());
+	// also clear out the stop time whenever we set a new start time
+	InternalMemory.write_dword(loc+ATOEventOffStart, 0);
+}
+
+void ReefAngel_ATOClass::StopTopping(bool fHighAto /*= false*/)
+{
+	topping = false;
+	int loc = (AtoEventCount * ATOEventSize) + ATOEventStart + ATOEventOffStart;
+	if ( fHighAto )
+	{
+		loc += (ATOEventSize * MAX_ATO_LOG_EVENTS);
+	}
+	InternalMemory.write_dword(loc, now());
+	AtoEventCount++;
+	// check if we exceed the max logged events, if so, reset back to 0
+	if ( AtoEventCount >= MAX_ATO_LOG_EVENTS ) { AtoEventCount = 0; }
+}
+#endif  // ENABLE_ATO_LOGGING

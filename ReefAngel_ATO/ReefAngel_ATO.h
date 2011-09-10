@@ -34,8 +34,13 @@ public:
 	ReefAngel_ATOClass();
     virtual bool IsActive() = 0;
 	inline bool IsTopping() { return topping; }
+#ifdef ENABLE_ATO_LOGGING
+	virtual void StartTopping(bool fHighAto = false);
+	virtual void StopTopping(bool fHighAto = false);
+#else
 	inline void StartTopping() { topping = true; }
 	inline void StopTopping() { topping = false; }
+#endif  // ENABLE_ATO_LOGGING
 	unsigned long Timer;
 
 private:

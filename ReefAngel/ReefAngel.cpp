@@ -392,6 +392,9 @@ void ReefAngelClass::Init()
 	LCD.BacklightOn();
 	Relay.AllOff();
 	OverheatTempProbe = &Params.Temp2;
+#ifdef ENABLE_ATO_LOGGING
+	AtoEventCount = 0;
+#endif  // ENABLE_ATO_LOGGING
 	/*
 	TODO Check this code, is it needed?
     PHMin=EEPROM.read(PH_Min)*256 + EEPROM.read(PH_Min+1);
@@ -676,6 +679,11 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 		InternalMemory.write(ATO_Exceed_Flag, 1);
 #endif  // ENABLE_EXCEED_FLAGS
 		Relay.Off(ATORelay);
+#ifdef ENABLE_ATO_LOGGING
+		// bump the counter if a timeout occurs
+		AtoEventCount++;
+		if ( AtoEventCount >= MAX_ATO_LOG_EVENTS ) { AtoEventCount = 0; }
+#endif  // ENABLE_ATO_LOGGING
 	}
 }
 
@@ -741,6 +749,11 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, byte byteTimeout, byte 
         InternalMemory.write(ATO_Single_Exceed_Flag, 1);
 #endif  // ENABLE_EXCEED_FLAGS
         Relay.Off(ATORelay);
+#ifdef ENABLE_ATO_LOGGING
+		// bump the counter if a timeout occurs
+		AtoEventCount++;
+		if ( AtoEventCount >= MAX_ATO_LOG_EVENTS ) { AtoEventCount = 0; }
+#endif  // ENABLE_ATO_LOGGING
     }
 }
 
@@ -1022,75 +1035,6 @@ void ReefAngelClass::PWMSetPercent(byte p)
 	}
 }
 #endif  // PWMExpansion
-
-void ReefAngelClass::PCLogging()
-{
-	// This function is used for logging the data to Dave's PC Client software
-	// It prints the strings from program memory instead of RAM
-	PROGMEMprint(XML_T1);
-	Serial.print(Params.Temp1);
-	PROGMEMprint(XML_T2);
-	Serial.print(Params.Temp2);
-	PROGMEMprint(XML_T3);
-	Serial.print(Params.Temp3);
-	PROGMEMprint(XML_PH);
-	Serial.print(Params.PH);
-	PROGMEMprint(XML_R);
-	Serial.print(Relay.RelayData,DEC);
-	PROGMEMprint(XML_RON);
-	Serial.print(Relay.RelayMaskOn,DEC);
-	PROGMEMprint(XML_ROFF);
-	Serial.print(Relay.RelayMaskOff,DEC);
-	PROGMEMprint(XML_RE_CLOSE);
-	PROGMEMprint(XML_RE_OFF);
-	PROGMEMprint(XML_CLOSE_TAG);
-#ifdef RelayExp
-	for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
-	{
-		// relay data
-		PROGMEMprint(XML_RE_OPEN);
-		Serial.print(EID, DEC);
-		PROGMEMprint(XML_CLOSE_TAG);
-		Serial.print(Relay.RelayDataE[EID],DEC);
-		PROGMEMprint(XML_RE_CLOSE);
-		Serial.print(EID, DEC);
-		PROGMEMprint(XML_CLOSE_TAG);
-		// relay on mask
-		PROGMEMprint(XML_RE_OPEN);
-		PROGMEMprint(XML_RE_ON);
-		Serial.print(EID, DEC);
-		PROGMEMprint(XML_CLOSE_TAG);
-		Serial.print(Relay.RelayMaskOnE[EID],DEC);
-		PROGMEMprint(XML_RE_CLOSE);
-		PROGMEMprint(XML_RE_ON);
-		Serial.print(EID, DEC);
-		PROGMEMprint(XML_CLOSE_TAG);
-		// relay off mask
-		PROGMEMprint(XML_RE_OPEN);
-		PROGMEMprint(XML_RE_OFF);
-		Serial.print(EID, DEC);
-		PROGMEMprint(XML_CLOSE_TAG);
-		Serial.print(Relay.RelayMaskOffE[EID],DEC);
-		PROGMEMprint(XML_RE_CLOSE);
-		PROGMEMprint(XML_RE_OFF);
-		Serial.print(EID, DEC);
-		PROGMEMprint(XML_CLOSE_TAG);
-	}
-#endif  // RelayExp
-	PROGMEMprint(XML_ATOLOW);
-	Serial.print(LowATO.IsActive());
-	PROGMEMprint(XML_ATOHIGH);
-	Serial.print(HighATO.IsActive());
-	PROGMEMprint(XML_ATOHIGH_END);
-#ifdef DisplayLEDPWM
-	PROGMEMprint(XML_PWMA);
-	Serial.print(PWM.GetActinicValue(), DEC);
-	PROGMEMprint(XML_PWMD);
-	Serial.print(PWM.GetDaylightValue(), DEC);
-	PROGMEMprint(XML_PWMD_END);
-#endif  // DisplayLEDPWM
-	PROGMEMprint(XML_END);
-}
 
 #ifdef wifi
 void ReefAngelClass::LoadWebBanner(int pointer, byte qty)

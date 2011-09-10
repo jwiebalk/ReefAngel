@@ -176,13 +176,14 @@ Int variables need 2 blocks
 When adding more variables, use the previous value plus 1 or 2
   depending on the previous values storage requirement
 */
-#define ATO_Single_Exceed_Flag	  747
-#define ATO_Exceed_Flag			  748
-#define Overheat_Exceed_Flag	  749
+#define ATO_Single_Exceed_Flag	  733	//747
+#define ATO_Exceed_Flag			  734	//748
+#define Overheat_Exceed_Flag	  735	//749
 
+#define MAX_ATO_LOG_EVENTS		  4
 #define ATOEventSize			  8
 #define ATOEventOffStart		  4
-#define ATOEventStart			  750
+#define ATOEventStart			  736	//750
 #define ATOEvent1_On			  ATOEventStart
 #define ATOEvent1_Off			  ATOEventStart+4
 #define ATOEvent2_On			  ATOEventStart+8
@@ -191,6 +192,14 @@ When adding more variables, use the previous value plus 1 or 2
 #define ATOEvent3_Off			  ATOEventStart+20
 #define ATOEvent4_On			  ATOEventStart+24
 #define ATOEvent4_Off			  ATOEventStart+28
+#define ATOHighEvent1_On			  ATOEventStart+32
+#define ATOHighEvent1_Off			  ATOEventStart+36
+#define ATOHighEvent2_On			  ATOEventStart+40
+#define ATOHighEvent2_Off			  ATOEventStart+44
+#define ATOHighEvent3_On			  ATOEventStart+48
+#define ATOHighEvent3_Off			  ATOEventStart+52
+#define ATOHighEvent4_On			  ATOEventStart+56
+#define ATOHighEvent4_Off			  ATOEventStart+60
 
 #define VarsStart                 800
 #define Mem_B_MHOnHour            VarsStart
@@ -506,6 +515,9 @@ extern byte DelayedOnPorts;
 #ifdef RelayExp
 extern byte DelayedOnPortsE[MAX_RELAY_EXPANSION_MODULES];
 #endif  // RelayExp
+#ifdef ENABLE_ATO_LOGGING
+extern byte AtoEventCount;  // Defined in ReefAngel_ATO.cpp
+#endif  // ENABLE_ATO_LOGGING
 
 // globally useable functions
 byte intlength(int intin);

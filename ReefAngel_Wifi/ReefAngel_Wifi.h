@@ -44,6 +44,12 @@ const prog_char XML_PWMA[] PROGMEM = "<PWMA>";
 const prog_char XML_PWMD[] PROGMEM = "</PWMA><PWMD>";
 const prog_char XML_PWMD_END[] PROGMEM = "</PWMD>";
 #endif  // DisplayLEDPWM
+#ifdef ENABLE_ATO_LOGGING
+const prog_char XML_ATOLOW_LOG_OPEN[] PROGMEM = "<AL";
+const prog_char XML_ATOLOW_LOG_CLOSE[] PROGMEM = "</AL";
+const prog_char XML_ATOHIGH_LOG_OPEN[] PROGMEM = "<AH";
+const prog_char XML_ATOHIGH_LOG_CLOSE[] PROGMEM = "</AH";
+#endif  // ENABLE_ATO_LOGGING
 const prog_char XML_END[] PROGMEM = "</RA>";
 const prog_char XML_CLOSE_TAG[] PROGMEM = ">";
 
@@ -81,6 +87,8 @@ const prog_char XML_ERR[] PROGMEM = "ERR";
 #define REQ_M_ALL		6  		// All memory values
 #define REQ_VERSION		7  		// Library version
 #define REQ_DATE		8  		// Date and time
+#define REQ_R_STATUS	9		// Relay status information
+#define REQ_RA_STATUS	10		// Relay status information + ato logging
 #define REQ_HTTP		127		// HTTP get request from  external server
 #define REQ_UNKNOWN		128	 	// Unknown request
 
@@ -239,6 +247,7 @@ void pushbuffer(byte inStr);
 char GetC(int c);
 void ConvertC(char* strIn, char* strOut, byte len);
 void WifiAuthentication(char* userpass);
+void SendXMLData(bool fAtoLog = false);
 void processHTTP();
 #endif  // wifi
 

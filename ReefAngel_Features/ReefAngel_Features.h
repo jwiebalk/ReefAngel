@@ -427,4 +427,12 @@ Approximately 68 bytes to enable the storing of the exceeded flags (not counting
 */
 //#define ENABLE_EXCEED_FLAGS
 
+/*
+ATO Event Logging
+
+Experimental Feature - enabling will log the ATO events to the internal memory for later querying from another application
+such as Client Suite.  This will help catch the ATO events that occur between the logging intervals.
+*/
+//#define ENABLE_ATO_LOGGING
+
 #endif  // __REEFANGEL_FEATURES_H__

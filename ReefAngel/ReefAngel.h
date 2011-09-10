@@ -149,8 +149,7 @@ public:
 	void PWMSetPercent(byte p);
 #endif  // PWMExpansion
 
-	// Logging Functions - WebBanner and PCLogging
-	void PCLogging();
+	// WebBanner
 #ifdef wifi
 	void LoadWebBanner(int pointer, byte qty);
 	void WebBanner();

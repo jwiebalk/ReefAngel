@@ -171,6 +171,8 @@ void pushbuffer(byte inStr)
             else if (strncmp("GET /v", m_pushback, 6)==0) reqtype = -REQ_VERSION;
             else if (strncmp("GET /d", m_pushback, 6)==0) { reqtype = -REQ_DATE; weboption2 = -1; weboption3 = -1; bCommaCount = 0; }
             else if (strncmp("HTTP/1.", m_pushback, 7)==0) reqtype = -REQ_HTTP;
+            else if (strncmp("GET /sr", m_pushback, 7)==0) reqtype = -REQ_R_STATUS;
+            else if (strncmp("GET /sa", m_pushback, 7)==0) reqtype = -REQ_RA_STATUS;
             else reqtype = -REQ_UNKNOWN;
 		}
 	}
@@ -264,6 +266,10 @@ void processHTTP()
 #endif  // RelayExp
 				}
 				ReefAngel.Relay.Write();
+			}
+			case REQ_RA_STATUS:
+			case REQ_R_STATUS:
+			{
 				char temp[6];
 				int s=112;
 				//<RA><T1></T1><T2></T2><T3></T3><PH></PH><R></R><RON></RON><ROFF></ROFF><ATOLOW></ATOLOW><ATOHIGH></ATOHIGH></RA>
@@ -291,12 +297,32 @@ void processHTTP()
 				}
 #endif  // RelayExp
 				s += 2;  // one digit for each ATO
+#ifdef ENABLE_ATO_LOGGING
+				if ( reqtype == REQ_RA_STATUS )
+				{
+					// we send all the ato logging events both high & low
+					/*
+					The XML code will be like this.  This is 1 event.  There are 8 events total (4 low / 4 high).
+					<AL#ON>DWORD</AL#ON>
+					<AL#OFF>DWORD</AL#OFF>
+					Each event is 40 bytes (32 bytes for text, 8 bytes for dword values total)
+					*/
+					s += 320;
+				}
+#endif  // ENABLE_ATO_LOGGING
 				P(WebBodyMsg) = SERVER_HEADER_XML;
 				printP(WebBodyMsg);
 				Serial.print(s, DEC);
 				P(WebBodyMsg1) = SERVER_HEADER3;
 				printP(WebBodyMsg1);
-				ReefAngel.PCLogging();  // print the XML data
+#ifdef ENABLE_ATO_LOGGING
+				if ( reqtype == REQ_RA_STATUS )
+					SendXMLData(true);
+				else
+					SendXMLData();
+#else
+				SendXMLData();
+#endif  // ENABLE_ATO_LOGGING
 				break;
 			}  // REQ_RELAY
 			case REQ_M_BYTE:
@@ -606,6 +632,139 @@ void WifiAuthentication(char* userpass)
 	strcpy(authStr,authPtr);
 	free(authPtr);
 	Serial.println(authStr);
+}
+
+void SendXMLData(bool fAtoLog /*= false*/)
+{
+	// This function is used for sending the XML data on the wifi interface
+	// It prints the strings from program memory instead of RAM
+	PROGMEMprint(XML_T1);
+	Serial.print(ReefAngel.Params.Temp1);
+	PROGMEMprint(XML_T2);
+	Serial.print(ReefAngel.Params.Temp2);
+	PROGMEMprint(XML_T3);
+	Serial.print(ReefAngel.Params.Temp3);
+	PROGMEMprint(XML_PH);
+	Serial.print(ReefAngel.Params.PH);
+	PROGMEMprint(XML_R);
+	Serial.print(ReefAngel.Relay.RelayData,DEC);
+	PROGMEMprint(XML_RON);
+	Serial.print(ReefAngel.Relay.RelayMaskOn,DEC);
+	PROGMEMprint(XML_ROFF);
+	Serial.print(ReefAngel.Relay.RelayMaskOff,DEC);
+	PROGMEMprint(XML_RE_CLOSE);
+	PROGMEMprint(XML_RE_OFF);
+	PROGMEMprint(XML_CLOSE_TAG);
+#ifdef RelayExp
+	for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
+	{
+		// relay data
+		PROGMEMprint(XML_RE_OPEN);
+		Serial.print(EID, DEC);
+		PROGMEMprint(XML_CLOSE_TAG);
+		Serial.print(ReefAngel.Relay.RelayDataE[EID],DEC);
+		PROGMEMprint(XML_RE_CLOSE);
+		Serial.print(EID, DEC);
+		PROGMEMprint(XML_CLOSE_TAG);
+		// relay on mask
+		PROGMEMprint(XML_RE_OPEN);
+		PROGMEMprint(XML_RE_ON);
+		Serial.print(EID, DEC);
+		PROGMEMprint(XML_CLOSE_TAG);
+		Serial.print(ReefAngel.Relay.RelayMaskOnE[EID],DEC);
+		PROGMEMprint(XML_RE_CLOSE);
+		PROGMEMprint(XML_RE_ON);
+		Serial.print(EID, DEC);
+		PROGMEMprint(XML_CLOSE_TAG);
+		// relay off mask
+		PROGMEMprint(XML_RE_OPEN);
+		PROGMEMprint(XML_RE_OFF);
+		Serial.print(EID, DEC);
+		PROGMEMprint(XML_CLOSE_TAG);
+		Serial.print(ReefAngel.Relay.RelayMaskOffE[EID],DEC);
+		PROGMEMprint(XML_RE_CLOSE);
+		PROGMEMprint(XML_RE_OFF);
+		Serial.print(EID, DEC);
+		PROGMEMprint(XML_CLOSE_TAG);
+	}
+#endif  // RelayExp
+	PROGMEMprint(XML_ATOLOW);
+	Serial.print(ReefAngel.LowATO.IsActive());
+	PROGMEMprint(XML_ATOHIGH);
+	Serial.print(ReefAngel.HighATO.IsActive());
+	PROGMEMprint(XML_ATOHIGH_END);
+#ifdef DisplayLEDPWM
+	PROGMEMprint(XML_PWMA);
+	Serial.print(ReefAngel.PWM.GetActinicValue(), DEC);
+	PROGMEMprint(XML_PWMD);
+	Serial.print(ReefAngel.PWM.GetDaylightValue(), DEC);
+	PROGMEMprint(XML_PWMD_END);
+#endif  // DisplayLEDPWM
+#ifdef ENABLE_ATO_LOGGING
+	if ( fAtoLog )
+	{
+		int loc;
+		for ( byte b = 0; b < MAX_ATO_LOG_EVENTS; b++ )
+		{
+			// print ato low event
+			// low start time
+			loc = (b * ATOEventSize) + ATOEventStart;
+			PROGMEMprint(XML_ATOLOW_LOG_OPEN);
+			Serial.print(b,DEC);
+			PROGMEMprint(XML_RE_ON);
+			PROGMEMprint(XML_CLOSE_TAG);
+			Serial.print(InternalMemory.read_dword(loc), DEC);
+			PROGMEMprint(XML_ATOLOW_LOG_CLOSE);
+			Serial.print(b,DEC);
+			PROGMEMprint(XML_RE_ON);
+			PROGMEMprint(XML_CLOSE_TAG);
+			// zero out memory after sent
+			InternalMemory.write_dword(loc, 0);
+			// low stop time
+			loc += ATOEventOffStart;
+			PROGMEMprint(XML_ATOLOW_LOG_OPEN);
+			Serial.print(b,DEC);
+			PROGMEMprint(XML_RE_OFF);
+			PROGMEMprint(XML_CLOSE_TAG);
+			Serial.print(InternalMemory.read_dword(loc), DEC);
+			PROGMEMprint(XML_ATOLOW_LOG_CLOSE);
+			Serial.print(b,DEC);
+			PROGMEMprint(XML_RE_OFF);
+			PROGMEMprint(XML_CLOSE_TAG);
+			// zero out memory after sent
+			InternalMemory.write_dword(loc, 0);
+			// print ato high event
+			// high start time
+			loc = (b * ATOEventSize) + ATOEventStart + (ATOEventSize * MAX_ATO_LOG_EVENTS);
+			PROGMEMprint(XML_ATOHIGH_LOG_OPEN);
+			Serial.print(b,DEC);
+			PROGMEMprint(XML_RE_ON);
+			PROGMEMprint(XML_CLOSE_TAG);
+			Serial.print(InternalMemory.read_dword(loc), DEC);
+			PROGMEMprint(XML_ATOHIGH_LOG_CLOSE);
+			Serial.print(b,DEC);
+			PROGMEMprint(XML_RE_ON);
+			PROGMEMprint(XML_CLOSE_TAG);
+			// zero out memory after sent
+			InternalMemory.write_dword(loc, 0);
+			// high stop time
+			loc += ATOEventOffStart;
+			PROGMEMprint(XML_ATOHIGH_LOG_OPEN);
+			Serial.print(b,DEC);
+			PROGMEMprint(XML_RE_OFF);
+			PROGMEMprint(XML_CLOSE_TAG);
+			Serial.print(InternalMemory.read_dword(loc), DEC);
+			PROGMEMprint(XML_ATOHIGH_LOG_CLOSE);
+			Serial.print(b,DEC);
+			PROGMEMprint(XML_RE_OFF);
+			PROGMEMprint(XML_CLOSE_TAG);
+			// zero out memory after sent
+			InternalMemory.write_dword(loc, 0);
+		}
+		AtoEventCount = 0;
+	}
+#endif  // ENABLE_ATO_LOGGING
+	PROGMEMprint(XML_END);
 }
 
 #endif  // wifi
