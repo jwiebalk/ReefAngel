@@ -100,7 +100,7 @@ Comment the next line to remove this ability.
 
 Approximately 1984 bytes to have this feature
 */
-#define DateTimeSetup
+//#define DateTimeSetup
 
 /*
 If you do not want to have a Version menu entry to see what version of the software is on the controller,
@@ -179,7 +179,7 @@ This is advisable since all settings can be updated via the wifi interface.
 
 Approximately 5000+ bytes to have this feature. This size can vary.
 */
-//#define wifi
+#define wifi
 
 /*
 This next line will control the displaying of all LED PWM related items.  The items it controls are:
@@ -314,7 +314,7 @@ the Internal Memory values for them you must enable the features:
 
 Approximately 4566 bytes removed when using the Simplified Menu
 */
-//#define SIMPLE_MENU
+#define SIMPLE_MENU
 
 /*
 This option allows for the user to handle the menu in their PDE file
@@ -436,5 +436,7 @@ Only useful to enable if you have WIFI enabled as well.
 
 */
 //#define ENABLE_ATO_LOGGING
+
+#define __PLUS_SPECIAL_WIFI__
 
 #endif  // __REEFANGEL_FEATURES_H__
