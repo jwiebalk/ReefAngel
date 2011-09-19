@@ -195,9 +195,9 @@ void processHTTP()
 			bIncoming=false;
 			//for (int a=0;a<32;a++) pushbuffer(0);
 		}
-		if (Serial.available()>0)
+		if (WIFI_SERIAL.available()>0)
 		{
-			pushbuffer(Serial.read());
+			pushbuffer(WIFI_SERIAL.read());
 			timeout=millis();
 		}
     }
@@ -597,7 +597,7 @@ void processHTTP()
 		  printP(WebBodyMsg);
 		}
     }
-	Serial.flush();
+	WIFI_SERIAL.flush();
 	m_pushbackindex=0;
     reqtype=0;
     weboption=0;
@@ -774,7 +774,7 @@ void SendXMLData(bool fAtoLog /*= false*/)
 void pingSerial()
 {
 #ifdef wifi
-    if ( Serial.available() > 0 ) processHTTP();
+    if ( WIFI_SERIAL.available() > 0 ) processHTTP();
 #endif  // wifi
 }
 

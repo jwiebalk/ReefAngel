@@ -22,7 +22,7 @@
 #ifndef	ReefAngel_h
 #define ReefAngel_h
 
-#define ReefAngel_Version "0.8.5.16"
+#define ReefAngel_Version "0.8.5.17-cb"
 
 #include <ReefAngel_Globals.h>
 #include <ReefAngel_EEPROM.h>  // NOTE read/write internal memory

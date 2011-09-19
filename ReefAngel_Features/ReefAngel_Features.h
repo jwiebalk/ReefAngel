@@ -435,7 +435,7 @@ such as Client Suite.  This will help catch the ATO events that occur between th
 Only useful to enable if you have WIFI enabled as well.
 
 */
-//#define ENABLE_ATO_LOGGING
+#define ENABLE_ATO_LOGGING
 
 #define __PLUS_SPECIAL_WIFI__
 
