@@ -245,8 +245,8 @@ down and make the controller more customized for the user)
 Approximately 530 bytes to have RelayExp
 Approximately 94, 176 or 270 additional bytes needed when increasing InstalledRelayExpansionModules
 */
-//#define RelayExp
-//#define InstalledRelayExpansionModules	1
+#define RelayExp
+#define InstalledRelayExpansionModules	1
 
 /*
 This will enable the ability for people to create a custom main screen with the complete menu system
@@ -266,7 +266,7 @@ Just copy and paste the framework of the functions above into your PDE file.
 
 If you do not want a graph to be displayed, you can leave it blank/empty.
 */
-//#define CUSTOM_MAIN
+#define CUSTOM_MAIN
 
 
 /*
