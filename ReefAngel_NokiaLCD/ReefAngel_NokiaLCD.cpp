@@ -1094,7 +1094,7 @@ void ReefAngel_NokiaLCD::DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y
 {
 	char text[7];
 	if ( Temp == 0xFFFF ) Temp = 0;
-	if ( Temp == 0 )
+	if (( Temp == 0 ) && ( decimal > 1 ))
 	{
 		strcpy(text, "Error");
 	}
