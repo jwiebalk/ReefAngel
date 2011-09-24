@@ -28,13 +28,19 @@
 #include <DS1307RTC.h>
 #include <ReefAngel.h>
 
+#ifdef __PLUS_SPECIAL_WIFI__
+#define WIFI_SERIAL Serial1
+#else
+#define WIFI_SERIAL Serial
+#endif // __PLUS_SPECIAL_WIFI__
+
 void WebResponse (const prog_char *response, long strsize)
 {
 //  P(WebHeaderMsg) = SERVER_HEADER_HTML;
 //  printP(WebHeaderMsg);
     P(WebBodyMsg) = SERVER_HEADER_HTML;
     printP(WebBodyMsg);
-    Serial.print(strsize,DEC);
+    WIFI_SERIAL.print(strsize,DEC);
     P(WebBodyMsg1) = SERVER_HEADER3;
     printP(WebBodyMsg1);
     printP(response);
@@ -46,7 +52,7 @@ void printP(const prog_char *str)
     do
     {
         a=pgm_read_byte(str++);
-        if (a!=0) Serial.print(a);
+        if (a!=0) WIFI_SERIAL.print(a);
     }
     while (a!=0);
 }
@@ -56,11 +62,6 @@ void pushbuffer(byte inStr)
 
 	m_pushback[m_pushbackindex]=inStr;
 	m_pushback[m_pushbackindex+1]=0;
-	//memcpy(&m_pushback[0], &m_pushback[1], 31);
-	//m_pushback[30]=inStr;
-	//m_pushback[31]=0;
-	//if (~reqtype)
-	//{
 	if (reqtype>0 && reqtype<128)
 	{
 		if (authStr[m_pushbackindex]==inStr) m_pushbackindex++; else m_pushbackindex=0;
@@ -189,16 +190,15 @@ void processHTTP()
 			bIncoming=false;
 			//for (int a=0;a<32;a++) pushbuffer(0);
 		}
-		if (Serial.available()>0)
+		if (WIFI_SERIAL.available()>0)
 		{
-			pushbuffer(Serial.read());
+			pushbuffer(WIFI_SERIAL.read());
 			timeout=millis();
 		}
     }
 	if (authStr[0]==0) auth=true;
     if (auth)
     {
-		//Serial.println(reqtype,DEC);
 		auth=false;
 		switch ( reqtype )
 		{
@@ -312,7 +312,7 @@ void processHTTP()
 #endif  // ENABLE_ATO_LOGGING
 				P(WebBodyMsg) = SERVER_HEADER_XML;
 				printP(WebBodyMsg);
-				Serial.print(s, DEC);
+				WIFI_SERIAL.print(s, DEC);
 				P(WebBodyMsg1) = SERVER_HEADER3;
 				printP(WebBodyMsg1);
 #ifdef ENABLE_ATO_LOGGING
@@ -331,7 +331,7 @@ void processHTTP()
 				int s = 118;
 				P(WebBodyMsg) = SERVER_HEADER_XML;
 				printP(WebBodyMsg);
-				Serial.print(s, DEC);
+				WIFI_SERIAL.print(s, DEC);
 				P(WebBodyMsg1) = SERVER_HEADER3;
 				printP(WebBodyMsg1);
 
@@ -383,25 +383,25 @@ void processHTTP()
 #endif  // WavemakerSetup
 
 					PROGMEMprint(XML_M_OPEN);
-					Serial.print(weboption2, DEC);
+					WIFI_SERIAL.print(weboption2, DEC);
 					PROGMEMprint(XML_CLOSE_TAG);
 					PROGMEMprint(XML_OK);
 					PROGMEMprint(XML_M_CLOSE);
-					Serial.print(weboption2, DEC);
+					WIFI_SERIAL.print(weboption2, DEC);
 					PROGMEMprint(XML_CLOSE_TAG);
 				}
 				else if ( !bHasSecondValue && (weboption2 >= 0) && (bCommaCount==0) )
 				{
 					// no second value and no comma, so we read the value from memory
 					PROGMEMprint(XML_M_OPEN);
-					Serial.print(weboption2, DEC);
+					WIFI_SERIAL.print(weboption2, DEC);
 					PROGMEMprint(XML_CLOSE_TAG);
 					if ( reqtype == REQ_M_BYTE )
-						Serial.print(InternalMemory.read(weboption2),DEC);
+						WIFI_SERIAL.print(InternalMemory.read(weboption2),DEC);
 					else
-						Serial.print(InternalMemory.read_int(weboption2),DEC);
+						WIFI_SERIAL.print(InternalMemory.read_int(weboption2),DEC);
 					PROGMEMprint(XML_M_CLOSE);
-					Serial.print(weboption2, DEC);
+					WIFI_SERIAL.print(weboption2, DEC);
 					PROGMEMprint(XML_CLOSE_TAG);
 				}
 				else
@@ -448,7 +448,7 @@ void processHTTP()
 
 				P(WebBodyMsg) = SERVER_HEADER_XML;
 				printP(WebBodyMsg);
-				Serial.print(s, DEC);
+				WIFI_SERIAL.print(s, DEC);
 				P(WebBodyMsg1) = SERVER_HEADER3;
 				printP(WebBodyMsg1);
 				PROGMEMprint(XML_MEM_OPEN);
@@ -463,14 +463,14 @@ void processHTTP()
 				for ( x = 0, count = VarsStart; x < num; x++ )
 				{
 					PROGMEMprint(XML_M_OPEN);
-					Serial.print(count,DEC);
+					WIFI_SERIAL.print(count,DEC);
 					PROGMEMprint(XML_CLOSE_TAG);
 					if ( offsets[x] == 1 )
-						Serial.print(InternalMemory.read(count),DEC);
+						WIFI_SERIAL.print(InternalMemory.read(count),DEC);
 					else
-						Serial.print(InternalMemory.read_int(count),DEC);
+						WIFI_SERIAL.print(InternalMemory.read_int(count),DEC);
 					PROGMEMprint(XML_M_CLOSE);
-					Serial.print(count,DEC);
+					WIFI_SERIAL.print(count,DEC);
 					PROGMEMprint(XML_CLOSE_TAG);
 					count += offsets[x];
 				}  // for x
@@ -483,10 +483,10 @@ void processHTTP()
 				s += strlen(ReefAngel_Version);
 				P(WebBodyMsg) = SERVER_HEADER_XML;
 				printP(WebBodyMsg);
-				Serial.print(s, DEC);
+				WIFI_SERIAL.print(s, DEC);
 				P(WebBodyMsg1) = SERVER_HEADER3;
 				printP(WebBodyMsg1);
-				Serial.print("<V>"ReefAngel_Version"</V>");
+				WIFI_SERIAL.print("<V>"ReefAngel_Version"</V>");
 				break;
 			}  // REQ_VERSION
 			case REQ_DATE:
@@ -533,7 +533,7 @@ void processHTTP()
 				}
 				P(WebBodyMsg) = SERVER_HEADER_XML;
 				printP(WebBodyMsg);
-				Serial.print(s, DEC);
+				WIFI_SERIAL.print(s, DEC);
 				P(WebBodyMsg1) = SERVER_HEADER3;
 				printP(WebBodyMsg1);
 				PROGMEMprint(XML_DATE_OPEN);
@@ -544,21 +544,17 @@ void processHTTP()
 				else if ( weboption == -2 )
 				{
 					time_t n = now();
-					Serial.print("<HR>");
-					Serial.print(hour(n), DEC);
-					Serial.print("</HR>");
-					Serial.print("<MIN>");
-					Serial.print(minute(n), DEC);
-					Serial.print("</MIN>");
-					Serial.print("<MON>");
-					Serial.print(month(n), DEC);
-					Serial.print("</MON>");
-					Serial.print("<DAY>");
-					Serial.print(day(n), DEC);
-					Serial.print("</DAY>");
-					Serial.print("<YR>");
-					Serial.print(year(n), DEC);
-					Serial.print("</YR>");
+					WIFI_SERIAL.print("<HR>");
+					WIFI_SERIAL.print(hour(n), DEC);
+					WIFI_SERIAL.print("</HR><MIN>");
+					WIFI_SERIAL.print(minute(n), DEC);
+					WIFI_SERIAL.print("</MIN><MON>");
+					WIFI_SERIAL.print(month(n), DEC);
+					WIFI_SERIAL.print("</MON><DAY>");
+					WIFI_SERIAL.print(day(n), DEC);
+					WIFI_SERIAL.print("</DAY><YR>");
+					WIFI_SERIAL.print(year(n), DEC);
+					WIFI_SERIAL.print("</YR>");
 				}
 				else
 				{
@@ -595,7 +591,7 @@ void processHTTP()
 		  printP(WebBodyMsg);
 		}
     }
-	Serial.flush();
+	WIFI_SERIAL.flush();
 	m_pushbackindex=0;
     reqtype=0;
     weboption=0;
@@ -631,7 +627,7 @@ void WifiAuthentication(char* userpass)
 	*(authPtr + authPtrSize) = 0;
 	strcpy(authStr,authPtr);
 	free(authPtr);
-	Serial.println(authStr);
+	WIFI_SERIAL.println(authStr);
 }
 
 void SendXMLData(bool fAtoLog /*= false*/)
@@ -639,19 +635,19 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	// This function is used for sending the XML data on the wifi interface
 	// It prints the strings from program memory instead of RAM
 	PROGMEMprint(XML_T1);
-	Serial.print(ReefAngel.Params.Temp1);
+	WIFI_SERIAL.print(ReefAngel.Params.Temp1);
 	PROGMEMprint(XML_T2);
-	Serial.print(ReefAngel.Params.Temp2);
+	WIFI_SERIAL.print(ReefAngel.Params.Temp2);
 	PROGMEMprint(XML_T3);
-	Serial.print(ReefAngel.Params.Temp3);
+	WIFI_SERIAL.print(ReefAngel.Params.Temp3);
 	PROGMEMprint(XML_PH);
-	Serial.print(ReefAngel.Params.PH);
+	WIFI_SERIAL.print(ReefAngel.Params.PH);
 	PROGMEMprint(XML_R);
-	Serial.print(ReefAngel.Relay.RelayData,DEC);
+	WIFI_SERIAL.print(ReefAngel.Relay.RelayData,DEC);
 	PROGMEMprint(XML_RON);
-	Serial.print(ReefAngel.Relay.RelayMaskOn,DEC);
+	WIFI_SERIAL.print(ReefAngel.Relay.RelayMaskOn,DEC);
 	PROGMEMprint(XML_ROFF);
-	Serial.print(ReefAngel.Relay.RelayMaskOff,DEC);
+	WIFI_SERIAL.print(ReefAngel.Relay.RelayMaskOff,DEC);
 	PROGMEMprint(XML_RE_CLOSE);
 	PROGMEMprint(XML_RE_OFF);
 	PROGMEMprint(XML_CLOSE_TAG);
@@ -660,44 +656,44 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	{
 		// relay data
 		PROGMEMprint(XML_RE_OPEN);
-		Serial.print(EID, DEC);
+		WIFI_SERIAL.print(EID, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
-		Serial.print(ReefAngel.Relay.RelayDataE[EID],DEC);
+		WIFI_SERIAL.print(ReefAngel.Relay.RelayDataE[EID],DEC);
 		PROGMEMprint(XML_RE_CLOSE);
-		Serial.print(EID, DEC);
+		WIFI_SERIAL.print(EID, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
 		// relay on mask
 		PROGMEMprint(XML_RE_OPEN);
 		PROGMEMprint(XML_RE_ON);
-		Serial.print(EID, DEC);
+		WIFI_SERIAL.print(EID, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
-		Serial.print(ReefAngel.Relay.RelayMaskOnE[EID],DEC);
+		WIFI_SERIAL.print(ReefAngel.Relay.RelayMaskOnE[EID],DEC);
 		PROGMEMprint(XML_RE_CLOSE);
 		PROGMEMprint(XML_RE_ON);
-		Serial.print(EID, DEC);
+		WIFI_SERIAL.print(EID, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
 		// relay off mask
 		PROGMEMprint(XML_RE_OPEN);
 		PROGMEMprint(XML_RE_OFF);
-		Serial.print(EID, DEC);
+		WIFI_SERIAL.print(EID, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
-		Serial.print(ReefAngel.Relay.RelayMaskOffE[EID],DEC);
+		WIFI_SERIAL.print(ReefAngel.Relay.RelayMaskOffE[EID],DEC);
 		PROGMEMprint(XML_RE_CLOSE);
 		PROGMEMprint(XML_RE_OFF);
-		Serial.print(EID, DEC);
+		WIFI_SERIAL.print(EID, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
 	}
 #endif  // RelayExp
 	PROGMEMprint(XML_ATOLOW);
-	Serial.print(ReefAngel.LowATO.IsActive());
+	WIFI_SERIAL.print(ReefAngel.LowATO.IsActive());
 	PROGMEMprint(XML_ATOHIGH);
-	Serial.print(ReefAngel.HighATO.IsActive());
+	WIFI_SERIAL.print(ReefAngel.HighATO.IsActive());
 	PROGMEMprint(XML_ATOHIGH_END);
 #ifdef DisplayLEDPWM
 	PROGMEMprint(XML_PWMA);
-	Serial.print(ReefAngel.PWM.GetActinicValue(), DEC);
+	WIFI_SERIAL.print(ReefAngel.PWM.GetActinicValue(), DEC);
 	PROGMEMprint(XML_PWMD);
-	Serial.print(ReefAngel.PWM.GetDaylightValue(), DEC);
+	WIFI_SERIAL.print(ReefAngel.PWM.GetDaylightValue(), DEC);
 	PROGMEMprint(XML_PWMD_END);
 #endif  // DisplayLEDPWM
 #ifdef ENABLE_ATO_LOGGING
@@ -710,12 +706,12 @@ void SendXMLData(bool fAtoLog /*= false*/)
 			// low start time
 			loc = (b * ATOEventSize) + ATOEventStart;
 			PROGMEMprint(XML_ATOLOW_LOG_OPEN);
-			Serial.print(b,DEC);
+			WIFI_SERIAL.print(b,DEC);
 			PROGMEMprint(XML_RE_ON);
 			PROGMEMprint(XML_CLOSE_TAG);
-			Serial.print(InternalMemory.read_dword(loc), DEC);
+			WIFI_SERIAL.print(InternalMemory.read_dword(loc), DEC);
 			PROGMEMprint(XML_ATOLOW_LOG_CLOSE);
-			Serial.print(b,DEC);
+			WIFI_SERIAL.print(b,DEC);
 			PROGMEMprint(XML_RE_ON);
 			PROGMEMprint(XML_CLOSE_TAG);
 			// zero out memory after sent
@@ -723,12 +719,12 @@ void SendXMLData(bool fAtoLog /*= false*/)
 			// low stop time
 			loc += ATOEventOffStart;
 			PROGMEMprint(XML_ATOLOW_LOG_OPEN);
-			Serial.print(b,DEC);
+			WIFI_SERIAL.print(b,DEC);
 			PROGMEMprint(XML_RE_OFF);
 			PROGMEMprint(XML_CLOSE_TAG);
-			Serial.print(InternalMemory.read_dword(loc), DEC);
+			WIFI_SERIAL.print(InternalMemory.read_dword(loc), DEC);
 			PROGMEMprint(XML_ATOLOW_LOG_CLOSE);
-			Serial.print(b,DEC);
+			WIFI_SERIAL.print(b,DEC);
 			PROGMEMprint(XML_RE_OFF);
 			PROGMEMprint(XML_CLOSE_TAG);
 			// zero out memory after sent
@@ -737,12 +733,12 @@ void SendXMLData(bool fAtoLog /*= false*/)
 			// high start time
 			loc = (b * ATOEventSize) + ATOEventStart + (ATOEventSize * MAX_ATO_LOG_EVENTS);
 			PROGMEMprint(XML_ATOHIGH_LOG_OPEN);
-			Serial.print(b,DEC);
+			WIFI_SERIAL.print(b,DEC);
 			PROGMEMprint(XML_RE_ON);
 			PROGMEMprint(XML_CLOSE_TAG);
-			Serial.print(InternalMemory.read_dword(loc), DEC);
+			WIFI_SERIAL.print(InternalMemory.read_dword(loc), DEC);
 			PROGMEMprint(XML_ATOHIGH_LOG_CLOSE);
-			Serial.print(b,DEC);
+			WIFI_SERIAL.print(b,DEC);
 			PROGMEMprint(XML_RE_ON);
 			PROGMEMprint(XML_CLOSE_TAG);
 			// zero out memory after sent
@@ -750,12 +746,12 @@ void SendXMLData(bool fAtoLog /*= false*/)
 			// high stop time
 			loc += ATOEventOffStart;
 			PROGMEMprint(XML_ATOHIGH_LOG_OPEN);
-			Serial.print(b,DEC);
+			WIFI_SERIAL.print(b,DEC);
 			PROGMEMprint(XML_RE_OFF);
 			PROGMEMprint(XML_CLOSE_TAG);
-			Serial.print(InternalMemory.read_dword(loc), DEC);
+			WIFI_SERIAL.print(InternalMemory.read_dword(loc), DEC);
 			PROGMEMprint(XML_ATOHIGH_LOG_CLOSE);
-			Serial.print(b,DEC);
+			WIFI_SERIAL.print(b,DEC);
 			PROGMEMprint(XML_RE_OFF);
 			PROGMEMprint(XML_CLOSE_TAG);
 			// zero out memory after sent
@@ -772,7 +768,7 @@ void SendXMLData(bool fAtoLog /*= false*/)
 void pingSerial()
 {
 #ifdef wifi
-    if ( Serial.available() > 0 ) processHTTP();
+    if ( WIFI_SERIAL.available() > 0 ) processHTTP();
 #endif  // wifi
 }
 
@@ -781,6 +777,6 @@ void PROGMEMprint(const prog_char str[])
     char c;
     if(!str) return;
     while((c = pgm_read_byte(str++)))
-        Serial.print(c,BYTE);
+        WIFI_SERIAL.print(c,BYTE);
 }
 
