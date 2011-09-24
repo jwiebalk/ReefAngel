@@ -23,16 +23,16 @@
 #include <ReefAngel_Globals.h>
 
 
-#ifdef wifi
-
-#include <DS1307RTC.h>
-#include <ReefAngel.h>
-
 #ifdef __PLUS_SPECIAL_WIFI__
 #define WIFI_SERIAL Serial1
 #else
 #define WIFI_SERIAL Serial
 #endif // __PLUS_SPECIAL_WIFI__
+
+#ifdef wifi
+
+#include <DS1307RTC.h>
+#include <ReefAngel.h>
 
 void WebResponse (const prog_char *response, long strsize)
 {
