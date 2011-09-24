@@ -1183,6 +1183,8 @@ void ReefAngelClass::FeedingModeStart()
 #ifdef DisplayImages
 	LCD.DrawEEPromImage(40,50, 40, 30, I2CEEPROM2, I2CEEPROM2_Feeding);
 #endif  // DisplayImages
+	// Tell controller what mode we are in
+	DisplayedMenu = FEEDING_MODE;
 }
 
 void ReefAngelClass::WaterChangeModeStart()
@@ -1206,6 +1208,8 @@ void ReefAngelClass::WaterChangeModeStart()
 #ifdef DisplayImages
 	LCD.DrawEEPromImage(51,55, 40, 30, I2CEEPROM2, I2CEEPROM2_Water_Change);
 #endif  // DisplayImages
+	// Tell controller what mode we are in
+	DisplayedMenu = WATERCHANGE_MODE;
 }
 
 void ReefAngelClass::ATOClear()
@@ -1304,7 +1308,7 @@ void ReefAngelClass::ShowInterface()
 #endif  // defined WDT || defined WDT_FORCE
         switch ( DisplayedMenu )
         {
-			case DEFAULT_MENU:
+			case DEFAULT_MENU:  // This is the home screen
 			{
 				// process screensaver timeout
 				if ( Timer[LCD_TIMER].IsTriggered() )
@@ -1480,7 +1484,6 @@ void ReefAngelClass::ShowInterface()
 					Relay.Write();
 
 					// Draw main screen
-					SelectedMenuItem = DEFAULT_MENU_ITEM;
 					DisplayedMenu = DEFAULT_MENU;
 #ifdef CUSTOM_MAIN
 					DrawCustomGraph();
@@ -1517,7 +1520,6 @@ void ReefAngelClass::ShowInterface()
 					Relay.Write();
 
 					// Draw main screen
-					SelectedMenuItem = DEFAULT_MENU_ITEM;
 					DisplayedMenu = DEFAULT_MENU;
 #ifdef CUSTOM_MAIN
 					DrawCustomGraph();
@@ -1527,9 +1529,40 @@ void ReefAngelClass::ShowInterface()
 				}
 				break;
 			}
+#ifdef CUSTOM_MENU
+			case ALT_SCREEN_MODE:
+			{
+				/*
+				for Custom Menus if displaying an alternate screen, to force the menu to be
+				redrawn when exiting the screen.  Used primarily for SetupCalibratePH
+				and with SetupDateTime.
+				Or used when you draw your own screen and stay inside the function and want to
+				return to the menu when your function exits
+				If not used, then you will have to press the button 2 times to return to the
+				main menu.
+				*/
+				redrawmenu = true;
+				showmenu = true;
+				DisplayedMenu = MAIN_MENU;
+				break;
+			}
+			case RETURN_MAIN_MODE:
+			{
+				// Handles the cleanup to turn to the main screen
+				ClearScreen(DefaultBGColor);
+				Timer[LCD_TIMER].Start();
+				DisplayedMenu = DEFAULT_MENU;
+#ifdef CUSTOM_MAIN
+				DrawCustomGraph();
+#else
+				LCD.DrawGraph(5, 5);
+#endif  // CUSTOM_MAIN
+				break;
+			}
+#endif  // CUSTOM_MENU
 			default:
 			{
-				// we are viewing another screen
+				// we are viewing another screen, primarily the DisplayMenuEntry screen
 				if ( Joystick.IsButtonPressed() )
 				{
 					// button is pressed, so we gotta exit out, show the menu & redraw it too
@@ -1793,8 +1826,7 @@ void ReefAngelClass::ProcessButtonPress()
         case EXCEED_TIMEOUT_MENU:
         {
             // we bypass all the other menus when the timeout has exceeded
-            // we need to mimic the default action for the main menu in addition to
-            // clearing out the stack
+            // we need to mimic the default action for the main menu
             SelectedMenuItem = DEFAULT_MENU_ITEM;
             DisplayedMenu = DEFAULT_MENU;
             showmenu = false;
@@ -1913,14 +1945,12 @@ void ReefAngelClass::ProcessButtonPressMain()
         	// run feeding mode
         	FeedingModeStart();
         	showmenu = false;
-			DisplayedMenu = FEEDING_MODE;
             break;
         }
         case MainMenu_WaterChangeMode:
         {
         	WaterChangeModeStart();
         	showmenu = false;
-			DisplayedMenu = WATERCHANGE_MODE;
             break;
         }
 
