@@ -161,12 +161,19 @@ public:
 	void OverheatClear();
 
     // Nested Menu Functions
+#ifdef CUSTOM_MENU
+	void InitMenu(int ptr, byte qty);
+#else
     void InitMenus();
+#endif  // CUSTOM_MENU
     void ShowInterface();
     void DisplayMenu();
     void DisplayMenuHeading();
     void DisplayMenuEntry(char *text);
     void ProcessButtonPress();
+#ifdef CUSTOM_MENU
+	void ProcessButtonPressCustom();
+#else
     void ProcessButtonPressMain();
 
 #ifndef SIMPLE_MENU
@@ -188,16 +195,17 @@ public:
                      char* prefix1, char* prefix2);
     void SetupLightsOptionDisplay(bool bMetalHalide);
 #endif  // SIMPLE_MENU
+#endif  // CUSTOM_MENU
 
     void SetupCalibratePH();
 #ifdef DateTimeSetup
     void SetupDateTime();
 #endif  // DateTimeSetup
-#ifndef SIMPLE_MENU
+#if !defined SIMPLE_MENU && !defined CUSTOM_MENU
 #ifdef DosingPumpSetup
     void SetupDosingPump();
 #endif  // DosingPumpSetup
-#endif  // SIMPLE_MENU
+#endif  // !defined SIMPLE_MENU && !defined CUSTOM_MENU
 
 private:
 	bool showmenu;
@@ -207,7 +215,9 @@ private:
 	// Nested Menu variables
 	int menusptr[Total_Menus];
 	byte menuqtysptr[Total_Menus];
+public:
 	byte DisplayedMenu;
+private:
 	byte PreviousMenu;
 	bool redrawmenu;
 
@@ -227,6 +237,34 @@ private:
 void DrawCustomMain();
 void DrawCustomGraph();
 #endif  // CUSTOM_MAIN
+
+#ifdef CUSTOM_MENU
+void MenuEntry1();
+#if CUSTOM_MENU_ENTRIES >= 2
+void MenuEntry2();
+#endif  // CUSTOM_MENU_ENTRIES >= 2
+#if CUSTOM_MENU_ENTRIES >= 3
+void MenuEntry3();
+#endif  // CUSTOM_MENU_ENTRIES >= 3
+#if CUSTOM_MENU_ENTRIES >= 4
+void MenuEntry4();
+#endif  // CUSTOM_MENU_ENTRIES >= 4
+#if CUSTOM_MENU_ENTRIES >= 5
+void MenuEntry5();
+#endif  // CUSTOM_MENU_ENTRIES >= 5
+#if CUSTOM_MENU_ENTRIES >= 6
+void MenuEntry6();
+#endif  // CUSTOM_MENU_ENTRIES >= 6
+#if CUSTOM_MENU_ENTRIES >= 7
+void MenuEntry7();
+#endif  // CUSTOM_MENU_ENTRIES >= 7
+#if CUSTOM_MENU_ENTRIES >= 8
+void MenuEntry8();
+#endif  // CUSTOM_MENU_ENTRIES >= 8
+#if CUSTOM_MENU_ENTRIES >= 9
+void MenuEntry9();
+#endif  // CUSTOM_MENU_ENTRIES >= 9
+#endif  // CUSTOM_MENU
 
 extern ReefAngelClass ReefAngel;  // make an instance for the user
 
