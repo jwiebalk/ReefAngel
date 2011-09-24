@@ -1463,9 +1463,6 @@ void ReefAngelClass::ShowInterface()
 				if ( bDone )
 				{
 					// we're finished, so let's clear the screen and return
-					ClearScreen(DefaultBGColor);
-					Timer[LCD_TIMER].Start();  // start LCD shutoff timer
-
 #ifdef SaveRelayState
 					Relay.RelayData = CurrentRelayState;
 #endif  // SaveRelayState
@@ -1482,14 +1479,7 @@ void ReefAngelClass::ShowInterface()
 					}
 #endif  // RelayExp
 					Relay.Write();
-
-					// Draw main screen
-					DisplayedMenu = DEFAULT_MENU;
-#ifdef CUSTOM_MAIN
-					DrawCustomGraph();
-#else
-					LCD.DrawGraph(5, 5);
-#endif  // CUSTOM_MAIN
+					ExitMenu();
 				}
 				break;
 			}
@@ -1499,9 +1489,6 @@ void ReefAngelClass::ShowInterface()
 				if ( Joystick.IsButtonPressed() )
 				{
 					// we're finished, so let's clear the screen and return
-					ClearScreen(DefaultBGColor);
-					Timer[LCD_TIMER].Start();  // start LCD shutoff timer
-
 #ifdef SaveRelayState
 					Relay.RelayData = CurrentRelayState;
 #endif  // SaveRelayState
@@ -1518,14 +1505,7 @@ void ReefAngelClass::ShowInterface()
 					}
 #endif  // RelayExp
 					Relay.Write();
-
-					// Draw main screen
-					DisplayedMenu = DEFAULT_MENU;
-#ifdef CUSTOM_MAIN
-					DrawCustomGraph();
-#else
-					LCD.DrawGraph(5, 5);
-#endif  // CUSTOM_MAIN
+					ExitMenu();
 				}
 				break;
 			}
@@ -1548,15 +1528,7 @@ void ReefAngelClass::ShowInterface()
 			}
 			case RETURN_MAIN_MODE:
 			{
-				// Handles the cleanup to turn to the main screen
-				ClearScreen(DefaultBGColor);
-				Timer[LCD_TIMER].Start();
-				DisplayedMenu = DEFAULT_MENU;
-#ifdef CUSTOM_MAIN
-				DrawCustomGraph();
-#else
-				LCD.DrawGraph(5, 5);
-#endif  // CUSTOM_MAIN
+				ExitMenu();
 				break;
 			}
 #endif  // CUSTOM_MENU
@@ -1767,6 +1739,19 @@ void ReefAngelClass::DisplayMenuEntry(char *text)
     LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, "Press to exit...");
 }
 
+void ReefAngelClass::ExitMenu()
+{
+	// Handles the cleanup to return to the main screen
+	ClearScreen(DefaultBGColor);
+	Timer[LCD_TIMER].Start();
+	DisplayedMenu = DEFAULT_MENU;
+#ifdef CUSTOM_MAIN
+	DrawCustomGraph();
+#else
+	LCD.DrawGraph(5, 5);
+#endif  // CUSTOM_MAIN
+}
+
 void ReefAngelClass::ProcessButtonPress()
 {
     bool bResetMenuTimeout = true;
@@ -1828,16 +1813,10 @@ void ReefAngelClass::ProcessButtonPress()
             // we bypass all the other menus when the timeout has exceeded
             // we need to mimic the default action for the main menu
             SelectedMenuItem = DEFAULT_MENU_ITEM;
-            DisplayedMenu = DEFAULT_MENU;
             showmenu = false;
-            ClearScreen(DefaultBGColor);
             bResetMenuTimeout = false;
             // we are exiting the menu, so draw the graph
-#ifdef CUSTOM_MAIN
-			DrawCustomGraph();
-#else
-			LCD.DrawGraph(5, 5);  // Redraw graphic of params
-#endif  // CUSTOM_MAIN
+			ExitMenu();
             break;
         }
     }
@@ -1920,14 +1899,7 @@ void ReefAngelClass::ProcessButtonPressCustom()
         {
             // This will be the EXIT choice
             SelectedMenuItem = DEFAULT_MENU_ITEM;
-            // switch to the previous menu
-            DisplayedMenu = DEFAULT_MENU;
-            // When we exit the main menu, we will redraw the graph
-#ifdef CUSTOM_MAIN
-			DrawCustomGraph();
-#else
-			LCD.DrawGraph(5, 5);  // Redraw graphic of params
-#endif  // CUSTOM_MAIN
+			ExitMenu();
             break;
         }
     }
@@ -2044,16 +2016,10 @@ void ReefAngelClass::ProcessButtonPressMain()
         {
             // This will be the EXIT choice
             SelectedMenuItem = DEFAULT_MENU_ITEM;
-            // switch to the previous menu
-            DisplayedMenu = DEFAULT_MENU;
             // disable the menu, display main screen
             showmenu = false;
             // When we exit the main menu, we will redraw the graph
-#ifdef CUSTOM_MAIN
-			DrawCustomGraph();
-#else
-			LCD.DrawGraph(5, 5);  // Redraw graphic of params
-#endif  // CUSTOM_MAIN
+			ExitMenu();
             break;
         }
     }

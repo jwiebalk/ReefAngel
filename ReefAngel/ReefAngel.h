@@ -170,6 +170,7 @@ public:
     void DisplayMenu();
     void DisplayMenuHeading();
     void DisplayMenuEntry(char *text);
+    void ExitMenu();
     void ProcessButtonPress();
 #ifdef CUSTOM_MENU
 	void ProcessButtonPressCustom();
