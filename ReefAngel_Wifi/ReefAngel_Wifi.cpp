@@ -62,11 +62,6 @@ void pushbuffer(byte inStr)
 
 	m_pushback[m_pushbackindex]=inStr;
 	m_pushback[m_pushbackindex+1]=0;
-	//memcpy(&m_pushback[0], &m_pushback[1], 31);
-	//m_pushback[30]=inStr;
-	//m_pushback[31]=0;
-	//if (~reqtype)
-	//{
 	if (reqtype>0 && reqtype<128)
 	{
 		if (authStr[m_pushbackindex]==inStr) m_pushbackindex++; else m_pushbackindex=0;
@@ -204,7 +199,6 @@ void processHTTP()
 	if (authStr[0]==0) auth=true;
     if (auth)
     {
-		//Serial.println(reqtype,DEC);
 		auth=false;
 		switch ( reqtype )
 		{
