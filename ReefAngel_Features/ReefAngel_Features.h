@@ -332,14 +332,14 @@ To create the menu entries, use this code:
 
 #include <avr/pgmspace.h>
 prog_char menu0_label[] PROGMEM = "Item 1";
-prog_char menu1_label[] PROGMEM = "One Fish";
-prog_char menu2_label[] PROGMEM = "Two Fish";
-prog_char menu3_label[] PROGMEM = "Red Fish";
-prog_char menu4_label[] PROGMEM = "Blue Fish";
-prog_char menu5_label[] PROGMEM = "Another entry";
-prog_char menu6_label[] PROGMEM = "Reef Angel";
-prog_char menu7_label[] PROGMEM = "Client Suite";
-prog_char menu8_label[] PROGMEM = "RA Gen";
+prog_char menu1_label[] PROGMEM = "Item 2";
+prog_char menu2_label[] PROGMEM = "Item 3";
+prog_char menu3_label[] PROGMEM = "Item 4";
+prog_char menu4_label[] PROGMEM = "Item 5";
+prog_char menu5_label[] PROGMEM = "Item 6";
+prog_char menu6_label[] PROGMEM = "Item 7";
+prog_char menu7_label[] PROGMEM = "Item 8";
+prog_char menu8_label[] PROGMEM = "Item 9";
 PROGMEM const char *menu_items[] = {
 menu0_label, menu1_label, menu2_label,
 menu3_label, menu4_label, menu5_label,
@@ -392,9 +392,9 @@ void MenuEntry9()
 Remove the functions that you do not need.  The above code just displays the text in the string on the display.
 You can remove that line and put whatever you want in the function.
 */
-#define CUSTOM_MENU
+//#define CUSTOM_MENU
 // max of 9 entries
-#define CUSTOM_MENU_ENTRIES		6
+//#define CUSTOM_MENU_ENTRIES		6
 
 
 /*
