@@ -100,7 +100,7 @@ Comment the next line to remove this ability.
 
 Approximately 1984 bytes to have this feature
 */
-//#define DateTimeSetup
+#define DateTimeSetup
 
 /*
 If you do not want to have a Version menu entry to see what version of the software is on the controller,
@@ -179,7 +179,7 @@ This is advisable since all settings can be updated via the wifi interface.
 
 Approximately 5000+ bytes to have this feature. This size can vary.
 */
-#define wifi
+//#define wifi
 
 /*
 This next line will control the displaying of all LED PWM related items.  The items it controls are:
@@ -245,8 +245,8 @@ down and make the controller more customized for the user)
 Approximately 530 bytes to have RelayExp
 Approximately 94, 176 or 270 additional bytes needed when increasing InstalledRelayExpansionModules
 */
-#define RelayExp
-#define InstalledRelayExpansionModules	1
+//#define RelayExp
+//#define InstalledRelayExpansionModules	1
 
 /*
 This will enable the ability for people to create a custom main screen with the complete menu system
@@ -266,7 +266,7 @@ Just copy and paste the framework of the functions above into your PDE file.
 
 If you do not want a graph to be displayed, you can leave it blank/empty.
 */
-#define CUSTOM_MAIN
+//#define CUSTOM_MAIN
 
 
 /*
@@ -314,7 +314,7 @@ the Internal Memory values for them you must enable the features:
 
 Approximately 4566 bytes removed when using the Simplified Menu
 */
-#define SIMPLE_MENU
+//#define SIMPLE_MENU
 
 /*
 This option allows for the user to handle the menu in their PDE file
@@ -506,8 +506,12 @@ such as Client Suite.  This will help catch the ATO events that occur between th
 Only useful to enable if you have WIFI enabled as well.
 
 */
-#define ENABLE_ATO_LOGGING
+//#define ENABLE_ATO_LOGGING
 
-#define __PLUS_SPECIAL_WIFI__
+/*
+Special prototype PLUS board with built-in WIFI module.  Only 1 exists and Curt Binder has it.
+Do NOT enable.  Code will not compile with this enabled.
+*/
+//#define __PLUS_SPECIAL_WIFI__
 
 #endif  // __REEFANGEL_FEATURES_H__
