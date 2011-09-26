@@ -501,10 +501,23 @@ Approximately 68 bytes to enable the storing of the exceeded flags (not counting
 /*
 ATO Event Logging
 
-Experimental Feature - enabling will log the ATO events to the internal memory for later querying from another application
+Enabling will log the ATO events to the internal memory for later querying from another application
 such as Client Suite.  This will help catch the ATO events that occur between the logging intervals.
 Only useful to enable if you have WIFI enabled as well.
 
+Request ato events with /sa
+Events logged with a max of 4 events (4 low / 4 high)
+	Standard ATO events are logged with the atolow
+	SingleATO events are logged either high or low
+Logs are cleared when request for log information is sent
+
+Structure of XML data being sent to requestor is:
+	<AL#ON>VALUE</AL#ON>
+	<AL#OFF>VALUE</AL#OFF>
+	<AH#ON>VALUE</AH#ON>
+    <AH#OFF>VALUE</AH#OFF>
+Where # is the event number from 0 - 3
+VALUE is the number of seconds since the epoc (jan 1, 1970)
 */
 //#define ENABLE_ATO_LOGGING
 
