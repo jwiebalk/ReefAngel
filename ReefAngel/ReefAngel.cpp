@@ -1690,28 +1690,46 @@ void ReefAngelClass::DisplayMenuHeading()
 #endif  // PWMExpansion
         case SetupMenu:
             {
-                ptr += strlen(Menu_0_label) + strlen(Menu_1_label) + 2;
+                ptr += strlen(Menu_0_label) + 1;
+#ifdef PWMExpansion
+                ptr += strlen(Menu_1_label) + 1;
+#endif  // PWMExpansion
                 strcpy_P(buffer, (char*)ptr);
             }
             break;
 #ifndef RemoveAllLights
         case LightsMenu:
             {
-                ptr += strlen(Menu_0_label) + strlen(Menu_1_label) + strlen(Menu_2_label) + 3;
+                ptr += strlen(Menu_0_label) + strlen(Menu_2_label) + 2;
+#ifdef PWMExpansion
+                ptr += strlen(Menu_1_label) + 1;
+#endif  // PWMExpansion
                 strcpy_P(buffer, (char*)ptr);
             }
             break;
 #endif  // RemoveAllLights
         case TempsMenu:
             {
-                ptr += strlen(Menu_0_label) + strlen(Menu_1_label) + strlen(Menu_2_label) + strlen(Menu_3_label) + 4;
+                ptr += strlen(Menu_0_label) + strlen(Menu_2_label) + 2;
+#ifdef PWMExpansion
+                ptr += strlen(Menu_1_label) + 1;
+#endif  // PWMExpansion
+#ifndef RemoveAllLights
+				ptr += strlen(Menu_3_label) + 1;
+#endif  // RemoveAllLights
                 strcpy_P(buffer, (char*)ptr);
             }
             break;
 #if defined SetupExtras || defined ATOSetup
         case TimeoutsMenu:
             {
-                ptr += strlen(Menu_0_label) + strlen(Menu_1_label) + strlen(Menu_2_label) + strlen(Menu_3_label) + strlen(Menu_4_label) + 5;
+                ptr += strlen(Menu_0_label) + strlen(Menu_2_label) + strlen(Menu_4_label) + 3;
+#ifdef PWMExpansion
+                ptr += strlen(Menu_1_label) + 1;
+#endif  // PWMExpansion
+#ifndef RemoveAllLights
+				ptr += strlen(Menu_3_label) + 1;
+#endif  // RemoveAllLights
                 strcpy_P(buffer, (char*)ptr);
             }
             break;
