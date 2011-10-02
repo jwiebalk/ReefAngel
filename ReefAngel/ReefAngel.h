@@ -22,7 +22,7 @@
 #ifndef	ReefAngel_h
 #define ReefAngel_h
 
-#define ReefAngel_Version "0.8.5.17"
+#define ReefAngel_Version "0.8.5.18"
 
 #include <ReefAngel_Globals.h>
 #include <ReefAngel_EEPROM.h>  // NOTE read/write internal memory
@@ -144,10 +144,10 @@ public:
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	void MoonlightPWM(byte RelayID, bool ShowPWM);
 #endif  // DisplayLEDPWM && ! defined RemoveAllLights
-#ifdef PWMExpansion
+#ifdef PWMEXPANSION
 //	void PWMExpansion(byte cmd, byte data);
 //	void PWMSetPercent(byte p);
-#endif  // PWMExpansion
+#endif  // PWMEXPANSION
 
 	// WebBanner
 #ifdef wifi
@@ -178,9 +178,9 @@ public:
     void ProcessButtonPressMain();
 
 #ifndef SIMPLE_MENU
-#ifdef PWMExpansion
+#ifdef PWMEXPANSION
 	void ProcessButtonPressPWM();
-#endif  // PWMExpansion
+#endif  // PWMEXPANSION
     void ProcessButtonPressSetup();
 #ifndef RemoveAllLights
     void ProcessButtonPressLights();

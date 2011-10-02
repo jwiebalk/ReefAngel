@@ -212,7 +212,7 @@ Custom
 
 Approximately 630 bytes to have this feature
 */
-//#define PWMExpansion
+//#define PWMEXPANSION
 
 /*
 This next line will allow you to use the ATO switches independently from each other.  You can specify

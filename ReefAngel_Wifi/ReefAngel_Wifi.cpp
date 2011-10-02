@@ -174,7 +174,7 @@ void pushbuffer(byte inStr)
             else if (strncmp("HTTP/1.", m_pushback, 7)==0) reqtype = -REQ_HTTP;
             else if (strncmp("GET /sr", m_pushback, 7)==0) reqtype = -REQ_R_STATUS;
             else if (strncmp("GET /sa", m_pushback, 7)==0) reqtype = -REQ_RA_STATUS;
-            else reqtype = -REQ_UNKNOWN;
+            //else reqtype = -REQ_UNKNOWN;
 		}
 	}
 }
