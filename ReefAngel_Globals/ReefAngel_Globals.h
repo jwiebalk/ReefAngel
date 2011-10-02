@@ -346,6 +346,14 @@ When adding more variables, use the previous value plus 1 or 2
 #define DEFAULT_MENU_ITEM   0     // default menu item, first item on menu
 #define MAIN_MENU           0
 
+// PWM Expansion Modes
+#define PWM_DATA_DEFAULT		0	// Default data
+#define PWM_CMD_CLOUDS			6	// Clouds command
+#define PWM_DATA_CLOUDS_SLOW	1	// Slow clouds, must be used with CLOUDS cmd
+#define PWM_DATA_CLOUDS_FAST	15  // Fast clouds, must be used with CLOUDS cmd
+#define PWM_CMD_TSTORM1			7	// Thunderstorm 1 command, use data default
+#define PWM_CMD_TSTORM2			8	// Thunderstorm 2 command, use data default
+
 #ifndef COLORS_PDE
 //  Global Colors
 #define COLOR_BLACK                 0x00

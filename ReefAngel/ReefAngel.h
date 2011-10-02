@@ -145,8 +145,8 @@ public:
 	void MoonlightPWM(byte RelayID, bool ShowPWM);
 #endif  // DisplayLEDPWM && ! defined RemoveAllLights
 #ifdef PWMExpansion
-	void PWMExpansion(byte cmd, byte data);
-	void PWMSetPercent(byte p);
+//	void PWMExpansion(byte cmd, byte data);
+//	void PWMSetPercent(byte p);
 #endif  // PWMExpansion
 
 	// WebBanner

@@ -21,6 +21,7 @@
 
 #include "ReefAngel_PWM.h"
 #include <ReefAngel_Globals.h>
+#include <Wire.h>
 
 ReefAngel_PWMClass::ReefAngel_PWMClass()
 {
@@ -41,3 +42,25 @@ void ReefAngel_PWMClass::SetDaylight(byte value)
     analogWrite(daylightPWMPin, value*255/100);
     DaylightPWMValue = value;
 }
+
+#ifdef PWMExpansion
+void ReefAngel_PWMClass::Expansion(byte cmd, byte data)
+{
+	Wire.beginTransmission(8);  // transmit to device #2, consider having this user defined possibly
+	Wire.send('$');				// send the $$$
+	Wire.send('$');
+	Wire.send('$');
+	Wire.send(cmd);				// send the command
+	Wire.send(data);			// send the data
+	Wire.endTransmission();		// stop transmitting
+}
+
+void ReefAngel_PWMClass::ExpansionSetPercent(byte p)
+{
+	// loop through all 6 channels and send the value
+	for ( byte a = 0; a < 6; a++ )
+	{
+		Expansion(a, 255/p);
+	}
+}
+#endif  // PWMExpansion

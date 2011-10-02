@@ -1066,6 +1066,7 @@ void ReefAngelClass::MoonlightPWM(byte RelayID, bool ShowPWM)
 #endif  // DisplayLEDPWM && ! defined RemoveAllLights
 
 #ifdef PWMExpansion
+/*
 void ReefAngelClass::PWMExpansion(byte cmd, byte data)
 {
 	Wire.beginTransmission(8);  // transmit to device #2, consider having this user defined possibly
@@ -1085,6 +1086,7 @@ void ReefAngelClass::PWMSetPercent(byte p)
 		PWMExpansion(a, 255/p);
 	}
 }
+*/
 #endif  // PWMExpansion
 
 #ifdef wifi
@@ -2035,37 +2037,37 @@ void ReefAngelClass::ProcessButtonPressPWM()
 	{
 		case PWMMenu_SlowCloud:
 		{
-			PWMExpansion(6, 1);
+			PWM.Expansion(PWM_CMD_CLOUDS, PWM_DATA_CLOUDS_SLOW);
 			break;
 		}
 		case PWMMenu_FastCloud:
 		{
-			PWMExpansion(6, 15);
+			PWM.Expansion(PWM_CMD_CLOUDS, PWM_DATA_CLOUDS_FAST);
 			break;
 		}
 		case PWMMenu_TStorm1:
 		{
-			PWMExpansion(7, 0);
+			PWM.Expansion(PWM_CMD_TSTORM1, PWM_DATA_DEFAULT);
 			break;
 		}
 		case PWMMenu_TStorm2:
 		{
-			PWMExpansion(8, 0);
+			PWM.Expansion(PWM_CMD_TSTORM2, PWM_DATA_DEFAULT);
 			break;
 		}
 		case PWMMenu_0:
 		{
-			PWMSetPercent(0);
+			PWM.ExpansionSetPercent(0);
 			break;
 		}
 		case PWMMenu_50:
 		{
-			PWMSetPercent(50);
+			PWM.ExpansionSetPercent(50);
 			break;
 		}
 		case PWMMenu_100:
 		{
-			PWMSetPercent(100);
+			PWM.ExpansionSetPercent(100);
 			break;
 		}
 		case PWMMenu_Custom:
@@ -2075,7 +2077,7 @@ void ReefAngelClass::ProcessButtonPressPWM()
 			if ( SetupOption(p, q, 0, 100, 3, "%", "", "PWM %", "", "") )
 			{
 				// Pressed OK
-				PWMSetPercent(p);
+				PWM.ExpansionSetPercent(p);
 			}
 			break;
 		}
