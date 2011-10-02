@@ -30,10 +30,10 @@ public:
 	ReefAngel_PWMClass();
 	void SetActinic(byte value);
 	void SetDaylight(byte value);
-#ifdef PWMExpansion
+#ifdef PWMEXPANSION
 	void Expansion(byte cmd, byte data);
 	void ExpansionSetPercent(byte p);
-#endif  // PWMExpansion
+#endif  // PWMEXPANSION
 	inline byte GetActinicValue() { return ActinicPWMValue; }
 	inline byte GetDaylightValue() { return DaylightPWMValue; }
 

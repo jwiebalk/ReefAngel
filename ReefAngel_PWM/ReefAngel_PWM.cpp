@@ -32,18 +32,18 @@ ReefAngel_PWMClass::ReefAngel_PWMClass()
 
 void ReefAngel_PWMClass::SetActinic(byte value)
 {
-    analogWrite(actinicPWMPin, value*255/100);
+    analogWrite(actinicPWMPin, value*2.55);
     ActinicPWMValue = value;
 
 }
 
 void ReefAngel_PWMClass::SetDaylight(byte value)
 {
-    analogWrite(daylightPWMPin, value*255/100);
+    analogWrite(daylightPWMPin, value*2.55);
     DaylightPWMValue = value;
 }
 
-#ifdef PWMExpansion
+#ifdef PWMEXPANSION
 void ReefAngel_PWMClass::Expansion(byte cmd, byte data)
 {
 	Wire.beginTransmission(8);  // transmit to device #2, consider having this user defined possibly
@@ -60,7 +60,7 @@ void ReefAngel_PWMClass::ExpansionSetPercent(byte p)
 	// loop through all 6 channels and send the value
 	for ( byte a = 0; a < 6; a++ )
 	{
-		Expansion(a, 255/p);
+		Expansion(a, int(2.55*p));
 	}
 }
-#endif  // PWMExpansion
+#endif  // PWMEXPANSION

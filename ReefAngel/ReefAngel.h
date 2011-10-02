@@ -144,10 +144,6 @@ public:
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	void MoonlightPWM(byte RelayID, bool ShowPWM);
 #endif  // DisplayLEDPWM && ! defined RemoveAllLights
-#ifdef PWMEXPANSION
-//	void PWMExpansion(byte cmd, byte data);
-//	void PWMSetPercent(byte p);
-#endif  // PWMEXPANSION
 
 	// WebBanner
 #ifdef wifi
