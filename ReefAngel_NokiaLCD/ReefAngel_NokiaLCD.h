@@ -29,6 +29,8 @@ typedef struct  {
   int Temp2;
   int Temp3;
   int PH;
+  int Salinity;
+  int ORP;
 } ParamsStruct;
 
 enum FontHeight {
