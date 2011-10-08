@@ -238,6 +238,96 @@ void ReefAngel_EEPROMClass::T1Pointer_write(const uint8_t value)
     write(T1Pointer, value);
 }
 
+uint8_t ReefAngel_EEPROMClass::PWMSlopeStartD_read()
+{
+    return read(Mem_B_PWMSlopeStartD);
+}
+
+void ReefAngel_EEPROMClass::PWMSlopeStartD_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeStartD, value);
+}
+
+uint8_t ReefAngel_EEPROMClass::PWMSlopeEndD_read()
+{
+    return read(Mem_B_PWMSlopeEndD);
+}
+
+void ReefAngel_EEPROMClass::PWMSlopeEndD_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeEndD, value);
+}
+
+uint8_t ReefAngel_EEPROMClass::PWMSlopeDurationD_read()
+{
+    return read(Mem_B_PWMSlopeDurationD);
+}
+
+void ReefAngel_EEPROMClass::PWMSlopeDurationD_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeDurationD, value);
+}
+
+uint8_t ReefAngel_EEPROMClass::PWMSlopeStartA_read()
+{
+    return read(Mem_B_PWMSlopeStartA);
+}
+
+void ReefAngel_EEPROMClass::PWMSlopeStartA_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeStartA, value);
+}
+
+uint8_t ReefAngel_EEPROMClass::PWMSlopeEndA_read()
+{
+    return read(Mem_B_PWMSlopeEndA);
+}
+
+void ReefAngel_EEPROMClass::PWMSlopeEndA_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeEndA, value);
+}
+
+uint8_t ReefAngel_EEPROMClass::PWMSlopeDurationA_read()
+{
+    return read(Mem_B_PWMSlopeDurationA);
+}
+
+void ReefAngel_EEPROMClass::PWMSlopeDurationA_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeDurationA, value);
+}
+
+uint8_t ReefAngel_EEPROMClass::RFMode_read()
+{
+    return read(Mem_B_RFMode);
+}
+
+void ReefAngel_EEPROMClass::RFMode_write(const uint8_t value)
+{
+    write(Mem_B_RFMode, value);
+}
+
+uint8_t ReefAngel_EEPROMClass::RFSpeed_read()
+{
+    return read(Mem_B_RFSpeed);
+}
+
+void ReefAngel_EEPROMClass::RFSpeed_write(const uint8_t value)
+{
+    write(Mem_B_RFSpeed, value);
+}
+
+uint8_t ReefAngel_EEPROMClass::RFDuration_read()
+{
+    return read(Mem_B_RFDuration);
+}
+
+void ReefAngel_EEPROMClass::RFDuration_write(const uint8_t value)
+{
+    write(Mem_B_RFDuration, value);
+}
+
 // Int Functions
 int ReefAngel_EEPROMClass::WM1Timer_read()
 {
@@ -367,6 +457,16 @@ int ReefAngel_EEPROMClass::DP2RepeatInterval_read()
 void ReefAngel_EEPROMClass::DP2RepeatInterval_write(const int value)
 {
 	write_int(Mem_I_DP2RepeatInterval, value);
+}
+
+int ReefAngel_EEPROMClass::SalMax_read()
+{
+    return read_int(Mem_I_SalMax);
+}
+
+void ReefAngel_EEPROMClass::SalMax_write(const int value)
+{
+    write_int(Mem_I_SalMax, value);
 }
 
 // Private functions

@@ -444,14 +444,12 @@ void ReefAngelClass::Init()
 #ifdef ENABLE_ATO_LOGGING
 	AtoEventCount = 0;
 #endif  // ENABLE_ATO_LOGGING
-	/*
-	TODO Check this code, is it needed?
-    PHMin=EEPROM.read(PH_Min)*256 + EEPROM.read(PH_Min+1);
-	PHMax=EEPROM.read(PH_Max)*256 + EEPROM.read(PH_Max+1);
-	*/
+
     PHMin = InternalMemory.PHMin_read();
     PHMax = InternalMemory.PHMax_read();
+    SalMax = InternalMemory.SalMax_read();
 	taddr = InternalMemory.T1Pointer_read();
+	Params.Salinity=0;
 
 	if ((taddr>120) || (taddr<0))
 	{
@@ -526,6 +524,20 @@ void ReefAngelClass::Refresh()
 #if defined WDT || defined WDT_FORCE
 	wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+#ifdef RFEXPANSION
+	byte RFRecv=0;
+	RFRecv=RF.RFCheck();
+	if (RFRecv==1) 
+	{
+		ClearScreen(DefaultBGColor);
+		FeedingModeStart();
+	}
+	if (RFRecv==2) 
+	{
+		Timer[FEEDING_TIMER].ForceTrigger();
+	}	
+	if (DisplayedMenu!=253) RF.SetMode(InternalMemory.RFMode_read(),InternalMemory.RFSpeed_read(),InternalMemory.RFDuration_read());
+#endif  // RFEXPANSION
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	now();
 #ifdef DirectTempSensor
@@ -539,6 +551,11 @@ void ReefAngelClass::Refresh()
 	Params.PH=analogRead(PHPin);
 	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
 	LCD.Clear(DefaultBGColor,0,0,1,1);
+#if defined SALINITYEXPANSION
+	Params.Salinity=ReefAngel.Salinity.Read();
+	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
+	LCD.Clear(DefaultBGColor,0,0,1,1);
+#endif  // defined SALINITYEXPANSION
 	TempSensor.RequestConvertion();
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 #else  // DirectTempSensor
@@ -559,6 +576,11 @@ void ReefAngelClass::Refresh()
 	Params.PH=analogRead(PHPin);
     LCD.Clear(DefaultBGColor,0,0,1,1);
 	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
+#if defined SALINITYEXPANSION
+	Params.Salinity=ReefAngel.Salinity.Read();
+	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
+	LCD.Clear(DefaultBGColor,0,0,1,1);
+#endif  // defined SALINITYEXPANSION
 	TempSensor.RequestConvertion();
 #endif  // DirectTempSensor
 }
@@ -1161,6 +1183,9 @@ void ReefAngelClass::FeedingModeStart()
 #ifdef DisplayImages
 	LCD.DrawEEPromImage(40,50, 40, 30, I2CEEPROM2, I2CEEPROM2_Feeding);
 #endif  // DisplayImages
+#ifdef RFEXPANSION
+	RF.SetMode(Feeding_Start,0,0);
+#endif  // RFEXPANSION
 	// Tell controller what mode we are in
 	DisplayedMenu = FEEDING_MODE;
 }
@@ -1457,6 +1482,9 @@ void ReefAngelClass::ShowInterface()
 					}
 #endif  // RelayExp
 					Relay.Write();
+#ifdef RFEXPANSION
+					RF.SetMode(Feeding_Stop,0,0);
+#endif  // RFEXPANSION
 					ExitMenu();
 				}
 				break;

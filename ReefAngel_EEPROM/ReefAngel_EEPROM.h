@@ -71,6 +71,24 @@ class ReefAngel_EEPROMClass {
         void DP2OnMinute_write(const uint8_t value);
         uint8_t T1Pointer_read();
         void T1Pointer_write(const uint8_t value);
+        uint8_t PWMSlopeStartD_read();
+        void PWMSlopeStartD_write(const uint8_t value);
+        uint8_t PWMSlopeEndD_read();
+        void PWMSlopeEndD_write(const uint8_t value);
+        uint8_t PWMSlopeDurationD_read();
+        void PWMSlopeDurationD_write(const uint8_t value);
+        uint8_t PWMSlopeStartA_read();
+        void PWMSlopeStartA_write(const uint8_t value);
+        uint8_t PWMSlopeEndA_read();
+        void PWMSlopeEndA_write(const uint8_t value);
+        uint8_t PWMSlopeDurationA_read();
+        void PWMSlopeDurationA_write(const uint8_t value);
+        uint8_t RFMode_read();
+        void RFMode_write(const uint8_t value);
+        uint8_t RFSpeed_read();
+        void RFSpeed_write(const uint8_t value);
+        uint8_t RFDuration_read();
+        void RFDuration_write(const uint8_t value);
 
         // Functions that read/write an int
         int WM1Timer_read();
@@ -99,6 +117,8 @@ class ReefAngel_EEPROMClass {
         void DP1RepeatInterval_write(const int value);
         int DP2RepeatInterval_read();
         void DP2RepeatInterval_write(const int value);
+        int SalMax_read();
+        void SalMax_write(const int value);
 
         // Functions that do the reading/writing to memory
         uint8_t read(uint8_t);

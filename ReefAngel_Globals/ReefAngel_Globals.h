@@ -150,6 +150,8 @@
 #define I2CExpander1        0x20
 #define I2CExpander2        0x21
 #define I2CExpModule        0x38 // 0x38-3f
+#define I2CSalinity			0X4d
+#define I2CRF				0X10
 
 // I2C Images Addresses
 #define I2CEEPROM2_Main              0     //0-2999
@@ -236,7 +238,17 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_ATOHighTimeout      VarsStart+42
 #define Mem_I_DP1RepeatInterval	  VarsStart+43
 #define Mem_I_DP2RepeatInterval	  VarsStart+45
-// Next value starts VarsStart+47
+#define Mem_I_SalMax			  VarsStart+47
+#define Mem_B_PWMSlopeStartD      VarsStart+49
+#define Mem_B_PWMSlopeEndD	      VarsStart+50
+#define Mem_B_PWMSlopeDurationD   VarsStart+51
+#define Mem_B_PWMSlopeStartA      VarsStart+52
+#define Mem_B_PWMSlopeEndA	      VarsStart+53
+#define Mem_B_PWMSlopeDurationA   VarsStart+54
+#define Mem_B_RFMode			  VarsStart+55
+#define Mem_B_RFSpeed			  VarsStart+56
+#define Mem_B_RFDuration		  VarsStart+57
+// Next value starts VarsStart+58
 
 // EEProm Pointers
 #define PH_Min		        949
@@ -520,6 +532,25 @@ PH: 7 - 10
 #define T3HIGH  920
 #define PHLOW   550
 #define PHHIGH  840
+
+/*
+Vortech Modes
+
+Used by the RF Expansion Module
+ */
+#define Constant      0
+#define Random1       1 // Lagoonal
+#define Random2       2 // Reef Crest
+#define ShortWave     3
+#define LongWave      4
+#define Smart_NTM     5 // Nutrient Transport Mode
+#define Smart_TSM     6 // Tidal Swell Mode
+#define Feeding_Start 7
+#define Feeding_Stop  8
+#define Night         9
+#define Slave_Start   97
+#define Slave_Stop    98
+#define None          99
 
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))

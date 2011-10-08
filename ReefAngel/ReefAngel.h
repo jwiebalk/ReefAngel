@@ -36,6 +36,8 @@
 #include <ReefAngel_PWM.h>
 #include <ReefAngel_Timer.h>
 #include <ReefAngel_Memory.h>
+#include <ReefAngel_Salinity.h>
+#include <ReefAngel_RF.h>
 #include <avr/pgmspace.h>
 
 // Watchdog Timers
@@ -59,7 +61,7 @@ class ReefAngelClass
 {
 
 public:
-	int PHMin,PHMax;
+	int PHMin,PHMax,SalMax;
 	ParamsStruct Params;
 	ReefAngelClass();
 	ReefAngel_NokiaLCD LCD;
@@ -73,6 +75,12 @@ public:
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	ReefAngel_PWMClass PWM;
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
+#if defined SALINITYEXPANSION
+	ReefAngel_SalinityClass Salinity;
+#endif  // defined SALINITYEXPANSION
+#if defined RFEXPANSION
+	ReefAngel_RFClass RF;
+#endif  // defined RFEXPANSION
 	/*
 	Timers:
 	0 - Feeding Mode timer
