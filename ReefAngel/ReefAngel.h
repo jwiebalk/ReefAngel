@@ -36,9 +36,14 @@
 #include <ReefAngel_PWM.h>
 #include <ReefAngel_Timer.h>
 #include <ReefAngel_Memory.h>
-#include <ReefAngel_Salinity.h>
-#include <ReefAngel_RF.h>
 #include <avr/pgmspace.h>
+
+#ifdef SALINITYEXPANSION
+#include <ReefAngel_Salinity.h>
+#endif  // SALINITYEXPANSION
+#ifdef RFEXPANSION
+#include <ReefAngel_RF.h>
+#endif  // RFEXPANSION
 
 // Watchdog Timers
 #if defined WDT || defined WDT_FORCE
