@@ -573,7 +573,13 @@ void ReefAngelClass::Refresh()
     LCD.Clear(DefaultBGColor,0,0,1,1);
     y = x - Params.Temp3;
     if ( abs(y) < MAX_TEMP_SWING || Params.Temp3 == 0 || ~x) Params.Temp3 = x;
-	Params.PH=analogRead(PHPin);
+    int AvgpH=0;
+    for (int a=0;a<20;a++)
+    {
+    	AvgpH+=analogRead(PHPin);
+    }
+    AvgpH/=20;
+    Params.PH=AvgpH;
     LCD.Clear(DefaultBGColor,0,0,1,1);
 	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
 #if defined SALINITYEXPANSION
