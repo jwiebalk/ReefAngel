@@ -458,6 +458,7 @@ void ReefAngelClass::Init()
 	}
 
 	Timer[FEEDING_TIMER].SetInterval(InternalMemory.FeedingTimer_read());  // Default Feeding timer
+	if ( InternalMemory.LCDTimer_read() < 60 ) InternalMemory.LCDTimer_write(60);  // if it's less than 60, force it to 60
 	Timer[LCD_TIMER].SetInterval(InternalMemory.LCDTimer_read());  // LCD Sleep Mode timer
 	Timer[LCD_TIMER].Start();  // start timer
 	Timer[STORE_PARAMS_TIMER].SetInterval(720);  // Store Params
@@ -527,16 +528,16 @@ void ReefAngelClass::Refresh()
 #ifdef RFEXPANSION
 	byte RFRecv=0;
 	RFRecv=RF.RFCheck();
-	if (RFRecv==1) 
+	if (RFRecv==1)
 	{
 		ClearScreen(DefaultBGColor);
 		FeedingModeStart();
 	}
-	if (RFRecv==2) 
+	if (RFRecv==2)
 	{
 		Timer[FEEDING_TIMER].ForceTrigger();
-	}	
-	if (DisplayedMenu!=253) RF.SetMode(InternalMemory.RFMode_read(),InternalMemory.RFSpeed_read(),InternalMemory.RFDuration_read());
+	}
+	if (DisplayedMenu!=FEEDING_MODE) RF.SetMode(InternalMemory.RFMode_read(),InternalMemory.RFSpeed_read(),InternalMemory.RFDuration_read());
 #endif  // RFEXPANSION
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	now();
