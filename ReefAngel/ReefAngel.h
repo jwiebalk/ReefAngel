@@ -215,6 +215,9 @@ public:
 #endif  // CUSTOM_MENU
 
     void SetupCalibratePH();
+#if defined SALINITYEXPANSION
+    void SetupCalibrateSalinity();
+#endif  // defined SALINITYEXPANSION
 #ifdef DateTimeSetup
     void SetupDateTime();
 #endif  // DateTimeSetup

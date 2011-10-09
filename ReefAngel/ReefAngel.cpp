@@ -561,7 +561,7 @@ void ReefAngelClass::Refresh()
 	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 #if defined SALINITYEXPANSION
-	Params.Salinity=ReefAngel.Salinity.Read();
+	Params.Salinity=Salinity.Read();
 	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 #endif  // defined SALINITYEXPANSION
@@ -582,17 +582,15 @@ void ReefAngelClass::Refresh()
     LCD.Clear(DefaultBGColor,0,0,1,1);
     y = x - Params.Temp3;
     if ( abs(y) < MAX_TEMP_SWING || Params.Temp3 == 0 || ~x) Params.Temp3 = x;
-    int AvgpH=0;
     for (int a=0;a<20;a++)
     {
-    	AvgpH+=analogRead(PHPin);
+    	Params.PH+=analogRead(PHPin);
     }
-    AvgpH/=20;
-    Params.PH=AvgpH;
+    Params.PH/=20;
     LCD.Clear(DefaultBGColor,0,0,1,1);
 	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
 #if defined SALINITYEXPANSION
-	Params.Salinity=ReefAngel.Salinity.Read();
+	Params.Salinity=Salinity.Read();
 	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 #endif  // defined SALINITYEXPANSION
@@ -3006,6 +3004,69 @@ void ReefAngelClass::SetupCalibratePH()
         PHMin = iTPHMin;
     }
 }
+
+#ifdef SALINITYEXPANSION
+void ReefAngelClass::SetupCalibrateSalinity()
+{
+    bool bOKSel = false;
+    bool bSave = false;
+    bool bDone = false;
+    bool bDrawButtons = true;
+    unsigned int iS = 0;
+    byte offset = 65;
+    // draw labels
+    ClearScreen(DefaultBGColor);
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate Salinity");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, "35 PPT");
+    do
+    {
+#if defined WDT || defined WDT_FORCE
+		wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
+	    for (int a=0;a<15;a++)
+	    {
+	    	iS += Salinity.Read();
+	    }
+	    iS/=15;
+        LCD.DrawCalibrate(iS, MENU_START_COL + offset, MENU_START_ROW*5);
+        if (  bDrawButtons )
+        {
+            if ( bOKSel )
+            {
+                LCD.DrawOK(true);
+                LCD.DrawCancel(false);
+            }
+            else
+            {
+                LCD.DrawOK(false);
+                LCD.DrawCancel(true);
+            }
+            bDrawButtons = false;
+        }
+        if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
+        {
+            // toggle the selection
+            bOKSel = !bOKSel;
+            bDrawButtons = true;
+        }
+        if ( Joystick.IsButtonPressed() )
+        {
+            bDone = true;
+            if ( bOKSel )
+            {
+                bSave = true;
+            }
+        }
+    } while ( ! bDone );
+
+    if ( bSave )
+    {
+        // save PHMin & PHMax to memory
+        InternalMemory.SalMax_write(iS);
+		SalMax = iS;
+    }
+}
+#endif  // SALINITYEXPANSION    
 
 #ifdef DateTimeSetup
 void ReefAngelClass::SetupDateTime()
