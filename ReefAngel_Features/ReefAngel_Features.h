@@ -543,4 +543,17 @@ Approximately 208 bytes to enable this feature
 */
 //#define SALINITYEXPANSION
 
+/*
+RF Module
+
+This module is used to control Vortech pumps.  Enable this feature if you want that control.
+You will have to add in this line above the ReefAngel.h include:
+
+#include <ReefAngel_RF.h>  // <-- add this line
+#include <ReefAngel.h>  // add above this line
+
+Approximately 346 bytes to enable this feature
+*/
+//#define RFEXPANSION
+
 #endif  // __REEFANGEL_FEATURES_H__
