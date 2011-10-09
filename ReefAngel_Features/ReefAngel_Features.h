@@ -556,4 +556,17 @@ Approximately 346 bytes to enable this feature
 */
 //#define RFEXPANSION
 
+/*
+AI LED
+
+This features the ability to control the AI LED's.
+You will have to add in this line above the ReefAngel.h include:
+
+#include <ReefAngel_AI.h>  // <-- add this line
+#include <ReefAngel.h>  // add above this line
+
+Approximately 382 bytes to enable this feature
+*/
+//#define AI_LED
+
 #endif  // __REEFANGEL_FEATURES_H__
