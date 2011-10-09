@@ -527,4 +527,20 @@ Do NOT enable.  Code will not compile with this enabled.
 */
 //#define __PLUS_SPECIAL_WIFI__
 
+/*
+Salinity Module
+
+Uncomment this next line if you have a Salinity Module that you would like to use.  You will want to
+use a custom main screen as well to display the Salinity values for you.  You must also put this line
+in your PDE file above the ReefAngel.h include line:
+
+#include <ReefAngel_Salinity.h>  // <-- Add this line
+#include <ReefAngel.h>  // <-- Add above this line
+
+If you do not, you will get an error compiling.
+
+Approximately 208 bytes to enable this feature
+*/
+//#define SALINITYEXPANSION
+
 #endif  // __REEFANGEL_FEATURES_H__
