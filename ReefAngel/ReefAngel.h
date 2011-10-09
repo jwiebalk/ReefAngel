@@ -36,14 +36,18 @@
 #include <ReefAngel_PWM.h>
 #include <ReefAngel_Timer.h>
 #include <ReefAngel_Memory.h>
-#include <avr/pgmspace.h>
 
-#ifdef SALINITYEXPANSION
-#include <ReefAngel_Salinity.h>
-#endif  // SALINITYEXPANSION
-#ifdef RFEXPANSION
-#include <ReefAngel_RF.h>
-#endif  // RFEXPANSION
+#if defined SALINITYEXPANSION
+	#include <ReefAngel_Salinity.h>
+#endif  // defined SALINITYEXPANSION
+#if defined RFEXPANSION
+	#include <ReefAngel_RF.h>
+#endif  // defined RFEXPANSION
+#if defined AI_LED
+	#include <ReefAngel_AI.h>
+#endif  // defined AI_LED
+
+#include <avr/pgmspace.h>
 
 // Watchdog Timers
 #if defined WDT || defined WDT_FORCE
@@ -86,6 +90,9 @@ public:
 #if defined RFEXPANSION
 	ReefAngel_RFClass RF;
 #endif  // defined RFEXPANSION
+#if defined AI_LED
+	ReefAngel_AIClass AI;
+#endif  // defined AI_LED
 	/*
 	Timers:
 	0 - Feeding Mode timer

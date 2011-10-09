@@ -539,6 +539,14 @@ void ReefAngelClass::Refresh()
 	}
 	if (DisplayedMenu!=FEEDING_MODE) RF.SetMode(InternalMemory.RFMode_read(),InternalMemory.RFSpeed_read(),InternalMemory.RFDuration_read());
 #endif  // RFEXPANSION
+#ifdef AI_LED
+    if (millis()-AI.AImillis>AI.StreamDelay)
+    {
+      AI.Send();
+      AI.AImillis=millis();
+    }
+#endif  // AI_LED
+	
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	now();
 #ifdef DirectTempSensor

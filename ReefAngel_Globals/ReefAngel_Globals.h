@@ -255,6 +255,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define PH_Max		        951
 #define T1Pointer			953
 
+#define bit9600Delay 		101  
 #define KeyPressRate		250
 #define DEGREE_F            0
 #define DEGREE_C            1
@@ -551,6 +552,16 @@ Used by the RF Expansion Module
 #define Slave_Start   97
 #define Slave_Stop    98
 #define None          99
+
+/*
+AI Channels
+
+Used by the AI Functions
+ */
+#define White			0
+#define Blue			1
+#define RoyalBlue		2
+const byte RawChannel[]={67,65,66};
 
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))
