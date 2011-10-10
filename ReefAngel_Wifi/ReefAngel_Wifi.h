@@ -93,6 +93,9 @@ const prog_char XML_ERR[] PROGMEM = "ERR";
 #define REQ_DATE		8  		// Date and time
 #define REQ_R_STATUS	9		// Relay status information
 #define REQ_RA_STATUS	10		// Relay status information + ato logging
+#define REQ_FEEDING		11		// Start feeding mode
+#define REQ_WATER		12		// Start water change mode
+#define REQ_BTN_PRESS	13		// Simulate a button press, to end feeding & water change modes
 #define REQ_HTTP		127		// HTTP get request from  external server
 #define REQ_UNKNOWN		128	 	// Unknown request
 

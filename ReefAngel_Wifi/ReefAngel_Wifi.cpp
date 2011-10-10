@@ -174,6 +174,9 @@ void pushbuffer(byte inStr)
             else if (strncmp("HTTP/1.", m_pushback, 7)==0) reqtype = -REQ_HTTP;
             else if (strncmp("GET /sr", m_pushback, 7)==0) reqtype = -REQ_R_STATUS;
             else if (strncmp("GET /sa", m_pushback, 7)==0) reqtype = -REQ_RA_STATUS;
+            else if (strncmp("GET /bp", m_pushback, 7)==0) reqtype = -REQ_BTN_PRESS;
+            else if (strncmp("GET /f", m_pushback, 6)==0) reqtype = -REQ_FEEDING;
+            else if (strncmp("GET /w", m_pushback, 6)==0) reqtype = -REQ_WATER;
             //else reqtype = -REQ_UNKNOWN;
 		}
 	}
@@ -577,6 +580,32 @@ void processHTTP()
 				// If we process that command (which we will), we end up not recognizing it and send off an uknown request response
 				// back to the server.  Then the server will send another response back to us and we end up getting in an almost
 				// infinite loop.  We will mark it as an HTTP request and ignore it
+				break;
+			}
+			case REQ_FEEDING:
+			{
+				// Start up the feeding mode only if we are on the home screen
+				if ( ReefAngel.DisplayedMenu == DEFAULT_MENU )
+				{
+					ReefAngel.ClearScreen(DefaultBGColor);
+					ReefAngel.FeedingModeStart();
+				}
+				break;
+			}
+			case REQ_WATER:
+			{
+				// Start up the water change mode only if we are on the home screen
+				if ( ReefAngel.DisplayedMenu == DEFAULT_MENU )
+				{
+					ReefAngel.ClearScreen(DefaultBGColor);
+					ReefAngel.WaterChangeModeStart();
+				}
+				break;
+			}
+			case REQ_BTN_PRESS:
+			{
+				// Simulate a button press to stop the modes
+				ButtonPress++;
 				break;
 			}
 			default:

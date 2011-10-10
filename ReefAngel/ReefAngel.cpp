@@ -546,7 +546,7 @@ void ReefAngelClass::Refresh()
       AI.AImillis=millis();
     }
 #endif  // AI_LED
-	
+
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	now();
 #ifdef DirectTempSensor
@@ -1375,13 +1375,11 @@ void ReefAngelClass::ShowInterface()
 				// display everything on the home screen except the graph
 				// the graph is drawn/updated when we exit the main menu & when the parameters are saved
 				LCD.DrawDate(6, 112);
-				pingSerial();
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 				LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
 #else  // defined DisplayLEDPWM && ! defined RemoveAllLights
 				LCD.DrawMonitor(15, 60, Params);
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
-				pingSerial();
 				byte TempRelay = Relay.RelayData;
 				TempRelay &= Relay.RelayMaskOff;
 				TempRelay |= Relay.RelayMaskOn;
@@ -3066,7 +3064,7 @@ void ReefAngelClass::SetupCalibrateSalinity()
 		SalMax = iS;
     }
 }
-#endif  // SALINITYEXPANSION    
+#endif  // SALINITYEXPANSION
 
 #ifdef DateTimeSetup
 void ReefAngelClass::SetupDateTime()
