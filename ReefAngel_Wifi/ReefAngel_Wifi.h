@@ -45,6 +45,10 @@ const prog_char XML_PWMA[] PROGMEM = "<PWMA>";
 const prog_char XML_PWMD[] PROGMEM = "</PWMA><PWMD>";
 const prog_char XML_PWMD_END[] PROGMEM = "</PWMD>";
 #endif  // DisplayLEDPWM
+#ifdef SALINITYEXPANSION
+const prog_char XML_SAL[] PROGMEM = "<SAL>";
+const prog_char XML_SAL_END[] PROGMEM = "</SAL>";
+#endif  // SALINITYEXPANSION
 #ifdef ENABLE_ATO_LOGGING
 const prog_char XML_ATOLOW_LOG_OPEN[] PROGMEM = "<AL";
 const prog_char XML_ATOLOW_LOG_CLOSE[] PROGMEM = "</AL";

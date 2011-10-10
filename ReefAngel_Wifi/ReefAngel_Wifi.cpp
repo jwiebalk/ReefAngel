@@ -286,6 +286,11 @@ void processHTTP()
 				s += intlength(ReefAngel.PWM.GetDaylightValue());
 				s += intlength(ReefAngel.PWM.GetActinicValue());
 #endif  // DisplayLEDPWM
+#ifdef SALINITYEXPANSION
+				s += 11;
+				//<SAL></SAL>
+				s += intlength(ReefAngel.Params.Salinity);
+#endif  // SALINITYEXPANSION
 #ifdef RelayExp
 				s += 296;
 				//<R0></R0><RON0></RON0><ROFF0></ROFF0><R1></R1><RON1></RON1><ROFF1></ROFF1><R2></R2><RON2></RON2><ROFF2></ROFF2><R3></R3><RON3></RON3><ROFF3></ROFF3><R4></R4><RON4></RON4><ROFF4></ROFF4><R5></R5><RON5></RON5><ROFF5></ROFF5><R6></R6><RON6></RON6><ROFF6></ROFF6><R7></R7><RON7></RON7><ROFF7></ROFF7>
@@ -696,6 +701,11 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	WIFI_SERIAL.print(ReefAngel.PWM.GetDaylightValue(), DEC);
 	PROGMEMprint(XML_PWMD_END);
 #endif  // DisplayLEDPWM
+#ifdef SALINITYEXPANSION
+	PROGMEMprint(XML_SAL);
+	WIFI_SERIAL.print(ReefAngel.Params.Salinity, DEC);
+	PROGMEMprint(XML_SAL_END);
+#endif  // SALINITYEXPANSION
 #ifdef ENABLE_ATO_LOGGING
 	if ( fAtoLog )
 	{
