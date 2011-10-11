@@ -582,6 +582,7 @@ void ReefAngelClass::Refresh()
     LCD.Clear(DefaultBGColor,0,0,1,1);
     y = x - Params.Temp3;
     if ( abs(y) < MAX_TEMP_SWING || Params.Temp3 == 0 || ~x) Params.Temp3 = x;
+    Params.PH=0;
     for (int a=0;a<20;a++)
     {
     	Params.PH+=analogRead(PHPin);
