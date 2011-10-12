@@ -51,7 +51,7 @@ the intervals inside the Sketch (hardcode or have it read from memory if the mem
 
 Approximately 378 bytes to have WavemakerSetup
 */
-#define WavemakerSetup
+//#define WavemakerSetup
 
 /*
 These next two options are for the Dosing Pumps.  They operate differently, so read carefully to determine
@@ -120,7 +120,7 @@ When this or SetupExtras are defined, the Timeouts menu is included.
 Timeouts menu requires approximately 710 bytes
 This feature requires approximately 190 bytes if SetupExtras is defined
 */
-#define ATOSetup
+//#define ATOSetup
 
 /*
 This item will remove all lighting functionality from the controller.  It is the equivalent to
@@ -137,7 +137,7 @@ you can comment out the next line to remove the Metal Halide Setup and Metal Hal
 
 Approximately 258 bytes to have this feature
 */
-#define MetalHalideSetup
+//#define MetalHalideSetup
 
 /*
 If you do not use standard lights and do not wish to have the setup screens on your controller,
@@ -145,7 +145,7 @@ you can comment out the next line to remove the Standard Lights Setup
 
 Approximately 90 bytes to have this feature
 */
-#define StandardLightSetup
+//#define StandardLightSetup
 
 /*
 If you want to use the old way of reading the temp sensor which is always reading the value in
@@ -179,7 +179,7 @@ This is advisable since all settings can be updated via the wifi interface.
 
 Approximately 5000+ bytes to have this feature. This size can vary.
 */
-//#define wifi
+#define wifi
 
 /*
 This next line will control the displaying of all LED PWM related items.  The items it controls are:
@@ -314,7 +314,7 @@ the Internal Memory values for them you must enable the features:
 
 Approximately 4566 bytes removed when using the Simplified Menu
 */
-//#define SIMPLE_MENU
+#define SIMPLE_MENU
 
 /*
 This option allows for the user to handle the menu in their PDE file
