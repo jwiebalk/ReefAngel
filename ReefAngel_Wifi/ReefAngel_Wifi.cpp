@@ -609,8 +609,12 @@ void processHTTP()
 				{
 					ReefAngel.ClearScreen(DefaultBGColor);
 					ReefAngel.FeedingModeStart();
+					ModeResponse(true);
 				}
-				ModeResponse(true);
+				else
+				{
+					ModeResponse(false);
+				}
 				break;
 			}
 			case REQ_WATER:
@@ -620,8 +624,12 @@ void processHTTP()
 				{
 					ReefAngel.ClearScreen(DefaultBGColor);
 					ReefAngel.WaterChangeModeStart();
+					ModeResponse(true);
 				}
-				ModeResponse(true);
+				else
+				{
+					ModeResponse(false);
+				}
 				break;
 			}
 			case REQ_BTN_PRESS:
