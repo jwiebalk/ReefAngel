@@ -46,6 +46,26 @@ void WebResponse (const prog_char *response, long strsize)
     printP(response);
 }
 
+void ModeResponse(bool fOk)
+{
+	P(WebBodyMsg) = SERVER_HEADER_XML;
+	printP(WebBodyMsg);
+	uint8_t s;
+	if ( fOk )
+		s = 15;
+	else
+		s = 16;
+	WIFI_SERIAL.print(s, DEC);
+	P(WebBodyMsg1) = SERVER_HEADER3;
+	printP(WebBodyMsg1);
+	PROGMEMprint(XML_MODE_OPEN);
+	if ( fOk )
+		PROGMEMprint(XML_OK);
+	else
+		PROGMEMprint(XML_ERR);
+	PROGMEMprint(XML_MODE_CLOSE);
+}
+
 void printP(const prog_char *str)
 {
     char a;
@@ -175,8 +195,8 @@ void pushbuffer(byte inStr)
             else if (strncmp("GET /sr", m_pushback, 7)==0) reqtype = -REQ_R_STATUS;
             else if (strncmp("GET /sa", m_pushback, 7)==0) reqtype = -REQ_RA_STATUS;
             else if (strncmp("GET /bp", m_pushback, 7)==0) reqtype = -REQ_BTN_PRESS;
-            else if (strncmp("GET /f", m_pushback, 6)==0) reqtype = -REQ_FEEDING;
-            else if (strncmp("GET /w", m_pushback, 6)==0) reqtype = -REQ_WATER;
+            else if (strncmp("GET /mf", m_pushback, 7)==0) reqtype = -REQ_FEEDING;
+            else if (strncmp("GET /mw", m_pushback, 7)==0) reqtype = -REQ_WATER;
             //else reqtype = -REQ_UNKNOWN;
 		}
 	}
@@ -590,6 +610,7 @@ void processHTTP()
 					ReefAngel.ClearScreen(DefaultBGColor);
 					ReefAngel.FeedingModeStart();
 				}
+				ModeResponse(true);
 				break;
 			}
 			case REQ_WATER:
@@ -600,12 +621,14 @@ void processHTTP()
 					ReefAngel.ClearScreen(DefaultBGColor);
 					ReefAngel.WaterChangeModeStart();
 				}
+				ModeResponse(true);
 				break;
 			}
 			case REQ_BTN_PRESS:
 			{
 				// Simulate a button press to stop the modes
 				ButtonPress++;
+				ModeResponse(true);
 				break;
 			}
 			default:

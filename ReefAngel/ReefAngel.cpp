@@ -1192,6 +1192,7 @@ void ReefAngelClass::FeedingModeStart()
 	}
 #endif  // RelayExp
 	Relay.Write();
+	ClearScreen(DefaultBGColor);
 	LCD.DrawText(ModeScreenColor, DefaultBGColor, 30, 10, "Feeding Mode");
 	Timer[FEEDING_TIMER].Start();  //Start Feeding Mode timer
 #ifdef DisplayImages
@@ -1220,6 +1221,7 @@ void ReefAngelClass::WaterChangeModeStart()
 	}
 #endif  // RelayExp
 	Relay.Write();
+	ClearScreen(DefaultBGColor);
 	// Display the water change mode
 	LCD.DrawText(ModeScreenColor, DefaultBGColor, 20, 10, "Water Change Mode");
 #ifdef DisplayImages

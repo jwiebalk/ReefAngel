@@ -65,6 +65,8 @@ const prog_char XML_MEM_OPEN[] PROGMEM = "<MEM>";
 const prog_char XML_MEM_CLOSE[] PROGMEM = "</MEM>";
 const prog_char XML_DATE_OPEN[] PROGMEM = "<D>";
 const prog_char XML_DATE_CLOSE[] PROGMEM = "</D>";
+const prog_char XML_MODE_OPEN[] PROGMEM = "<MODE>";
+const prog_char XML_MODE_CLOSE[] PROGMEM = "</MODE>";
 const prog_char XML_OK[] PROGMEM = "OK";
 const prog_char XML_ERR[] PROGMEM = "ERR";
 
