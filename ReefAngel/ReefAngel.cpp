@@ -537,7 +537,7 @@ void ReefAngelClass::Refresh()
 	{
 		Timer[FEEDING_TIMER].ForceTrigger();
 	}
-	if (DisplayedMenu!=FEEDING_MODE) RF.SetMode(InternalMemory.RFMode_read(),InternalMemory.RFSpeed_read(),InternalMemory.RFDuration_read());
+	if (DisplayedMenu!=FEEDING_MODE && RF.UseMemory) RF.SetMode(InternalMemory.RFMode_read(),InternalMemory.RFSpeed_read(),InternalMemory.RFDuration_read());
 #endif  // RFEXPANSION
 #ifdef AI_LED
     if (millis()-AI.AImillis>AI.StreamDelay)

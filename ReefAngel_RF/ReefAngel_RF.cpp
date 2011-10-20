@@ -25,6 +25,7 @@
 
 ReefAngel_RFClass::ReefAngel_RFClass()
 {
+	UseMemory=true;
 }
 
 void ReefAngel_RFClass::SetMode(byte mode, byte speed, byte duration)

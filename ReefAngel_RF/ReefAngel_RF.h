@@ -28,6 +28,7 @@ class ReefAngel_RFClass
 {
 public:
 	ReefAngel_RFClass();
+	boolean UseMemory;
 	void SetMode(byte mode, byte speed, byte duration);
 	byte RFCheck();
 };
