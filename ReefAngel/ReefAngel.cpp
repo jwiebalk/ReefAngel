@@ -565,7 +565,7 @@ void ReefAngelClass::Refresh()
 	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 #endif  // defined SALINITYEXPANSION
-	TempSensor.RequestConvertion();
+	TempSensor.RequestConversion();
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 #else  // DirectTempSensor
     int x = TempSensor.ReadTemperature(TempSensor.addrT1);
@@ -595,7 +595,7 @@ void ReefAngelClass::Refresh()
 	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 #endif  // defined SALINITYEXPANSION
-	TempSensor.RequestConvertion();
+	TempSensor.RequestConversion();
 #endif  // DirectTempSensor
 }
 

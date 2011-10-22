@@ -48,7 +48,7 @@ void ReefAngel_TempSensorClass::Init()
 	ds.reset_search();
 }
 
-void ReefAngel_TempSensorClass::RequestConvertion()
+void ReefAngel_TempSensorClass::RequestConversion()
 {
 	if(addrT1[0]==0x28)
 	{
