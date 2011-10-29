@@ -136,11 +136,14 @@ const prog_char mainmenu_1_label[] PROGMEM = "Water Change";
 const prog_char mainmenu_2_label[] PROGMEM = "ATO Clear";
 const prog_char mainmenu_3_label[] PROGMEM = "Overheat Clear";
 const prog_char mainmenu_4_label[] PROGMEM = "PH Calibration";
+#ifdef SALINITYEXPANSION
+const prog_char mainmenu_5_label[] PROGMEM = "Sal Calibration";
+#endif  // SALINITYEXPANSION
 #ifdef DateTimeSetup
-const prog_char mainmenu_5_label[] PROGMEM = "Date / Time";
+const prog_char mainmenu_6_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
 #ifdef VersionMenu
-const prog_char mainmenu_6_label[] PROGMEM = "Version";
+const prog_char mainmenu_7_label[] PROGMEM = "Version";
 #endif  // VersionMenu
 PROGMEM const char *mainmenu_items[] = {
                     mainmenu_0_label,
@@ -148,11 +151,14 @@ PROGMEM const char *mainmenu_items[] = {
                     mainmenu_2_label,
                     mainmenu_3_label,
                     mainmenu_4_label,
+#ifdef SALINITYEXPANSION
+					mainmenu_5_label,
+#endif  // SALINITYEXPANSION
 #ifdef DateTimeSetup
-                    mainmenu_5_label,
+                    mainmenu_6_label,
 #endif  // DateTimeSetup
 #ifdef VersionMenu
-                    mainmenu_6_label
+                    mainmenu_7_label
 #endif  // VersionMenu
                     };
 enum MainMenuItem {
@@ -161,6 +167,9 @@ enum MainMenuItem {
     MainMenu_ATOClear,
     MainMenu_OverheatClear,
     MainMenu_PHCalibration,
+#ifdef SALINITYEXPANSION
+	MainMenu_SalinityCalibration,
+#endif  // SALINITYEXPANSION
 #ifdef DateTimeSetup
     MainMenu_DateTime,
 #endif  // DateTimeSetup
@@ -238,8 +247,11 @@ const prog_char setupmenu_1_label[] PROGMEM = "Single Dose";
 const prog_char setupmenu_2_label[] PROGMEM = "Multi Dose";
 #endif  // DosingPumpIntervalSetup
 const prog_char setupmenu_3_label[] PROGMEM = "Calibrate pH";
+#ifdef SALINITYEXPANSION
+const prog_char setupmenu_4_label[] PROGMEM = "Calibrate Sal";
+#endif  // SALINITYEXPANSION
 #ifdef DateTimeSetup
-const prog_char setupmenu_4_label[] PROGMEM = "Date / Time";
+const prog_char setupmenu_5_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
 PROGMEM const char *setupmenu_items[] = {
 #ifdef WavemakerSetup
@@ -252,8 +264,11 @@ PROGMEM const char *setupmenu_items[] = {
 					setupmenu_2_label,
 #endif  // DosingPumpIntervalSetup
                     setupmenu_3_label,
+#ifdef SALINITYEXPANSION
+					setupmenu_4_label,
+#endif  // SALINITYEXPANSION
 #ifdef DateTimeSetup
-                    setupmenu_4_label
+                    setupmenu_5_label
 #endif  // DateTimeSetup
                     };
 enum SetupMenuItem {
@@ -267,6 +282,9 @@ enum SetupMenuItem {
 	SetupMenu_DosingPumpInterval,
 #endif  // DosingPumpIntervalSetup
     SetupMenu_CalibratePH,
+#ifdef SALINITYEXPANSION
+	SetupMenu_CalibrateSalinity,
+#endif  // SALINITYEXPANSION
 #ifdef DateTimeSetup
     SetupMenu_DateTime
 #endif  // DateTimeSetup
@@ -1986,6 +2004,13 @@ void ReefAngelClass::ProcessButtonPressMain()
 			SetupCalibratePH();
 			break;
 		}
+#ifdef SALINITYEXPANSION
+		case MainMenu_SalinityCalibration:
+		{
+			SetupCalibrateSalinity();
+			break;
+		}
+#endif  // SALINITYEXPANSION
 #ifdef DateTimeSetup
 		case MainMenu_DateTime:
 		{
@@ -2189,6 +2214,13 @@ void ReefAngelClass::ProcessButtonPressSetup()
             SetupCalibratePH();
             break;
         }
+#ifdef SALINITYEXPANSION
+		case SetupMenu_CalibrateSalinity:
+		{
+			SetupCalibrateSalinity();
+			break;
+		}
+#endif  // SALINITYEXPANSION
 #ifdef DateTimeSetup
         case SetupMenu_DateTime:
         {
