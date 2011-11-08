@@ -314,6 +314,13 @@ void processHTTP()
 				//<SAL></SAL>
 				s += intlength(ReefAngel.Params.Salinity);
 #endif  // SALINITYEXPANSION
+#ifdef AI_LED
+				s += 35;
+				//<AIW></AIW><AIB></AIB><AIRB></AIRB>
+				s += intlength(ReefAngel.AI.GetChannel(0));
+				s += intlength(ReefAngel.AI.GetChannel(1));
+				s += intlength(ReefAngel.AI.GetChannel(2));
+#endif  // AI_LED
 #ifdef RelayExp
 				s += 296;
 				//<R0></R0><RON0></RON0><ROFF0></ROFF0><R1></R1><RON1></RON1><ROFF1></ROFF1><R2></R2><RON2></RON2><ROFF2></ROFF2><R3></R3><RON3></RON3><ROFF3></ROFF3><R4></R4><RON4></RON4><ROFF4></ROFF4><R5></R5><RON5></RON5><ROFF5></ROFF5><R6></R6><RON6></RON6><ROFF6></ROFF6><R7></R7><RON7></RON7><ROFF7></ROFF7>
@@ -766,6 +773,15 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	WIFI_SERIAL.print(ReefAngel.Params.Salinity, DEC);
 	PROGMEMprint(XML_SAL_END);
 #endif  // SALINITYEXPANSION
+#ifdef AI_LED
+	PROGMEMprint(XML_AIW);
+	WIFI_SERIAL.print(ReefAngel.AI.GetChannel(0), DEC);
+	PROGMEMprint(XML_AIW_END);
+	WIFI_SERIAL.print(ReefAngel.AI.GetChannel(1), DEC);
+	PROGMEMprint(XML_AIB_END);
+	WIFI_SERIAL.print(ReefAngel.AI.GetChannel(2), DEC);
+	PROGMEMprint(XML_AIRB_END);
+#endif  // AI_LED
 #ifdef ENABLE_ATO_LOGGING
 	if ( fAtoLog )
 	{
